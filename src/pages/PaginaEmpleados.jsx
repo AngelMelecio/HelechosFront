@@ -7,7 +7,7 @@ const PaginaEmpleados = () => {
     const dummyEmpleados = [
         { id: 'asdas', name: "juan", extra: 'es jooto' },
         { id: '123sd', name: "jose", extra: 'No es jooto' },
-        { id: 'ads21', name: "aksdj", extra: 'tambien es jooto' },
+        { id: 'adasdasdasdasdasdasdasds21', name: "akasdasdasdasdsdj", extra: 'tambien es jooasdasd asda sto' },
     ]
 
     function RenderTable() {
@@ -41,27 +41,29 @@ const PaginaEmpleados = () => {
     return (
         <div id='tabla' className="customTable flex">
             <div className="flex bg-white w-full m-2 p-2 rounded-lg">
-                <table className="table-auto border-collapse:collapse text-center ">
-                    <thead>
-                        <tr>
+                <div className="flex w-full overflow-scroll">
+                    <table className="table-auto border-collapse:collapse ">
+                        <thead className='text-center'>
+                            <tr>
+                                {
+                                    columns.map((c, i) =>
+                                        <th key={"C" + i} >
+                                            {c.name}
+                                        </th>)
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
                             {
-                                columns.map((c, i) =>
-                                    <th key={"C" + i} >
-                                        {c.name}
-                                    </th>)
+                                dummyEmpleados.map((e, i) =>
+                                    <tr key={"E"+i}>
+                                        <CustomRow element={ e } />
+                                    </tr>
+                                )
                             }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            dummyEmpleados.map((e, i) =>
-                                <tr key={"E"+i}>
-                                    <CustomRow element={ e } />
-                                </tr>
-                            )
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )
