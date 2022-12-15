@@ -1,0 +1,28 @@
+.App{
+  display: flex;
+  flex-direction: row;
+}
+.camContainer{
+  display: flex;
+  padding: 1rem;
+  width: 250px;
+  border: 2px solid rgb(84, 209, 188);
+}
+.button{
+  width: 10rem;
+  margin-bottom: 2rem;
+  background-color: rgb(84, 209, 188);
+  border: none;
+  height: 2rem;
+  color: white;
+}
+
+.scanner{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  padding: 3rem;
+  text-align: center;
+}
