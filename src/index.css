@@ -64,3 +64,16 @@ input::-webkit-inner-spin-button {
   border-radius: 50px;
   background-color: rgb(187, 187, 187);
 }
+
+.opacity-white{
+  background-color: white;
+  transition: 0.2s;
+}
+.opacity-white:hover{
+  background-color: #e5e7eb;
+  transition: 0.2s;
+}
+.opacity-white:active{
+  opacity: 60%;
+  transition: 0s;
+}
