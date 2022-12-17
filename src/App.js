@@ -24,7 +24,7 @@ const App = () => {
     setLoadingScan(true);
     //console.log(`loaded data data`, scanData.text);
     if (scanData && scanData?.text !== "") {
-      console.log( scanData.text+"" );
+      //console.log( scanData.text+"" );
       setObj( (scanData.text+"") );
       setStartScan(false);
       setLoadingScan(false);
