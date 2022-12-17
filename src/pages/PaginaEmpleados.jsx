@@ -20,7 +20,6 @@ const PaginaEmpleados = () => {
     { name: 'Contraseña' }
   ]
 
-
   const screenRef = useRef()
   const modalRef = useRef()
   const someSelectedRef = useRef()
