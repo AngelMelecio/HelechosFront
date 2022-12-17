@@ -50,13 +50,9 @@ export default function Login() {
 
                 <div className='flex flex-col text-emerald-800 font-bold py-2'>
                     <label>Contraseña</label>
-                    <input className='p-2 rounded-lg bg-emerald-200	 mt-2 focus:border-emerald-800 focus:bg-emerald-600 focus:outline-none focus:text-white'
+                    <Field  className='p-2 rounded-lg bg-emerald-200	 mt-2 focus:border-emerald-800 focus:bg-emerald-600 focus:outline-none focus:text-white'
                         type="password"
-                        id='contrasenia'
                         name='contrasenia'
-                        onChange={formik.handleChange}
-                        value={formik.values.contrasenia}
-                        onBlur={formik.handleBlur}
                     />
                 </div>
                 {formik.errors.contrasenia ? <div>{formik.errors.contrasenia}</div> : null}
