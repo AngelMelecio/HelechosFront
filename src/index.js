@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import PaginaEmpleados  from './pages/PaginaEmpleados'
-import Login from './pages/Login';
+import Login from './pages/Login'
 
 ReactDOM.render(
   <React.StrictMode>
