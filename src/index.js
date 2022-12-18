@@ -4,13 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import PaginaEmpleados  from './pages/PaginaEmpleados'
-import Login from './pages/Login';
 
 ReactDOM.render(
   <React.StrictMode>
     
     <div className="bg-gray-300 h-screen">
-      <Login/>
+      <PaginaEmpleados/>
     </div>
     
     {/*<App />*/}
