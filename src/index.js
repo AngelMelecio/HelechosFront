@@ -10,7 +10,7 @@ ReactDOM.render(
   <React.StrictMode>
     
     <div className="bg-gray-300 h-screen">
-      <Login/>
+      <PaginaEmpleados/>
     </div>
     
     {/*<App />*/}
