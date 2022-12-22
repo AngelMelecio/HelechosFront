@@ -19,7 +19,7 @@ import {
 import {
     AiFillCamera as Camera,
     AiOutlinePhone as Phone,
-    AiOutlineUser as User
+    AiOutlineUser as User,
 } from 'react-icons/ai'
 
 import {
@@ -29,6 +29,10 @@ import {
 import {
     FaUserEdit as UserEdit
 } from 'react-icons/fa'
+
+import {
+    FiUpload as Upload
+} from 'react-icons/fi'
 
 
 
@@ -46,5 +50,6 @@ export const ICONS = {
     Email,
     User,
     Key,
-    UserEdit
+    UserEdit,
+    Upload
 }
