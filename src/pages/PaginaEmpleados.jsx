@@ -7,6 +7,7 @@ import Input from '../components/Input'
 import { ICONS } from '../constants/icons'
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
+const imageEndPoint = 'http://127.0.0.1:8000'
 
 const initobj = {
   idEmpleado: "",
@@ -59,8 +60,8 @@ const PaginaEmpleados = () => {
     getEmpleados()
   }, [])
 
-
   const getEmpleados = async () => {
+
     await fetch(apiEmpleadosUrl, {
       method: 'GET',
       headers: {
@@ -69,9 +70,62 @@ const PaginaEmpleados = () => {
     })
       .then(response => response.json())
       .then(data => {
-        setListaEmpleados(data.map(empl => ({ ...empl, isSelected: false })))
-        setAllEmpleados(data)
+
+        let formatData = data.map((empl) =>
+        ({
+          ...empl,
+          isSelected: false,
+          fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
+        })
+        )
+
+        setListaEmpleados(formatData)
+        setAllEmpleados(formatData)
       })
+
+  }
+
+  const saveEmpleado = async (e) => {
+    e.preventDefault()
+
+    setSaving(true)
+
+    let formData = new FormData()
+
+    formData.append('nombre', objEmpleado.nombre)
+    formData.append('apellidos', objEmpleado.apellidos)
+    formData.append('direccion', objEmpleado.direccion)
+    formData.append('telefono', objEmpleado.telefono)
+    formData.append('correo', objEmpleado.correo)
+    formData.append('ns', objEmpleado.ns)
+    formData.append('usuario', objEmpleado.usuario)
+    formData.append('contrasena', objEmpleado.contrasena)
+    formData.append('fotografia', objEmpleado.fotografia)
+    formData.append('departamento', objEmpleado.departamento)
+    formData.append('tipo', objEmpleado.tipo)
+    
+    if (!isEdit) {
+
+      await fetch(apiEmpleadosUrl, {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => alert(data.message))
+    }
+    else{
+      await fetch(apiEmpleadosUrl + objEmpleado.id, {
+        method: 'PUT',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => alert(data.message))
+    }
+
+    await getEmpleados()
+    setObjEmpleado(initobj)
+    setSaving(false)
+    handleModalVisibility(false)
   }
 
   const handleModalVisibility = (show) => {
@@ -92,33 +146,7 @@ const PaginaEmpleados = () => {
     setObjEmpleado({ ...objEmpleado, [e.target.name]: e.target.value })
   }
 
-  const saveEmpleado = async (e) => {
-    e.preventDefault()
-
-    setSaving(true)
-
-    if (!isEdit) {
-      await fetch(apiEmpleadosUrl, {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(objEmpleado)
-      })
-        .then(response => response.json())
-        .then(data => alert(data.message))
-    }
-
-
-    await getEmpleados()
-    setObjEmpleado(initobj)
-    setSaving(false)
-    handleModalVisibility(false)
-
-  }
-
   const handleSelection = (e) => {
-
     setListaEmpleados(prev => prev.map((empl, indx) => (
       indx === Number(e.target.value) ?
         { ...empl, isSelected: e.target.checked } :
@@ -132,25 +160,21 @@ const PaginaEmpleados = () => {
         sel = true
       }
     })
-
     hideShowOptions(sel)
+  }
+
+  const handleSelectImage = (e) => {
+    e.preventDefault()
+    setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
   }
 
   const unSelecAll = () => {
     setListaEmpleados(prev => prev.map(empl => ({ ...empl, isSelected: false })))
     hideShowOptions(false)
   }
-
-  const handleSelectImage = (e) => {
-    e.preventDefault()
-  }
-
+  
   const handleSearch = () => {
     let val = (searchRef.current.value).trim().toLowerCase()
-
-    let N = listaEmpleados.length
-    for (let i = 0; i < N; i++) {
-    }
 
     let newLista = allEmpleados.filter(e => {
       let E = JSON.stringify(e).toLowerCase()
@@ -170,6 +194,14 @@ const PaginaEmpleados = () => {
     setModalVisible(true)
     setIsEdit(true)
     setObjEmpleado(emp)
+  }
+
+  const toUrl = (file) =>{
+    if( file instanceof File ){
+      return URL.createObjectURL( file )
+    }
+    if( file == '' ) return null
+    return file
   }
 
   const CustomRow = ({ element, index, onClick }) => {
@@ -208,7 +240,6 @@ const PaginaEmpleados = () => {
     )
   }
 
-
   return (
     <div className='h-screen'>
       {
@@ -244,9 +275,16 @@ const PaginaEmpleados = () => {
                 <div className='flex flex-col w-full items-center justify-center'>
                   <div className="flex relative items-center justify-center foto text-center">
                     { /* Imagen del Empleado */}
-                    <button onClick={handleSelectImage} className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normalButton rounded-full'>
-                      <ICONS.Camera size='22px' />
-                    </button>
+                    <img
+                      className='object-cover foto'
+                      src={ toUrl(objEmpleado?.fotografia) }
+                      alt='' />
+                    <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
+                    <label
+                      className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normalButton rounded-full'
+                      htmlFor='file' >
+                      <ICONS.Upload style={{color:'white'}} size='18px' />
+                    </label>
                   </div>
                 </div>
                 <div id='fields' className=' mt-2 mb-2'>
@@ -306,6 +344,7 @@ const PaginaEmpleados = () => {
                     className='bg-teal-500 p-1 w-40 text-white normalButton'
                     type="submit"
                     value={isEdit ? "GUARDAR" : "AGREGAR"}
+                    
                   />
                 </div>
               </form>
@@ -365,20 +404,18 @@ const PaginaEmpleados = () => {
               <tbody>
                 {
                   listaEmpleados.map((e, i) =>
-                    <>
-                      <tr key={"E" + i}  >
-                        <td className='p-0'>
-                          <input
-                            value={i}
-                            className='checkbox'
-                            type="checkbox"
-                            onChange={handleSelection}
-                            checked={e.isSelected}
-                          />
-                        </td>
-                        <CustomRow element={e} index={i} onClick={ () => handleEdit(e)} />
-                      </tr>
-                    </>
+                    <tr key={"E" + i}  >
+                      <td className='p-0'>
+                        <input
+                          value={i}
+                          className='checkbox'
+                          type="checkbox"
+                          onChange={handleSelection}
+                          checked={e.isSelected}
+                        />
+                      </td>
+                      <CustomRow element={e} index={i} onClick={() => handleEdit(e)} />
+                    </tr>
                   )
                 }
               </tbody>
