@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
-import { icons } from 'react-icons'
 import DeleteModal from '../components/DeleteModal'
 import Input from '../components/Input'
 
@@ -103,7 +102,7 @@ const PaginaEmpleados = () => {
     formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', objEmpleado.departamento)
     formData.append('tipo', objEmpleado.tipo)
-    
+
     if (!isEdit) {
 
       await fetch(apiEmpleadosUrl, {
@@ -113,7 +112,7 @@ const PaginaEmpleados = () => {
         .then(response => response.json())
         .then(data => alert(data.message))
     }
-    else{
+    else {
       await fetch(apiEmpleadosUrl + objEmpleado.id, {
         method: 'PUT',
         body: formData
@@ -172,7 +171,7 @@ const PaginaEmpleados = () => {
     setListaEmpleados(prev => prev.map(empl => ({ ...empl, isSelected: false })))
     hideShowOptions(false)
   }
-  
+
   const handleSearch = () => {
     let val = (searchRef.current.value).trim().toLowerCase()
 
@@ -196,11 +195,11 @@ const PaginaEmpleados = () => {
     setObjEmpleado(emp)
   }
 
-  const toUrl = (file) =>{
-    if( file instanceof File ){
-      return URL.createObjectURL( file )
+  const toUrl = (file) => {
+    if (file instanceof File) {
+      return URL.createObjectURL(file)
     }
-    if( file == '' ) return null
+    if (file == '') return null
     return file
   }
 
@@ -241,7 +240,7 @@ const PaginaEmpleados = () => {
   }
 
   return (
-    <div className='h-screen'>
+    <div className='h-screen w-full'>
       {
         modalDeleteVisible ?
           <DeleteModal
@@ -254,106 +253,109 @@ const PaginaEmpleados = () => {
       {
         modalVisible ?
           <div ref={modalRef} id="modal"
-            className='z-10 flex absolute h-screen w-full grayTrans items-center justify-center '>
-            <div ref={modalBoxRef} className='w-full mx-10 p-5 rounded-lg bg-white shadow-md '  >
-              <div className="flex flex-row total-center mb-2 relative h-10">
-                {isEdit
-                  ? <ICONS.UserEdit className='mt-1 mr-2' size='20px' style={{ color: '#134e4a' }} />
-                  : <ICONS.PersonPlus className='mt-1 mr-2' size='20px' style={{ color: '#134e4a' }} />
-                }
-                <p className='font-bold text-teal-900 text-2xl' >
-                  {isEdit ? 'Editar Empleado' : 'Nuevo Empleado'}
-                </p>
-                <button
-                  className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute right-0 '
-                  onClick={() => handleModalVisibility(false)}
-                >
-                  <ICONS.Cancel className='m-0' size='25px' />
-                </button>
+            className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
+            <div className="">
+
+              <div ref={modalBoxRef} className='w-full p-5 rounded-lg bg-white shadow-md '  >
+                <div className="flex flex-row total-center mb-2 relative h-10">
+                  {isEdit
+                    ? <ICONS.UserEdit className='mt-1 mr-2' size='20px' style={{ color: '#134e4a' }} />
+                    : <ICONS.PersonPlus className='mt-1 mr-2' size='20px' style={{ color: '#134e4a' }} />
+                  }
+                  <p className='font-bold text-teal-900 text-2xl' >
+                    {isEdit ? 'Editar Empleado' : 'Nuevo Empleado'}
+                  </p>
+                  <button
+                    className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute right-0 '
+                    onClick={() => handleModalVisibility(false)}
+                  >
+                    <ICONS.Cancel className='m-0' size='25px' />
+                  </button>
+                </div>
+                <form className='form' onSubmit={saveEmpleado} >
+                  <div className='flex flex-col w-full items-center justify-center'>
+                    <div className="flex relative items-center justify-center foto text-center">
+                      { /* Imagen del Empleado */}
+                      <img
+                        className='object-cover foto'
+                        src={toUrl(objEmpleado?.fotografia)}
+                        alt='' />
+                      <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
+                      <label
+                        className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normalButton rounded-full'
+                        htmlFor='file' >
+                        <ICONS.Upload style={{ color: 'white' }} size='18px' />
+                      </label>
+                    </div>
+                  </div>
+                  <div id='fields' className=' mt-2 mb-2'>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Nombre(s)' type='text' name='nombre' value={objEmpleado.nombre}
+                        onChange={(e) => handleChange(e)} required={true}
+                      />
+                      <Input
+                        label='Apellido(s)' type='text' name='apellidos' value={objEmpleado.apellidos}
+                        onChange={(e) => handleChange(e)} required={true}
+                      />
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Dirección' type='text' name='direccion' value={objEmpleado.direccion}
+                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.House}
+                      />
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Seguro Social' type='number' name='ns' value={objEmpleado.ns}
+                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Add}
+                      />
+                      <Input
+                        label='Teléfono' type='number' name='telefono' value={objEmpleado.telefono}
+                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Phone}
+                      />
+                      <Input
+                        label='Correo' type='text' name='correo' value={objEmpleado.correo}
+                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Email}
+                      />
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Departamento' type='text' name='departamento' value={objEmpleado.departamento}
+                        onChange={(e) => handleChange(e)} required={true}
+                      />
+                      <Input
+                        label='Tipo' type='text' name='tipo' value={objEmpleado.tipo}
+                        onChange={(e) => handleChange(e)} required={true}
+                      />
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Usuario' type='text' name='usuario' value={objEmpleado.usuario}
+                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.User}
+                      />
+                      <Input
+                        label='Contaseña' type='password' name='contrasena' value={objEmpleado.contrasena}
+                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Key}
+                      />
+                    </div>
+                  </div>
+                  <div className='flex total-center mt-5'>
+                    <input
+                      className='bg-teal-500 p-1 w-40 text-white normalButton'
+                      type="submit"
+                      value={isEdit ? "GUARDAR" : "AGREGAR"}
+
+                    />
+                  </div>
+                </form>
               </div>
-              <form className='form' onSubmit={saveEmpleado} >
-                <div className='flex flex-col w-full items-center justify-center'>
-                  <div className="flex relative items-center justify-center foto text-center">
-                    { /* Imagen del Empleado */}
-                    <img
-                      className='object-cover foto'
-                      src={ toUrl(objEmpleado?.fotografia) }
-                      alt='' />
-                    <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
-                    <label
-                      className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normalButton rounded-full'
-                      htmlFor='file' >
-                      <ICONS.Upload style={{color:'white'}} size='18px' />
-                    </label>
-                  </div>
-                </div>
-                <div id='fields' className=' mt-2 mb-2'>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Nombre(s)' type='text' name='nombre' value={objEmpleado.nombre}
-                      onChange={(e) => handleChange(e)} required={true}
-                    />
-                    <Input
-                      label='Apellido(s)' type='text' name='apellidos' value={objEmpleado.apellidos}
-                      onChange={(e) => handleChange(e)} required={true}
-                    />
-                  </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Dirección' type='text' name='direccion' value={objEmpleado.direccion}
-                      onChange={(e) => handleChange(e)} required={true} Icon={ICONS.House}
-                    />
-                  </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Seguro Social' type='number' name='ns' value={objEmpleado.ns}
-                      onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Add}
-                    />
-                    <Input
-                      label='Teléfono' type='number' name='telefono' value={objEmpleado.telefono}
-                      onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Phone}
-                    />
-                    <Input
-                      label='Correo' type='text' name='correo' value={objEmpleado.correo}
-                      onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Email}
-                    />
-                  </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Departamento' type='text' name='departamento' value={objEmpleado.departamento}
-                      onChange={(e) => handleChange(e)} required={true}
-                    />
-                    <Input
-                      label='Tipo' type='text' name='tipo' value={objEmpleado.tipo}
-                      onChange={(e) => handleChange(e)} required={true}
-                    />
-                  </div>
-                  <div className='flex flex-row'>
-                    <Input
-                      label='Usuario' type='text' name='usuario' value={objEmpleado.usuario}
-                      onChange={(e) => handleChange(e)} required={true} Icon={ICONS.User}
-                    />
-                    <Input
-                      label='Contaseña' type='password' name='contrasena' value={objEmpleado.contrasena}
-                      onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Key}
-                    />
-                  </div>
-                </div>
-                <div className='flex total-center mt-5'>
-                  <input
-                    className='bg-teal-500 p-1 w-40 text-white normalButton'
-                    type="submit"
-                    value={isEdit ? "GUARDAR" : "AGREGAR"}
-                    
-                  />
-                </div>
-              </form>
             </div>
           </div>
           : null
       }
-      <div ref={screenRef} className="customTable flex">
-        <div className="flex flex-col bg-white w-full m-2 p-2 rounded-lg">
+      <div ref={screenRef} className="customTable flex bg-slate-200">
+        <div className="flex flex-col bg-white w-full p-5  rounded-lg">
           <div className='flex p-2 justify-between items-center' >
             <div className='flex'>
               <button
