@@ -17,6 +17,25 @@
   color: rgb(255, 255, 255);
   background: var(--teal300);
 }
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgb(255, 255, 255); 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(184, 194, 193); 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(138, 147, 145); 
+}
 
 body {
   margin: 0;
@@ -123,3 +142,28 @@ input::-webkit-inner-spin-button {
 	position: absolute;
 	z-index: -1;
 }
+
+#appbar .appbar-content{
+  opacity:0%;
+  transition: 0.3s;
+}
+
+#appbar:hover{
+  box-shadow: 5px 5px 5px 5px rgba(74, 74, 74, 0.6);
+}
+
+.appbar-content{
+  visibility: hidden;
+}
+
+#appbar:hover .appbar-content{
+  opacity: 100%;
+  transition: 0.6s;
+  visibility: visible;
+  
+}
+.touchable-opacity:active{
+  opacity: 50%;
+  transition: 0s;
+}
+

@@ -3,16 +3,25 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import PaginaEmpleados  from './pages/PaginaEmpleados'
+import PaginaEmpleados from './pages/PaginaEmpleados'
 import Login from './pages/Login'
+import AppBar from './components/AppBar';
 
 ReactDOM.render(
   <React.StrictMode>
-    
-    <div className="bg-gray-300 h-screen">
-      <PaginaEmpleados/>
+    <div className="flex w-screen relative h-screen">
+        <div className="flex w-14 realtive">
+          <AppBar />
+        </div>
+        <div id='page' className="flex w-full relative">
+          <div className="flex absolute w-full">
+            <div className='flex w-full bg-slate-100' >
+              <PaginaEmpleados />
+            </div>
+          </div>
+        </div>
+
     </div>
-    
     {/*<App />*/}
   </React.StrictMode>,
   document.getElementById('root')
