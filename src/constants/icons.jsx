@@ -45,7 +45,13 @@ import {
     GiHandTruck as Diablito
 } from 'react-icons/gi'
 
+import {
+    RiArrowUpSLine as Up,
+    RiArrowDownSLine as Down,
+    RiArrowRightSLine as Right,
+    RiArrowLeftSLine as Left,
 
+} from 'react-icons/ri'
 
 export const ICONS = { 
     Lupa,
@@ -70,5 +76,7 @@ export const ICONS = {
     Cloth,
     Box,
     Diablito,
-    Truck
+    Truck, 
+    Up, Down,
+    Right, Left
 }

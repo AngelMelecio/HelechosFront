@@ -20,7 +20,6 @@ ReactDOM.render(
             </div>
           </div>
         </div>
-
     </div>
     {/*<App />*/}
   </React.StrictMode>,
