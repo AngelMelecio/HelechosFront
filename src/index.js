@@ -9,7 +9,7 @@ import AppBar from './components/AppBar';
 
 ReactDOM.render(
   <React.StrictMode>
-    <div className="flex w-screen relative h-screen">
+     <div className="flex w-screen relative h-screen">
         <div className="flex w-14 realtive">
           <AppBar />
         </div>

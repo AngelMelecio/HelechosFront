@@ -1,7 +1,7 @@
 import React from 'react'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-
+import { ICONS } from '../constants/icons'
 import loginImg from '../imgs/helechos.png'
 
 export default function Login() {
@@ -60,7 +60,7 @@ export default function Login() {
                     <button className='w-full my-5 py-2 bg-teal-600 shadow-lg shadow-teal-500/50 hover:shadow-teal-500/40 text-white font-semibold rounded-lg'>Ingresar</button>
                 </Form>
             </div>
-
+            
         </Formik>
     )
 }

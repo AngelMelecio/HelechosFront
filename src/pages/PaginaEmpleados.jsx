@@ -1,13 +1,15 @@
+//Importaciones
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../components/DeleteModal'
 import Input from '../components/Input'
-
+import { Formik, Field, Form, ErrorMessage, useFormik } from 'formik'
+import * as Yup from 'yup'
 import { ICONS } from '../constants/icons'
 
+//Constantes
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const imageEndPoint = 'http://127.0.0.1:8000'
-
 const initobj = {
   idEmpleado: "",
   nombre: "",
@@ -23,21 +25,10 @@ const initobj = {
   tipo: ""
 }
 
+//Componenete - PaginaEmpleados
 const PaginaEmpleados = () => {
 
-  const columns = [
-
-    { name: 'Nombre' },
-    { name: 'Apellidos' },
-    { name: 'Dirección' },
-    { name: 'Seguro Social' },
-    { name: 'Teléfono' },
-    { name: 'Correo' },
-    { name: 'Departamento' },
-    { name: 'Usuario' },
-    { name: 'Contraseña' }
-  ]
-
+  //Hooks
   const screenRef = useRef()
   const modalRef = useRef()
   const someSelectedRef = useRef()
@@ -51,7 +42,6 @@ const PaginaEmpleados = () => {
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
   const [objEmpleado, setObjEmpleado] = useState(initobj);
-
   const [allEmpleados, setAllEmpleados] = useState([])
   const [listaEmpleados, setListaEmpleados] = useState([])
 
@@ -59,6 +49,78 @@ const PaginaEmpleados = () => {
     getEmpleados()
   }, [])
 
+  //Formik
+
+  //Validaciones
+  const validate = values => {
+    const errors = {};
+
+    if (!values.nombre) {
+      errors.nombre = 'Ingresa el nombre';
+    } else if (values.nombre.length > 25) {
+      errors.nombre = '25 caracteres o menos';
+    }
+
+    if (!values.apellidos) {
+      errors.apellidos = 'Ingresa el apellido';
+    } else if (values.apellidos.length > 50) {
+      errors.apellidos = '50 caracteres o menos';
+    }
+
+    if (!values.direccion) {
+      errors.direccion = 'Ingresa la dirección';
+    }
+
+    if (!values.telefono) {
+      errors.telefono = 'Ingresa el telefono';
+    } else if (values.telefono.length != 10) {
+      errors.telefono = 'Ingresa solo 10 digitos';
+    }
+
+    if (!values.correo) {
+      errors.correo = 'Ingresa el correo';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.correo)) {
+      errors.correo = 'Correo invalido';
+    }
+
+    if (!values.ns) {
+      errors.ns = 'Ingresa el NSS';
+    } else if (values.ns.length != 11) {
+      errors.ns = 'NSS incorrecto';
+    }
+
+    if (!values.usuario) {
+      errors.usuario = 'Ingresa un usuario';
+    } else if (values.usuario.length < 4 || values.usuario.length > 20) {
+      errors.usuario = 'El usuario debe tener una longitud entre 4 y 20 caracteres';
+    }
+
+    if (!values.contrasena) {
+      errors.contrasena = 'Ingresa un usuario';
+    } else if (values.contrasena.length < 8 || values.contrasena.length > 15) {
+      errors.contrasena = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
+    }
+
+    if (!values.departamento) {
+      errors.departamento = 'Selecciona un departamento';
+    } 
+    if (!values.tipo) {
+      errors.tipo = 'Selecciona un tipo';
+    } 
+
+    return errors;
+  };
+  //Declaración
+  const formik = useFormik({
+    initialValues: initobj,
+    validate,
+    onSubmit: values => {
+      saveEmpleado(values);
+    },
+  });
+
+
+  //Función getEmpleados
   const getEmpleados = async () => {
 
     await fetch(apiEmpleadosUrl, {
@@ -84,24 +146,24 @@ const PaginaEmpleados = () => {
 
   }
 
-  const saveEmpleado = async (e) => {
-    e.preventDefault()
-
+  //Función saveEmpleado
+  const saveEmpleado = async (values) => {
+    //alert(JSON.stringify(values,null,2))
     setSaving(true)
 
     let formData = new FormData()
 
-    formData.append('nombre', objEmpleado.nombre)
-    formData.append('apellidos', objEmpleado.apellidos)
-    formData.append('direccion', objEmpleado.direccion)
-    formData.append('telefono', objEmpleado.telefono)
-    formData.append('correo', objEmpleado.correo)
-    formData.append('ns', objEmpleado.ns)
-    formData.append('usuario', objEmpleado.usuario)
-    formData.append('contrasena', objEmpleado.contrasena)
-    formData.append('fotografia', objEmpleado.fotografia)
-    formData.append('departamento', objEmpleado.departamento)
-    formData.append('tipo', objEmpleado.tipo)
+    formData.append('nombre', values.nombre)
+    formData.append('apellidos', values.apellidos)
+    formData.append('direccion', values.direccion)
+    formData.append('telefono', values.telefono)
+    formData.append('correo', values.correo)
+    formData.append('ns', values.ns)
+    formData.append('usuario', values.usuario)
+    formData.append('contrasena', values.contrasena)
+    formData.append('fotografia', (objEmpleado.fotografia))//objEmpleado
+    formData.append('departamento', values.departamento)
+    formData.append('tipo', values.tipo)
 
     if (!isEdit) {
 
@@ -113,7 +175,7 @@ const PaginaEmpleados = () => {
         .then(data => alert(data.message))
     }
     else {
-      await fetch(apiEmpleadosUrl + objEmpleado.id, {
+      await fetch(apiEmpleadosUrl + values.idEmpleado, {
         method: 'PUT',
         body: formData
       })
@@ -127,13 +189,16 @@ const PaginaEmpleados = () => {
     handleModalVisibility(false)
   }
 
+  //Controlador handleModalVisibility
   const handleModalVisibility = (show) => {
+    if (!show) { formik.setValues(initobj) }
     setModalVisible(show)
     setIsEdit(false)
     setObjEmpleado(initobj)
     screenRef.current.style.filter = show ? "blur(2px)" : 'none'
   }
 
+  //Controlador hideShowOptions - Select -> Options
   const hideShowOptions = (a) => {
     someSelectedRef.current.checked = a
     someSelectedRef.current.disabled = !a
@@ -141,10 +206,12 @@ const PaginaEmpleados = () => {
     trashButtonRef.current.style.opacity = (!a) ? '40%' : '100%'
   }
 
+  //Controlador handleChange
   const handleChange = (e) => {
     setObjEmpleado({ ...objEmpleado, [e.target.name]: e.target.value })
   }
 
+  //Controlador handleSelection - Select -> True|False
   const handleSelection = (e) => {
     setListaEmpleados(prev => prev.map((empl, indx) => (
       indx === Number(e.target.value) ?
@@ -162,16 +229,27 @@ const PaginaEmpleados = () => {
     hideShowOptions(sel)
   }
 
+  //Controlador handleSelectImage
   const handleSelectImage = (e) => {
     e.preventDefault()
     setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
   }
+  //Función file -> url
+  const toUrl = (file) => {
+    if (file instanceof File) {
+      return URL.createObjectURL(file)
+    }
+    if (file == '') return null
+    return file
+  }
 
+  //Controlador unSelecteAll
   const unSelecAll = () => {
     setListaEmpleados(prev => prev.map(empl => ({ ...empl, isSelected: false })))
     hideShowOptions(false)
   }
 
+  //Controlador handleSearch
   const handleSearch = () => {
     let val = (searchRef.current.value).trim().toLowerCase()
 
@@ -184,25 +262,34 @@ const PaginaEmpleados = () => {
     setListaEmpleados(newLista)
   }
 
+  //Controlador handleModalDeleteVisibility
   const handleModalDeleteVisibility = (visible) => {
     if (!someSelectedRef.current.checked) return
     setModalDeleteVisible(visible)
   }
 
+  //Controlador handleEdit
   const handleEdit = (emp) => {
+    //alert(JSON.stringify(emp,null,2))
+    formik.setValues(emp)
     setModalVisible(true)
     setIsEdit(true)
     setObjEmpleado(emp)
   }
-
-  const toUrl = (file) => {
-    if (file instanceof File) {
-      return URL.createObjectURL(file)
-    }
-    if (file == '') return null
-    return file
-  }
-
+  ///------------------- Tabla -------------------
+  //Columns para tabla
+  const columns = [
+    { name: 'Nombre' },
+    { name: 'Apellidos' },
+    { name: 'Dirección' },
+    { name: 'Seguro Social' },
+    { name: 'Teléfono' },
+    { name: 'Correo' },
+    { name: 'Departamento' },
+    { name: 'Usuario' },
+    { name: 'Contraseña' }
+  ]
+  //Rows para tabla
   const CustomRow = ({ element, index, onClick }) => {
     const { id, nombre, apellidos, direccion, ns, telefono, correo, departamento, usuario, contrasena, isSelected } = element
     return (
@@ -252,8 +339,7 @@ const PaginaEmpleados = () => {
       }
       {
         modalVisible ?
-          <div ref={modalRef} id="modal"
-            className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
+          <div ref={modalRef} id="modal" className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
             <div className="">
 
               <div ref={modalBoxRef} className='w-full p-5 rounded-lg bg-white shadow-md '  >
@@ -267,12 +353,12 @@ const PaginaEmpleados = () => {
                   </p>
                   <button
                     className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute right-0 '
-                    onClick={() => handleModalVisibility(false)}
-                  >
+                    onClick={() => handleModalVisibility(false)}>
                     <ICONS.Cancel className='m-0' size='25px' />
                   </button>
                 </div>
-                <form className='form' onSubmit={saveEmpleado} >
+
+                <form className='form' onSubmit={formik.handleSubmit} >
                   <div className='flex flex-col w-full items-center justify-center'>
                     <div className="flex relative items-center justify-center foto text-center">
                       { /* Imagen del Empleado */}
@@ -288,55 +374,73 @@ const PaginaEmpleados = () => {
                       </label>
                     </div>
                   </div>
-                  <div id='fields' className=' mt-2 mb-2'>
+                  <div id='fields' className='mt-2 mb-2'>
                     <div className='flex flex-row'>
                       <Input
-                        label='Nombre(s)' type='text' name='nombre' value={objEmpleado.nombre}
-                        onChange={(e) => handleChange(e)} required={true}
-                      />
+                        label='Nombre(s)' type='text' name='nombre' value={formik.values.nombre}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.nombre ? formik.errors.nombre : null} />
+
                       <Input
-                        label='Apellido(s)' type='text' name='apellidos' value={objEmpleado.apellidos}
-                        onChange={(e) => handleChange(e)} required={true}
+                        label='Apellido(s)' type='text' name='apellidos' value={formik.values.apellidos}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.apellidos ? formik.errors.apellidos : null}
+                      />
+
+
+                    </div>
+                    <div className='flex flex-row'>
+                      <Input
+                        label='Dirección' type='text' name='direccion' value={formik.values.direccion}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.direccion ? formik.errors.direccion : null}
+                        Icon={ICONS.House}
                       />
                     </div>
                     <div className='flex flex-row'>
                       <Input
-                        label='Dirección' type='text' name='direccion' value={objEmpleado.direccion}
-                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.House}
+                        label='Seguro Social' type='text' name='ns' value={formik.values.ns}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.ns ? formik.errors.ns : null}
+                        Icon={ICONS.Add}
+                      />
+                      <Input
+                        label='Teléfono' type='text' name='telefono' value={formik.values.telefono}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.telefono ? formik.errors.telefono : null}
+                        Icon={ICONS.Phone}
+                      />
+                      <Input
+                        label='Correo' type='text' name='correo' value={formik.values.correo}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.correo ? formik.errors.correo : null}
+                        Icon={ICONS.Email}
                       />
                     </div>
                     <div className='flex flex-row'>
                       <Input
-                        label='Seguro Social' type='number' name='ns' value={objEmpleado.ns}
-                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Add}
+                        label='Departamento' type='text' name='departamento' value={formik.values.departamento}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.departamento ? formik.errors.departamento : null}
                       />
                       <Input
-                        label='Teléfono' type='number' name='telefono' value={objEmpleado.telefono}
-                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Phone}
-                      />
-                      <Input
-                        label='Correo' type='text' name='correo' value={objEmpleado.correo}
-                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Email}
+                        label='Tipo' type='text' name='tipo' value={formik.values.tipo}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.tipo ? formik.errors.tipo : null}
                       />
                     </div>
                     <div className='flex flex-row'>
                       <Input
-                        label='Departamento' type='text' name='departamento' value={objEmpleado.departamento}
-                        onChange={(e) => handleChange(e)} required={true}
+                        label='Usuario' type='text' name='usuario' value={formik.values.usuario}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.usuario ? formik.errors.usuario : null} 
+                        Icon={ICONS.User}
                       />
                       <Input
-                        label='Tipo' type='text' name='tipo' value={objEmpleado.tipo}
-                        onChange={(e) => handleChange(e)} required={true}
-                      />
-                    </div>
-                    <div className='flex flex-row'>
-                      <Input
-                        label='Usuario' type='text' name='usuario' value={objEmpleado.usuario}
-                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.User}
-                      />
-                      <Input
-                        label='Contaseña' type='password' name='contrasena' value={objEmpleado.contrasena}
-                        onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Key}
+                        label='Contaseña' type='password' name='contrasena' value={formik.values.contrasena}
+                        onChange={formik.handleChange} onBlur={formik.handleBlur} 
+                        errores={formik.errors.contrasena ? formik.errors.contrasena : null}
+                        Icon={ICONS.Key}
                       />
                     </div>
                   </div>
@@ -349,6 +453,8 @@ const PaginaEmpleados = () => {
                     />
                   </div>
                 </form>
+
+
               </div>
             </div>
           </div>
@@ -364,7 +470,11 @@ const PaginaEmpleados = () => {
                 <ICONS.Plus size='16px' />
               </button>
               <button
-
+                className='bg-teal-500 text-white w-8 h-8 total-center normalButton rounded-lg'
+                onClick={() => console.log(JSON.stringify(objEmpleado, null, 2))}>
+                <ICONS.Alert size='16px' />
+              </button>
+              <button
                 ref={trashButtonRef}
                 onClick={() => { handleModalDeleteVisibility(true) }}
                 className={'total-center ml-4 w-8 h-8 opacity-40 opacity-white rounded-lg'}
