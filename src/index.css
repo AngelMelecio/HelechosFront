@@ -1,14 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root{
+
+:root {
   --teal600: #0d9488;
   --teal400: #2dd4bf;
   --teal300: #6ee7b7;
   --rose500: #ef4444;
   --rose600: #dc2626;
 }
-::-moz-selection { /* Code for Firefox */
+
+::-moz-selection {
+  /* Code for Firefox */
   color: rgb(255, 255, 255);
   background: var(--teal300);
 }
@@ -17,6 +20,7 @@
   color: rgb(255, 255, 255);
   background: var(--teal300);
 }
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -24,17 +28,17 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: rgb(255, 255, 255); 
+  background: rgb(255, 255, 255);
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(184, 194, 193); 
+  background: #e2e8f0;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(138, 147, 145); 
+  background: #cbd5e1;
 }
 
 body {
@@ -50,120 +54,145 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  margin: 0; 
+  margin: 0;
 }
 
-.customTable td{
-  border: 1px solid rgb(201, 201, 201);
+.customTable td {
   padding-right: 1rem;
   padding-left: 1rem;
   overflow: auto;
   white-space: nowrap;
-  resize: horizontal;
 }
-.customTable tbody tr{
+
+.customTable tbody tr {
   cursor: pointer;
+  border: 1px solid #e2e8f0;
   transition: 0.4s;
 }
-.customTable tbody tr:hover{
-  background-color: rgb(237, 237, 237);
+.customTable thead tr{
+  border: 1px solid #e2e8f0;
+  color:#475569;
+}
+.customTable tbody tr:hover {
+  background-color: #e2e8f0;
   transition: 0.2s;
 }
 
-.normalButton{
+.normalButton {
   transition: 0.2s;
 }
 
-.normalButton:hover{
+.normalButton:hover {
   background-color: var(--teal600);
   transition: 0.2s;
 }
-.normalButton:active{
+
+.normalButton:active {
   background-color: var(--teal400);
   transition: 0s;
 }
-.grayTrans{
+
+.grayTrans {
   background-color: #3f3f3f8e;
   transition: 0.2s
 }
 
-.display-none{
+.display-none {
   display: none;
   opacity: 0%;
   transition: 0.2s
 }
 
 
-.rose-opacity{
+.rose-opacity {
   background-color: var(--rose500);
   transition: 0.2s
 }
-.rose-opacity:hover{
+
+.rose-opacity:hover {
   background-color: var(--rose600);
   transition: 0.2s
 }
-.rose-opacity:active{
+
+.rose-opacity:active {
   opacity: 50%;
   transition: 0s
 }
 
-.foto{
+.foto {
   width: 100px;
   height: 100px;
   border-radius: 50px;
   background-color: rgb(187, 187, 187);
 }
 
-.opacity-white{
+.opacity-white {
   background-color: #f3f4f6;
   transition: 0.2s;
 }
-.opacity-white:hover{
+
+.opacity-white:hover {
   background-color: #e5e7eb;
   transition: 0.2s;
 }
-.opacity-white:active{
+
+.opacity-white:active {
   opacity: 60%;
   transition: 0s;
 }
 
-.total-center{
+.total-center {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .inputfile {
-	width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 
-#appbar .appbar-content{
-  opacity:0%;
+#appbar .appbar-content {
+  opacity: 0%;
   transition: 0.3s;
 }
 
-#appbar:hover{
-  box-shadow: 5px 5px 5px 5px rgba(74, 74, 74, 0.6);
+#appbar:hover {
+  box-shadow: 6px 0px 8px 1px rgba(0,0,0,0.23);
 }
 
-.appbar-content{
+.appbar-content {
   visibility: hidden;
 }
 
-#appbar:hover .appbar-content{
+#appbar:hover .appbar-content {
   opacity: 100%;
   transition: 0.6s;
   visibility: visible;
-  
+
 }
-.touchable-opacity:active{
+
+.touchable-opacity:active {
   opacity: 50%;
   transition: 0s;
 }
 
+
+.normalButton:disabled,
+.normalButton:disabled:hover,
+.normalButton:disabled:active {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.shadow-top{
+
+  box-shadow: 0px -1px 8px 1px rgba(0,0,0,0.2);
+}

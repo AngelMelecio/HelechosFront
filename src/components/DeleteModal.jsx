@@ -1,8 +1,11 @@
 import { ICONS } from '../constants/icons'
-const DeleteModal = ({ onCancel, elements, message }) => {
+
+
+const DeleteModal = ({ onCancel,onConfirm, elements, message  }) => {
+
   return (
     <div className='z-10 total-center absolute h-screen w-full grayTrans '>
-      <div className='h-30 w-90 rounded-lg bg-white flex flex-col p-4 text-gray-800'>
+      <div className='h-30 w-90 rounded-lg bg-white shadow-lg flex flex-col p-4 text-gray-800'>
         <div className="total-center">
           <ICONS.Alert size='45px' style={{ color: '#fde047' }} />
         </div>
@@ -16,7 +19,7 @@ const DeleteModal = ({ onCancel, elements, message }) => {
             </p>
           </div>
         </div>
-        <div className='h-20 overflow-y-scroll bg-gray-200 mt-2 p-2' >
+        <div className='h-20 overflow-y-scroll bg-slate-100 mt-2 p-2' >
           {elements?.map(empl => {
             return empl.isSelected ?
               <p key={empl.id}>
@@ -31,7 +34,9 @@ const DeleteModal = ({ onCancel, elements, message }) => {
             className='bg-teal-500 w-full py-1 mr-2 normalButton'>
             Cancelar
           </button>
-          <button className='bg-rose-500 w-full py-1 ml-2 rose-opacity'>
+          <button
+            onClick={onConfirm}
+            className='bg-rose-500 w-full py-1 ml-2 rose-opacity'>
             Continuar
           </button>
         </div>
