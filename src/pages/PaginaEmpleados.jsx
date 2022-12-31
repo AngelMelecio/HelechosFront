@@ -9,7 +9,7 @@ import { ICONS } from '../constants/icons'
 import CustomSelect from '../components/CustomSelect'
 import Table from '../components/Table'
 import { useApp } from '../context/AppContext'
-
+import { AiOutlineConsoleSql } from 'react-icons/ai'
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
@@ -32,7 +32,7 @@ const initobj = {
 }
 
 const PaginaEmpleados = () => {
-  
+
   const modalRef = useRef()
   const modalBoxRef = useRef()
 
@@ -43,9 +43,9 @@ const PaginaEmpleados = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
-  const { allEmpleados, empleadosColumns }=useApp()
+  const { allEmpleados, empleadosColumns, getEmpleados } = useApp()
   //const [allEmpleados, setAllEmpleados] = useState([])
-  
+
   const [listaEmpleados, setListaEmpleados] = useState([])
 
   const [allMaquinas, setAllMaquinas] = useState([])
@@ -69,7 +69,6 @@ const PaginaEmpleados = () => {
     { value: 'Transporte', label: 'Transporte' },
     { value: 'Diseno', label: 'Diseño' },
     { value: 'Gerencia', label: 'Gerencia' }
-
   ]
 
   const optionsTipo = [
@@ -117,25 +116,25 @@ const PaginaEmpleados = () => {
       errors.ns = 'NSS incorrecto';
     }
 
-    if ((values.tipo==="Encargado"|| values.tipo==="Administrador")&& !values.usuario) {
+    if ((values.tipo === "Encargado" || values.tipo === "Administrador") && !values.usuario) {
       errors.usuario = 'Ingresa un usuario';
-    } else if ((values.tipo==="Encargado"|| values.tipo==="Administrador")&&(values.usuario.length < 4 || values.usuario.length > 20)) {
+    } else if ((values.tipo === "Encargado" || values.tipo === "Administrador") && (values.usuario.length < 4 || values.usuario.length > 20)) {
       errors.usuario = 'El usuario debe tener una longitud entre 4 y 20 caracteres';
     }
 
-    if ((values.tipo==="Encargado"|| values.tipo==="Administrador")&& !values.contrasena) {
+    if ((values.tipo === "Encargado" || values.tipo === "Administrador") && !values.contrasena) {
       errors.contrasena = 'Ingresa un usuario';
-    } else if ((values.tipo==="Encargado"|| values.tipo==="Administrador") && (values.contrasena.length < 8 || values.contrasena.length > 15)) {
+    } else if ((values.tipo === "Encargado" || values.tipo === "Administrador") && (values.contrasena.length < 8 || values.contrasena.length > 15)) {
       errors.contrasena = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
     }
     if (!values.departamento) {
       errors.departamento = 'Selecciona un departamento';
-    }else if (values.departamento==="Seleccione") {
+    } else if (values.departamento === "Seleccione") {
       errors.departamento = 'Selecciona un departamento';
-    } 
+    }
     if (!values.tipo) {
       errors.tipo = 'Selecciona un tipo';
-    }else if (values.tipo==="Seleccione") {
+    } else if (values.tipo === "Seleccione") {
       errors.tipo = 'Selecciona un tipo';
     }
 
@@ -198,20 +197,18 @@ const PaginaEmpleados = () => {
     formData.append('usuario', values.usuario)
     formData.append('contrasena', values.contrasena)
     if( (objEmpleado.fotografia) instanceof File )
-      formData.append('fotografia', values.fotografia)
+      formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
     formData.append('tipo', values.tipo)
 
-
     if (!isEdit) {
-
       //    Creacion de un Nuevo Empleado 
       let response = await fetch(apiEmpleadosUrl, {
         method: 'POST',
         body: formData
       })
-
       //    Espero la respuesta para obtener el nuevo Id 
+      console.log( response.json() )
       const { message, empleado } = await response.json()
 
       //    Asigno Cada una de las Maquinas 
@@ -240,7 +237,7 @@ const PaginaEmpleados = () => {
 
     }
 
-    //await getEmpleados()
+    getEmpleados()
     setObjEmpleado(initobj)
     setSaving(false)
     handleModalVisibility(false)
@@ -262,6 +259,7 @@ const PaginaEmpleados = () => {
 
   const handleModalVisibility = async (show) => {
     if (!show) { formik.setValues(initobj) }
+
     setModalVisible(show)
     setIsEdit(false)
     setObjEmpleado(initobj)
@@ -275,7 +273,6 @@ const PaginaEmpleados = () => {
     //e.preventDefault()
     setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
   }
-
 
   const handleModalDeleteVisibility = (visible) => {
     //if (!someSelectedRef.current.checked) return
@@ -321,42 +318,6 @@ const PaginaEmpleados = () => {
     return file
   }
 
-  const CustomRow = ({ element, index, onClick }) => {
-    const { id, nombre, apellidos, direccion, ns, telefono, correo, departamento, usuario, contrasena, isSelected } = element
-    return (
-      <>
-        <td className='m-2' onClick={onClick}>
-          { element['nombre'] }
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {apellidos}
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {direccion}
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {ns}
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {telefono}
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {correo}
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {departamento}
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {usuario}
-        </td>
-        <td className='m-2' onClick={onClick}>
-          {contrasena}
-        </td>
-      </>
-
-    )
-  }
-
   return (
     <div className='h-full w-full'>
       {
@@ -364,7 +325,7 @@ const PaginaEmpleados = () => {
           <DeleteModal
             onCancel={() => setModalDeleteVisible(false)}
             onConfirm={deleteEmpleados}
-            elements={ listaEmpleados }
+            elements={listaEmpleados}
             message='Los siguientes empleados se eliminarán permanentemente:'
           />
           : null
@@ -385,12 +346,12 @@ const PaginaEmpleados = () => {
                       {isEdit ? 'Editar Empleado' : 'Nuevo Empleado'}
                     </p>
                     <input
-                        disabled={saving}
-                        className='bg-teal-500 p-1 w-40 text-white normalButton absolute right-0 rounded-lg'
-                        type="submit"
-                        value={isEdit ? "GUARDAR" : "AGREGAR"}
-                        form="frmEmpleados"
-                      />
+                      disabled={saving}
+                      className='bg-teal-500 p-1 w-40 text-white normalButton absolute right-0 rounded-lg'
+                      type="submit"
+                      value={isEdit ? "GUARDAR" : "AGREGAR"}
+                      form="frmEmpleados"
+                    />
                     <button
                       className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute left-0 '
                       onClick={() => handleModalVisibility(false)}
@@ -400,10 +361,10 @@ const PaginaEmpleados = () => {
                   </div>
                 </div>
                 <div className="flex w-full h-full ">
-                  <form 
-                  id='frmEmpleados' 
-                  className='flex flex-col h-full w-full relative overflow-y-scroll' 
-                  onSubmit={formik.handleSubmit}>
+                  <form
+                    id='frmEmpleados'
+                    className='flex flex-col h-full w-full relative overflow-y-scroll'
+                    onSubmit={formik.handleSubmit}>
                     <div className="absolute w-full flex flex-col  px-4">
                       <div className='flex flex-row w-full h-full p-2 total-center'>
                         <div className="flex relative w-full items-center justify-center foto text-center">
@@ -496,21 +457,21 @@ const PaginaEmpleados = () => {
                             errores={formik.errors.tipo && formik.touched.tipo ? formik.errors.tipo : null}
                           />
                         </div>
-                        {(formik.values.tipo==="Encargado"|| formik.values.tipo==="Administrador")?
-                        <div className='flex flex-row'>
-                          <Input
-                            label='Usuario' type='text' name='usuario' value={formik.values.usuario}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
-                            Icon={ICONS.User}
-                          />
-                          <Input
-                            label='Contaseña' type='password' name='contrasena' value={formik.values.contrasena}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.contrasena && formik.touched.contrasena ? formik.errors.contrasena : null}
-                            Icon={ICONS.Key}
-                          />
-                        </div>:null}
+                        {(formik.values.tipo === "Encargado" || formik.values.tipo === "Administrador") ?
+                          <div className='flex flex-row'>
+                            <Input
+                              label='Usuario' type='text' name='usuario' value={formik.values.usuario}
+                              onChange={formik.handleChange} onBlur={formik.handleBlur}
+                              errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
+                              Icon={ICONS.User}
+                            />
+                            <Input
+                              label='Contaseña' type='password' name='contrasena' value={formik.values.contrasena}
+                              onChange={formik.handleChange} onBlur={formik.handleBlur}
+                              errores={formik.errors.contrasena && formik.touched.contrasena ? formik.errors.contrasena : null}
+                              Icon={ICONS.Key}
+                            />
+                          </div> : null}
                       </div>
                       {(formik.values.tipo==="Trabajador")?
                       <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
@@ -535,17 +496,17 @@ const PaginaEmpleados = () => {
           </div>
           : null
       }
-     
+
       <Table
         allItems={allEmpleados}
         visibleItems={listaEmpleados}
         setVisibleItems={setListaEmpleados}
         columns={empleadosColumns}
-        onAdd={ ()=>handleModalVisibility(true) }
+        onAdd={() => handleModalVisibility(true)}
         onDelete={() => { handleModalDeleteVisibility(true) }}
         onEdit={handleEdit}
       />
-    
+
     </div>
   )
 }
