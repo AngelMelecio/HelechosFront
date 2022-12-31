@@ -194,9 +194,9 @@ const Table = ({
       </div>
       <div
         id="table-container"
-        className=" flex h-full w-full relative bg-white">
-        <div className="w-full overflow-scroll bg-white shadow-md">
-          <table className="customTable">
+        className=" flex h-full w-full relative ">
+        <div className="w-full overflow-scroll bg-gray-200 ">
+          <table className="customTable bg-white shadow-md">
             <thead className='text-center'>
               <tr>
                 <th className="px-7 h-7" >

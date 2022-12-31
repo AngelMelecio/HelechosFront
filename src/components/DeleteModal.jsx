@@ -4,8 +4,8 @@ import { ICONS } from '../constants/icons'
 const DeleteModal = ({ onCancel,onConfirm, elements, message  }) => {
 
   return (
-    <div className='z-10 total-center absolute h-screen w-full grayTrans '>
-      <div className='h-30 w-90 rounded-lg bg-white shadow-lg flex flex-col p-4 text-gray-800'>
+    <div id="delete-modal" className='z-10 total-center absolute h-screen w-full grayTrans modal'>
+      <div className='h-30 w-90 rounded-lg bg-white shadow-lg flex flex-col p-4 text-gray-800 modal-box'>
         <div className="total-center">
           <ICONS.Alert size='45px' style={{ color: '#fde047' }} />
         </div>
