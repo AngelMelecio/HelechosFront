@@ -64,7 +64,8 @@ export function AppProvider({ children }) {
       value={{
         empleadosColumns,
         allEmpleados,
-        isFetching
+        isFetching,
+        getEmpleados,
       }}>
       {children}
     </AppContext.Provider>
