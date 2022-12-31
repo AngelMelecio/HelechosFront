@@ -9,11 +9,14 @@ import AppBar from './components/AppBar';
 import Table from './components/Table';
 import Main from './Main';
 import { AppProvider } from './context/AppContext';
+import {BrowserRouter} from 'react-router-dom'
 
 ReactDOM.render(
   <React.StrictMode>
     <AppProvider>
-      <Main/>
+      <BrowserRouter>
+        <Main/>
+      </BrowserRouter>
     </AppProvider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,21 +1,25 @@
+import { Link, resolvePath, useMatch, useResolvedPath } from 'react-router-dom'
 
 import { ICONS } from '../constants/icons'
 
 const AppBar = () => {
 
-    const Tab = ({ Icon = null, content }) => {
+    const Tab = ({ to, Icon = null, content }) => {
+        const resolvePath = useResolvedPath(to)
+        const isActive = useMatch({ path: resolvePath.pathname, end: true })
+        let activeStyles = isActive ? `bg-teal-700 hover:bg-teal-700` : ``
         return (
-            <div className="text-white 
-                relative w-full flex flex-row py-3 font-bold text-sm 
-                touchable-opacity items-center
-                duration-200 hover:bg-teal-500 cursor-pointer">
+            <Link to={to} 
+            className={`text-white relative w-full flex flex-row py-3 
+            font-bold text-sm touchable-opacity duration-200
+            items-center hover:bg-teal-500 cursor-pointer ` + activeStyles}>
                 <p className='w-14 total-center'>
-                    {Icon && <Icon size='20px'/>}
+                    {Icon && <Icon size='20px' />}
                 </p>
                 <p className='absolute ml-14 appbar-content align-center flex'>
                     {content}
                 </p>
-            </div>
+            </Link>
         )
     }
 
@@ -27,13 +31,13 @@ const AppBar = () => {
                     <img className="w-24 h-24" src="http://127.0.0.1:8000/media/images/helechos.PNG" alt="" />
                 </div>
                 <div id="tabs" className="mt-10">
-                    <Tab content={'PEDIDOS'} Icon={ICONS.Diablito} />
-                    <Tab content={'MODELOS'} Icon={ICONS.Cloth} />
-                    <Tab content={'CLIENTES'} Icon={ICONS.HandShake} />
-                    <Tab content={'EMPLEADOS'} Icon={ICONS.Worker} />
-                    <Tab content={'MAQUINAS'} Icon={ICONS.Machine} />
-                    <Tab content={'PROVEDORES'} Icon={ICONS.Truck} />
-                    <Tab content={'PRODUCCION'} Icon={ICONS.Boot} />
+                    <Tab to={'/pedidos'} content={'PEDIDOS'} Icon={ICONS.Diablito} />
+                    <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Cloth} />
+                    <Tab to={'/clientes'} content={'CLIENTES'} Icon={ICONS.HandShake} />
+                    <Tab to={'/'} content={'EMPLEADOS'} Icon={ICONS.Worker} />
+                    <Tab to={'/maquinas'} content={'MAQUINAS'} Icon={ICONS.Machine} />
+                    <Tab to={'/provedores'} content={'PROVEDORES'} Icon={ICONS.Truck} />
+                    <Tab to={'/produccion'} content={'PRODUCCION'} Icon={ICONS.Boot} />
                 </div>
             </div>
         </>

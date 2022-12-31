@@ -184,7 +184,7 @@ const PaginaEmpleados = () => {
   }
 
   const saveEmpleado = async (values) => {
-    
+
     setSaving(true)
 
     let formData = new FormData()
@@ -196,7 +196,7 @@ const PaginaEmpleados = () => {
     formData.append('ns', values.ns)
     formData.append('usuario', values.usuario)
     formData.append('contrasena', values.contrasena)
-    if( (objEmpleado.fotografia) instanceof File )
+    if ((objEmpleado.fotografia) instanceof File)
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
     formData.append('tipo', values.tipo)
@@ -208,7 +208,7 @@ const PaginaEmpleados = () => {
         body: formData
       })
       //    Espero la respuesta para obtener el nuevo Id 
-      console.log( response.json() )
+      console.log(response.json())
       const { message, empleado } = await response.json()
 
       //    Asigno Cada una de las Maquinas 
@@ -253,20 +253,28 @@ const PaginaEmpleados = () => {
           .then(data => console.log('Empleados Eliminados:', data))
       }
     })
-    //await getEmpleados()
+    getEmpleados()
     setModalDeleteVisible(false)
   }
 
-  const handleModalVisibility = async (show) => {
+  const handleModalVisibility = async ( show, edit ) => {
+    
     if (!show) { formik.setValues(initobj) }
 
+    if( show ) document.getElementById("form-modal").classList.add('visible')
+    else document.getElementById("form-modal").classList.remove('visible')
+
     setModalVisible(show)
-    setIsEdit(false)
-    setObjEmpleado(initobj)
-    if (show) {
-      setAvailableMaquinas(allMaquinas)
-      setAssignedMaquinas([])
+    setIsEdit(edit)
+
+    if( !edit ){
+      setObjEmpleado(initobj)
+      if (show) {
+        setAvailableMaquinas(allMaquinas)
+        setAssignedMaquinas([])
+      }
     }
+
   }
 
   const handleSelectImage = (e) => {
@@ -276,6 +284,8 @@ const PaginaEmpleados = () => {
 
   const handleModalDeleteVisibility = (visible) => {
     //if (!someSelectedRef.current.checked) return
+    if( visible ) document.getElementById('delete-modal').classList.add('visible')
+    else document.getElementById('delete-modal').classList.remove('visible')
     setModalDeleteVisible(visible)
   }
 
@@ -305,7 +315,7 @@ const PaginaEmpleados = () => {
     //alert(JSON.stringify(emp,null,2))
     formik.setValues(emp)
 
-    setModalVisible(true)
+    handleModalVisibility(true, true)
     setIsEdit(true)
     setObjEmpleado(emp)
   }
@@ -321,20 +331,20 @@ const PaginaEmpleados = () => {
   return (
     <div className='h-full w-full'>
       {
-        modalDeleteVisible ?
+        //modalDeleteVisible ?
           <DeleteModal
-            onCancel={() => setModalDeleteVisible(false)}
+            onCancel={() => handleModalDeleteVisibility(false)}
             onConfirm={deleteEmpleados}
             elements={listaEmpleados}
             message='Los siguientes empleados se eliminarán permanentemente:'
           />
-          : null
+          //: null
       }
       {
-        modalVisible ?
-          <div ref={modalRef} id="modal"
-            className='z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
-            <div ref={modalBoxRef} className='h-full w-3/4 rounded-lg bg-white shadow-xl'  >
+        //modalVisible ?
+          <div ref={modalRef} id="form-modal"
+            className='modal z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
+            <div  ref={modalBoxRef} className='modal-box h-full w-3/4 rounded-lg bg-white shadow-xl'  >
               <div className='w-full flex h-full flex-col '>
                 <div className="z-10 py-2 px-4 flex w-full shadow-md ">
                   <div className="flex flex-row w-full total-center relative h-10">
@@ -354,7 +364,7 @@ const PaginaEmpleados = () => {
                     />
                     <button
                       className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute left-0 '
-                      onClick={() => handleModalVisibility(false)}
+                      onClick={() => handleModalVisibility(false, false)}
                     >
                       <ICONS.Cancel className='m-0' size='25px' />
                     </button>
@@ -473,28 +483,28 @@ const PaginaEmpleados = () => {
                             />
                           </div> : null}
                       </div>
-                      {(formik.values.tipo==="Trabajador")?
-                      <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
-                        <div className="absolute w-full left-0 total-center -top-3">
-                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                            MAQUINAS
+                      {(formik.values.tipo === "Trabajador") ?
+                        <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
+                          <div className="absolute w-full left-0 total-center -top-3">
+                            <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                              MAQUINAS
+                            </div>
                           </div>
-                        </div>
-                        <SelectorMaquinas
-                          availableMaquinas={availableMaquinas}
-                          setAvailableMaquinas={setAvailableMaquinas}
-                          assignedMaquinas={assignedMaquinas}
-                          setAssignedMaquinas={setAssignedMaquinas}
-                          maquinasList={allMaquinas}
-                        />
-                      </div>:null}
+                          <SelectorMaquinas
+                            availableMaquinas={availableMaquinas}
+                            setAvailableMaquinas={setAvailableMaquinas}
+                            assignedMaquinas={assignedMaquinas}
+                            setAssignedMaquinas={setAssignedMaquinas}
+                            maquinasList={allMaquinas}
+                          />
+                        </div> : null}
                     </div>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          : null
+        //  : null
       }
 
       <Table
@@ -502,7 +512,7 @@ const PaginaEmpleados = () => {
         visibleItems={listaEmpleados}
         setVisibleItems={setListaEmpleados}
         columns={empleadosColumns}
-        onAdd={() => handleModalVisibility(true)}
+        onAdd={() => handleModalVisibility(true, true)}
         onDelete={() => { handleModalDeleteVisibility(true) }}
         onEdit={handleEdit}
       />
