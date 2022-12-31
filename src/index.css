@@ -22,8 +22,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
 }
 
 /* Track */
@@ -33,12 +33,12 @@
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: #d1d5db;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: #94a3b8;
 }
 
 body {
@@ -69,7 +69,8 @@ input::-webkit-inner-spin-button {
   white-space: nowrap;
 }
 .customTable th{
-  background-color: #f1f5f9;
+  background-color: #f3f4f6;
+  cursor:default;
 }
 
 .customTable th .filter-button{
@@ -81,15 +82,16 @@ input::-webkit-inner-spin-button {
   transition: 0.2s;
 }
 
-
-
 .customTable tbody tr {
+
+  color:#334155;
+  font-size: medium;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   transition: 0.4s;
 }
 .customTable thead tr{
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
 }
 .customTable tbody tr:hover {
   background-color: #e2e8f0;

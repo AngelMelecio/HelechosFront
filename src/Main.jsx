@@ -17,11 +17,7 @@ const Main = () => {
       <div id='page' className="flex w-full relative">
         <div className="flex absolute w-full">
           <div className='flex w-full h-screen bg-slate-200' >
-            {/* <PaginaEmpleados /> */}
-            {<Table
-              columns={empleadosColumns}
-              items={allEmpleados}
-            />}  
+            { <PaginaEmpleados /> }
           </div>
         </div>
       </div>
