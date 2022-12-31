@@ -184,24 +184,23 @@ const PaginaEmpleados = () => {
       .then(data => console.log('asignacion:', data))
   }
 
-  const saveEmpleado = async (e) => {
+  const saveEmpleado = async (values) => {
     
-    e.preventDefault()
-    //setSaving(true)
+    setSaving(true)
 
     let formData = new FormData()
-    formData.append('nombre', objEmpleado.nombre)
-    formData.append('apellidos', objEmpleado.apellidos)
-    formData.append('direccion', objEmpleado.direccion)
-    formData.append('telefono', objEmpleado.telefono)
-    formData.append('correo', objEmpleado.correo)
-    formData.append('ns', objEmpleado.ns)
-    formData.append('usuario', objEmpleado.usuario)
-    formData.append('contrasena', objEmpleado.contrasena)
+    formData.append('nombre', values.nombre)
+    formData.append('apellidos', values.apellidos)
+    formData.append('direccion', values.direccion)
+    formData.append('telefono', values.telefono)
+    formData.append('correo', values.correo)
+    formData.append('ns', values.ns)
+    formData.append('usuario', values.usuario)
+    formData.append('contrasena', values.contrasena)
     if( (objEmpleado.fotografia) instanceof File )
-      formData.append('fotografia', objEmpleado.fotografia)
-    formData.append('departamento', objEmpleado.departamento)
-    formData.append('tipo', objEmpleado.tipo)
+      formData.append('fotografia', values.fotografia)
+    formData.append('departamento', values.departamento)
+    formData.append('tipo', values.tipo)
 
 
     if (!isEdit) {
@@ -232,11 +231,11 @@ const PaginaEmpleados = () => {
         .then(data => alert(data.message))
 
       //    Removiendo las relaciones existentes
-      await removeRelationEM(objEmpleado.idEmpleado)
+      await removeRelationEM(values.idEmpleado)
 
       //    Creando las nuevas relaciones
       assignedMaquinas.forEach(async (am) => {
-        await newRelation(objEmpleado.idEmpleado, am.idMaquina)
+        await newRelation(values.idEmpleado, am.idMaquina)
       })
 
     }
@@ -272,9 +271,8 @@ const PaginaEmpleados = () => {
     }
   }
 
-  //duda aqui con el e.prevent
   const handleSelectImage = (e) => {
-    e.preventDefault()
+    //e.preventDefault()
     setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
   }
 
@@ -514,6 +512,7 @@ const PaginaEmpleados = () => {
                           />
                         </div>:null}
                       </div>
+                      {(formik.values.tipo==="Trabajador")?
                       <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
                         <div className="absolute w-full left-0 total-center -top-3">
                           <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
@@ -527,8 +526,7 @@ const PaginaEmpleados = () => {
                           setAssignedMaquinas={setAssignedMaquinas}
                           maquinasList={allMaquinas}
                         />
-                      </div>
-                      
+                      </div>:null}
                     </div>
                   </form>
                 </div>
