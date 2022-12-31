@@ -11,7 +11,7 @@ const Input = ({label,type,name,value,onChange,required, Icon=null }) =>{
                     name={name}
                     value={value}
                     onChange={onChange}
-                    className={"mb-1 flex w-full px-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 "+ p}
+                    className={"mb-1 flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 "+ p}
                     required={required}
                 />  
                 { Icon!=null ? 

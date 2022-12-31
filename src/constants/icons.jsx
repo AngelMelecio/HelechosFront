@@ -14,7 +14,9 @@ import {
     BsPlusLg as Plus,
     BsFillPersonPlusFill as PersonPlus,
     BsHouseDoor as House,
-    BsPeopleFill as Worker
+    BsPeopleFill as Worker,
+    BsFilter as Filter,
+
 } from 'react-icons/bs'
 
 import {
@@ -36,6 +38,11 @@ import {
 import {
     FiUpload as Upload
 } from 'react-icons/fi'
+
+import {
+    BiCaretDown as DownFill,
+    BiCaretUp as UpFill
+} from 'react-icons/bi'
 
 import {
     GiSewingMachine as Machine,
@@ -78,5 +85,7 @@ export const ICONS = {
     Diablito,
     Truck, 
     Up, Down,
-    Right, Left
+    Right, Left,
+    DownFill, UpFill,
+    Filter
 }
