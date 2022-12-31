@@ -4,8 +4,11 @@ import DeleteModal from '../components/DeleteModal'
 import Input from '../components/Input'
 import SelectorMaquinas from '../components/SelectorMaquinas'
 import { useFormik } from 'formik'
+
 import { ICONS } from '../constants/icons'
 import CustomSelect from '../components/CustomSelect'
+import Table from '../components/Table'
+import { useApp } from '../context/AppContext'
 
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
@@ -29,45 +32,28 @@ const initobj = {
 }
 
 const PaginaEmpleados = () => {
-
-  const columns = [
-
-    { name: 'Nombre' },
-    { name: 'Apellidos' },
-    { name: 'Dirección' },
-    { name: 'Seguro Social' },
-    { name: 'Teléfono' },
-    { name: 'Correo' },
-    { name: 'Departamento' },
-    { name: 'Usuario' },
-    { name: 'Contraseña' }
-  ]
-
-  const screenRef = useRef()
+  
   const modalRef = useRef()
-  const someSelectedRef = useRef()
-  const searchRef = useRef()
-  const trashButtonRef = useRef()
   const modalBoxRef = useRef()
+
+  const [objEmpleado, setObjEmpleado] = useState(initobj);
 
   const [saving, setSaving] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
-  const [objEmpleado, setObjEmpleado] = useState(initobj);
-
-  const [allEmpleados, setAllEmpleados] = useState([])
+  const { allEmpleados, empleadosColumns }=useApp()
+  //const [allEmpleados, setAllEmpleados] = useState([])
+  
   const [listaEmpleados, setListaEmpleados] = useState([])
 
   const [allMaquinas, setAllMaquinas] = useState([])
-
   const [availableMaquinas, setAvailableMaquinas] = useState([])
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
 
-
   useEffect(() => {
-    getEmpleados()
+    setListaEmpleados(allEmpleados)
     getMaquinas()
   }, [])
 
@@ -164,30 +150,6 @@ const PaginaEmpleados = () => {
     },
   });
 
-  const getEmpleados = async () => {
-
-    await fetch(apiEmpleadosUrl, {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-
-        let formatData = data.map((empl) =>
-        ({
-          ...empl,
-          isSelected: false,
-          fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
-        })
-        )
-
-        setListaEmpleados(formatData)
-        setAllEmpleados(formatData)
-      })
-
-  }
   const getMaquinas = async () => {
 
     await fetch(apiMaquinasUrl, {
@@ -198,19 +160,15 @@ const PaginaEmpleados = () => {
     })
       .then(response => response.json())
       .then(data => {
-
         setAllMaquinas(data)
       })
-
   }
 
   const removeRelationEM = async (idEmpleado) => {
     const response = await fetch(apiEmpleadoMaquinaUrl + idEmpleado, {
       method: 'DELETE'
     })
-
     console.log(await response.json())
-
   }
 
   const newRelation = async (idEmpleado, idMaquina) => {
@@ -226,23 +184,25 @@ const PaginaEmpleados = () => {
       .then(data => console.log('asignacion:', data))
   }
 
-  const saveEmpleado = async (values) => {
-
-    setSaving(true)
+  const saveEmpleado = async (e) => {
+    
+    e.preventDefault()
+    //setSaving(true)
 
     let formData = new FormData()
+    formData.append('nombre', objEmpleado.nombre)
+    formData.append('apellidos', objEmpleado.apellidos)
+    formData.append('direccion', objEmpleado.direccion)
+    formData.append('telefono', objEmpleado.telefono)
+    formData.append('correo', objEmpleado.correo)
+    formData.append('ns', objEmpleado.ns)
+    formData.append('usuario', objEmpleado.usuario)
+    formData.append('contrasena', objEmpleado.contrasena)
+    if( (objEmpleado.fotografia) instanceof File )
+      formData.append('fotografia', objEmpleado.fotografia)
+    formData.append('departamento', objEmpleado.departamento)
+    formData.append('tipo', objEmpleado.tipo)
 
-    formData.append('nombre', values.nombre)
-    formData.append('apellidos', values.apellidos)
-    formData.append('direccion', values.direccion)
-    formData.append('telefono', values.telefono)
-    formData.append('correo', values.correo)
-    formData.append('ns', values.ns)
-    formData.append('usuario', values.usuario)
-    formData.append('contrasena', values.contrasena)
-    formData.append('fotografia', objEmpleado.fotografia)
-    formData.append('departamento', values.departamento)
-    formData.append('tipo', values.tipo)
 
     if (!isEdit) {
 
@@ -281,7 +241,7 @@ const PaginaEmpleados = () => {
 
     }
 
-    await getEmpleados()
+    //await getEmpleados()
     setObjEmpleado(initobj)
     setSaving(false)
     handleModalVisibility(false)
@@ -297,7 +257,7 @@ const PaginaEmpleados = () => {
           .then(data => console.log('Empleados Eliminados:', data))
       }
     })
-    await getEmpleados()
+    //await getEmpleados()
     setModalDeleteVisible(false)
   }
 
@@ -308,67 +268,23 @@ const PaginaEmpleados = () => {
     setObjEmpleado(initobj)
     if (show) {
       setAvailableMaquinas(allMaquinas)
+      setAssignedMaquinas([])
     }
-    screenRef.current.style.filter = show ? "blur(2px)" : 'none'
   }
 
-  const hideShowOptions = (a) => {
-    someSelectedRef.current.checked = a
-    someSelectedRef.current.disabled = !a
-    trashButtonRef.current.disabled = !a
-    trashButtonRef.current.style.opacity = (!a) ? '40%' : '100%'
-  }
-
-  const handleChange = (e) => {
-    setObjEmpleado({ ...objEmpleado, [e.target.name]: e.target.value })
-  }
-
-  const handleSelection = (e) => {
-    setListaEmpleados(prev => prev.map((empl, indx) => (
-      indx === Number(e.target.value) ?
-        { ...empl, isSelected: e.target.checked } :
-        { ...empl }
-    )))
-
-    let sel = false
-    let inpts = document.querySelectorAll('.checkbox')
-    inpts.forEach(inp => {
-      if (inp.checked) {
-        sel = true
-      }
-    })
-    hideShowOptions(sel)
-  }
   //duda aqui con el e.prevent
   const handleSelectImage = (e) => {
     e.preventDefault()
     setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
   }
 
-  const unSelecAll = () => {
-    setListaEmpleados(prev => prev.map(empl => ({ ...empl, isSelected: false })))
-    hideShowOptions(false)
-  }
-
-  const handleSearch = () => {
-    let val = (searchRef.current.value).trim().toLowerCase()
-
-    let newLista = allEmpleados.filter(e => {
-      let E = JSON.stringify(e).toLowerCase()
-      return E.includes(val)
-    })
-
-    hideShowOptions(false)
-    setListaEmpleados(newLista)
-  }
 
   const handleModalDeleteVisibility = (visible) => {
-    if (!someSelectedRef.current.checked) return
+    //if (!someSelectedRef.current.checked) return
     setModalDeleteVisible(visible)
   }
 
   const handleEdit = async (emp) => {
-
     const response = await fetch(apiEmpleadoMaquinaUrl + emp.idEmpleado, {
       method: 'GET',
       headers: {
@@ -412,7 +328,7 @@ const PaginaEmpleados = () => {
     return (
       <>
         <td className='m-2' onClick={onClick}>
-          {nombre}
+          { element['nombre'] }
         </td>
         <td className='m-2' onClick={onClick}>
           {apellidos}
@@ -444,13 +360,13 @@ const PaginaEmpleados = () => {
   }
 
   return (
-    <div className='h-screen w-full'>
+    <div className='h-full w-full'>
       {
         modalDeleteVisible ?
           <DeleteModal
             onCancel={() => setModalDeleteVisible(false)}
             onConfirm={deleteEmpleados}
-            elements={listaEmpleados}
+            elements={ listaEmpleados }
             message='Los siguientes empleados se eliminarán permanentemente:'
           />
           : null
@@ -483,11 +399,13 @@ const PaginaEmpleados = () => {
                     >
                       <ICONS.Cancel className='m-0' size='25px' />
                     </button>
-
                   </div>
                 </div>
                 <div className="flex w-full h-full ">
-                  <form id='frmEmpleados' className='flex flex-col h-full w-full relative overflow-y-scroll' onSubmit={formik.handleSubmit}>
+                  <form 
+                  id='frmEmpleados' 
+                  className='flex flex-col h-full w-full relative overflow-y-scroll' 
+                  onSubmit={formik.handleSubmit}>
                     <div className="absolute w-full flex flex-col  px-4">
                       <div className='flex flex-row w-full h-full p-2 total-center'>
                         <div className="flex relative w-full items-center justify-center foto text-center">
@@ -612,86 +530,24 @@ const PaginaEmpleados = () => {
                       </div>
                       
                     </div>
-                    
                   </form>
                 </div>
-
               </div>
             </div>
           </div>
           : null
       }
-      <div ref={screenRef} className="customTable flex w-full bg-slate-200">
-        <div className="flex flex-col bg-white w-full p-5 rounded-lg">
-          <div className='flex p-2 justify-between items-center' >
-            <div className='flex'>
-              <button
-                className='bg-teal-500 text-white w-8 h-8 total-center normalButton rounded-lg'
-                onClick={() => handleModalVisibility(true)}>
-                <ICONS.Plus size='16px' />
-              </button>
-              <button
-
-                ref={trashButtonRef}
-                onClick={() => { handleModalDeleteVisibility(true) }}
-                className={'total-center ml-4 w-8 h-8 opacity-40 opacity-white rounded-lg'}
-              >
-                <ICONS.Trash size='19px' style={{ color: 'black' }} />
-              </button>
-            </div>
-            <div id="searchbar" className='flex flex-row w-96 h-8 items-center justify-center'>
-              <div
-                onClick={handleSearch}
-                className='h-full pl-3 pr-3 total-center opacity-white rounded-l-2xl'>
-                <ICONS.Lupa style={{ color: 'black' }} />
-              </div>
-              <input ref={searchRef} type="text" className='w-full h-full rounded-r-lg outline-none bg-gray-100' />
-            </div>
-          </div>
-
-          <div className="flex w-full overflow-scroll">
-            <table className="table-auto border-collapse:collapse ">
-              <thead className='text-center'>
-                <tr>
-                  <th>
-                    <div className=''>
-                      <input
-                        onChange={unSelecAll}
-                        ref={someSelectedRef}
-                        type="checkbox"
-                        disabled />
-                    </div>
-                  </th>
-                  {
-                    columns.map((c, i) =>
-                      <th className='p-1 font-semibold text-teal-800' key={"C" + i} >
-                        {c.name}
-                      </th>)
-                  }
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  listaEmpleados.map((e, i) =>
-                    <tr key={"E" + i}  >
-                      <td className='p-0'>
-                        <input
-                          value={i}
-                          className='checkbox'
-                          type="checkbox"
-                          onChange={handleSelection}
-                          checked={e.isSelected}
-                        />
-                      </td>
-                      <CustomRow element={e} index={i} onClick={() => handleEdit(e)} />
-                    </tr>
-                  )
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+     
+      <Table
+        allItems={allEmpleados}
+        visibleItems={listaEmpleados}
+        setVisibleItems={setListaEmpleados}
+        columns={empleadosColumns}
+        onAdd={ ()=>handleModalVisibility(true) }
+        onDelete={() => { handleModalDeleteVisibility(true) }}
+        onEdit={handleEdit}
+      />
+    
     </div>
   )
 }

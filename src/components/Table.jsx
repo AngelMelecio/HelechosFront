@@ -1,12 +1,20 @@
 import { useRef } from "react"
 import { useEffect } from "react"
 import { useState } from "react"
-import { AiOutlineConsoleSql } from "react-icons/ai"
 import { ICONS } from "../constants/icons"
 
-const Table = ({ items, columns }) => {
+const Table = ({ 
+  allItems, 
+  visibleItems, setVisibleItems,
 
-  const [visibleItems, setVisibleItems] = useState([])
+  columns, 
+  onAdd, 
+  onDelete, 
+  onEdit 
+
+}) => {
+
+  //const [visibleItems, setVisibleItems] = useState([])
   const [searchText, setSearchText] = useState('')
 
   const [sortParams, setSortParams] = useState({ attribute: null, criteria: null })
@@ -16,7 +24,7 @@ const Table = ({ items, columns }) => {
   const trashButtonRef = useRef()
 
   useEffect(() => {
-    setVisibleItems(items)
+    setVisibleItems(allItems)
   }, [])
 
   useEffect(() => {
@@ -75,10 +83,10 @@ const Table = ({ items, columns }) => {
   const sortItems = () => {
 
     if (sortParams.criteria === 0 || sortParams.criteria === null) {
-      return [...items]
+      return [...allItems]
     }
     else {
-      let newOrder = ( [...items].sort((a, b) => {
+      let newOrder = ( [...allItems].sort((a, b) => {
         let A = a[sortParams.attribute].toLowerCase()
         let B = b[sortParams.attribute].toLowerCase()
 
@@ -147,11 +155,12 @@ const Table = ({ items, columns }) => {
           className="flex flex-row"
           id="butons">
           <button
-
+            onClick={onAdd}
             className='bg-teal-500 text-white w-8 h-8 total-center normalButton rounded-lg'>
             <ICONS.Plus size='16px' />
           </button>
           <button
+           onClick={onDelete}
             disabled={ !isSelected() }
             ref={trashButtonRef}
             className={'total-center ml-4 w-8 h-8 trash-button rounded-lg'}>
@@ -199,7 +208,7 @@ const Table = ({ items, columns }) => {
                 </th>
                 {
                   columns.map((c, i) =>
-                    <th className='p-2 font-semibold text-teal-800' key={"C" + i} >
+                    <th className='p-2 font-medium text-teal-800' key={"C" + i} >
                       {<div className="flex flex-row relative total-center text-center">
                         <p className="px-6">{c.name} </p>
                         <button
@@ -227,7 +236,7 @@ const Table = ({ items, columns }) => {
                         />
                       </div>
                     </td>
-                    <CustomRow element={e} index={i} onClick={() => console.log('quiero editar')} />
+                    <CustomRow element={e} index={i} onClick={() => onEdit(e)} />
                   </tr>
                 )
               }

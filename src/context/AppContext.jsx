@@ -34,6 +34,7 @@ export function AppProvider({ children }) {
   }, [] )
 
   const getEmpleados = async () => {
+    
     setIsFetching(true)
     await fetch(apiEmpleadosUrl, {
       method: 'GET',
@@ -52,7 +53,9 @@ export function AppProvider({ children }) {
         )
         setAllEmpleados(formatData)
       })
-
+      .catch( e => {
+        console.log( e )
+      })
       setIsFetching(false)
   }
 
