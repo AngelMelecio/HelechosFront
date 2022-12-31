@@ -3,8 +3,10 @@ import { useEffect } from 'react'
 import DeleteModal from '../components/DeleteModal'
 import Input from '../components/Input'
 import SelectorMaquinas from '../components/SelectorMaquinas'
-
+import { useFormik } from 'formik'
 import { ICONS } from '../constants/icons'
+import CustomSelect from '../components/CustomSelect'
+
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
@@ -22,8 +24,8 @@ const initobj = {
   usuario: "",
   contrasena: "",
   fotografia: "",
-  departamento: "",
-  tipo: ""
+  departamento: "Seleccione",
+  tipo: "Seleccione"
 }
 
 const PaginaEmpleados = () => {
@@ -68,6 +70,99 @@ const PaginaEmpleados = () => {
     getEmpleados()
     getMaquinas()
   }, [])
+
+  //Formik
+
+  //Options select
+  const optionsDepartamento = [
+    { value: 'Seleccione', label: 'Seleccione' },
+    { value: 'Tejido', label: 'Tejido' },
+    { value: 'Corte', label: 'Corte' },
+    { value: 'Plancha', label: 'Plancha' },
+    { value: 'Empaque', label: 'Empaque' },
+    { value: 'Transporte', label: 'Transporte' },
+    { value: 'Diseno', label: 'Diseño' },
+    { value: 'Gerencia', label: 'Gerencia' }
+
+  ]
+
+  const optionsTipo = [
+    { value: 'Seleccione', label: 'Seleccione' },
+    { value: 'Trabajador', label: 'Trabajador' },
+    { value: 'Encargado', label: 'Encargado' },
+    { value: 'Administrador', label: 'Administrador' },
+  ]
+
+  //Validaciones
+  const validate = values => {
+    const errors = {};
+
+    if (!values.nombre) {
+      errors.nombre = 'Ingresa el nombre';
+    } else if (values.nombre.length > 25) {
+      errors.nombre = '25 caracteres o menos';
+    }
+
+    if (!values.apellidos) {
+      errors.apellidos = 'Ingresa el apellido';
+    } else if (values.apellidos.length > 50) {
+      errors.apellidos = '50 caracteres o menos';
+    }
+
+    if (!values.direccion) {
+      errors.direccion = 'Ingresa la dirección';
+    }
+
+    if (!values.telefono) {
+      errors.telefono = 'Ingresa el telefono';
+    } else if (values.telefono.length !== 10) {
+      errors.telefono = 'Ingresa solo 10 digitos';
+    }
+
+    if (!values.correo) {
+      errors.correo = 'Ingresa el correo';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.correo)) {
+      errors.correo = 'Correo invalido';
+    }
+
+    if (!values.ns) {
+      errors.ns = 'Ingresa el NSS';
+    } else if (values.ns.length !== 11) {
+      errors.ns = 'NSS incorrecto';
+    }
+
+    if ((values.tipo==="Encargado"|| values.tipo==="Administrador")&& !values.usuario) {
+      errors.usuario = 'Ingresa un usuario';
+    } else if ((values.tipo==="Encargado"|| values.tipo==="Administrador")&&(values.usuario.length < 4 || values.usuario.length > 20)) {
+      errors.usuario = 'El usuario debe tener una longitud entre 4 y 20 caracteres';
+    }
+
+    if ((values.tipo==="Encargado"|| values.tipo==="Administrador")&& !values.contrasena) {
+      errors.contrasena = 'Ingresa un usuario';
+    } else if ((values.tipo==="Encargado"|| values.tipo==="Administrador") && (values.contrasena.length < 8 || values.contrasena.length > 15)) {
+      errors.contrasena = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
+    }
+    if (!values.departamento) {
+      errors.departamento = 'Selecciona un departamento';
+    }else if (values.departamento==="Seleccione") {
+      errors.departamento = 'Selecciona un departamento';
+    } 
+    if (!values.tipo) {
+      errors.tipo = 'Selecciona un tipo';
+    }else if (values.tipo==="Seleccione") {
+      errors.tipo = 'Selecciona un tipo';
+    }
+
+    return errors;
+  };
+  //Declaración
+  const formik = useFormik({
+    initialValues: initobj,
+    validate,
+    onSubmit: values => {
+      saveEmpleado(values);
+    },
+  });
 
   const getEmpleados = async () => {
 
@@ -131,25 +226,23 @@ const PaginaEmpleados = () => {
       .then(data => console.log('asignacion:', data))
   }
 
-  const saveEmpleado = async (e) => {
-
-    e.preventDefault()
+  const saveEmpleado = async (values) => {
 
     setSaving(true)
 
     let formData = new FormData()
 
-    formData.append('nombre', objEmpleado.nombre)
-    formData.append('apellidos', objEmpleado.apellidos)
-    formData.append('direccion', objEmpleado.direccion)
-    formData.append('telefono', objEmpleado.telefono)
-    formData.append('correo', objEmpleado.correo)
-    formData.append('ns', objEmpleado.ns)
-    formData.append('usuario', objEmpleado.usuario)
-    formData.append('contrasena', objEmpleado.contrasena)
+    formData.append('nombre', values.nombre)
+    formData.append('apellidos', values.apellidos)
+    formData.append('direccion', values.direccion)
+    formData.append('telefono', values.telefono)
+    formData.append('correo', values.correo)
+    formData.append('ns', values.ns)
+    formData.append('usuario', values.usuario)
+    formData.append('contrasena', values.contrasena)
     formData.append('fotografia', objEmpleado.fotografia)
-    formData.append('departamento', objEmpleado.departamento)
-    formData.append('tipo', objEmpleado.tipo)
+    formData.append('departamento', values.departamento)
+    formData.append('tipo', values.tipo)
 
     if (!isEdit) {
 
@@ -209,7 +302,7 @@ const PaginaEmpleados = () => {
   }
 
   const handleModalVisibility = async (show) => {
-
+    if (!show) { formik.setValues(initobj) }
     setModalVisible(show)
     setIsEdit(false)
     setObjEmpleado(initobj)
@@ -246,7 +339,7 @@ const PaginaEmpleados = () => {
     })
     hideShowOptions(sel)
   }
-
+  //duda aqui con el e.prevent
   const handleSelectImage = (e) => {
     e.preventDefault()
     setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
@@ -297,6 +390,9 @@ const PaginaEmpleados = () => {
 
     setAssignedMaquinas(newAssigned)
     setAvailableMaquinas(newAvailable)
+
+    //alert(JSON.stringify(emp,null,2))
+    formik.setValues(emp)
 
     setModalVisible(true)
     setIsEdit(true)
@@ -374,22 +470,24 @@ const PaginaEmpleados = () => {
                     <p className='font-semibold text-teal-800 text-2xl' >
                       {isEdit ? 'Editar Empleado' : 'Nuevo Empleado'}
                     </p>
+                    <input
+                        disabled={saving}
+                        className='bg-teal-500 p-1 w-40 text-white normalButton absolute right-0 rounded-lg'
+                        type="submit"
+                        value={isEdit ? "GUARDAR" : "AGREGAR"}
+                        form="frmEmpleados"
+                      />
                     <button
                       className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute left-0 '
                       onClick={() => handleModalVisibility(false)}
                     >
                       <ICONS.Cancel className='m-0' size='25px' />
                     </button>
-                    <input
-                    disabled={saving}
-                    className='bg-teal-500 p-1 w-40 text-white normalButton absolute right-0 rounded-lg'
-                    type="submit"
-                    value={isEdit ? "GUARDAR" : "AGREGAR"}
-                  />
+
                   </div>
                 </div>
                 <div className="flex w-full h-full ">
-                  <form className='flex flex-col h-full w-full relative overflow-y-scroll' onSubmit={saveEmpleado}>
+                  <form id='frmEmpleados' className='flex flex-col h-full w-full relative overflow-y-scroll' onSubmit={formik.handleSubmit}>
                     <div className="absolute w-full flex flex-col  px-4">
                       <div className='flex flex-row w-full h-full p-2 total-center'>
                         <div className="flex relative w-full items-center justify-center foto text-center">
@@ -414,32 +512,42 @@ const PaginaEmpleados = () => {
                         </div>
                         <div className='flex flex-row'>
                           <Input
-                            label='Nombre(s)' type='text' name='nombre' value={objEmpleado.nombre}
-                            onChange={(e) => handleChange(e)} required={true}
-                          />
+                            label='Nombre(s)' type='text' name='nombre' value={formik.values.nombre}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.nombre && formik.touched.nombre ? formik.errors.nombre : null} />
+
                           <Input
-                            label='Apellido(s)' type='text' name='apellidos' value={objEmpleado.apellidos}
-                            onChange={(e) => handleChange(e)} required={true}
-                          />
-                        </div>
-                        <div className='flex flex-row'>
-                          <Input
-                            label='Dirección' type='text' name='direccion' value={objEmpleado.direccion}
-                            onChange={(e) => handleChange(e)} required={true} Icon={ICONS.House}
+                            label='Apellido(s)' type='text' name='apellidos' value={formik.values.apellidos}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.apellidos && formik.touched.apellidos ? formik.errors.apellidos : null}
                           />
                         </div>
                         <div className='flex flex-row'>
                           <Input
-                            label='Seguro Social' type='number' name='ns' value={objEmpleado.ns}
-                            onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Add}
+                            label='Dirección' type='text' name='direccion' value={formik.values.direccion}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.direccion && formik.touched.direccion ? formik.errors.direccion : null}
+                            Icon={ICONS.House}
+                          />
+                        </div>
+                        <div className='flex flex-row'>
+                          <Input
+                            label='Seguro Social' type='text' name='ns' value={formik.values.ns}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.ns && formik.touched.ns ? formik.errors.ns : null}
+                            Icon={ICONS.Add}
                           />
                           <Input
-                            label='Teléfono' type='number' name='telefono' value={objEmpleado.telefono}
-                            onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Phone}
+                            label='Teléfono' type='text' name='telefono' value={formik.values.telefono}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.telefono && formik.touched.telefono ? formik.errors.telefono : null}
+                            Icon={ICONS.Phone}
                           />
                           <Input
-                            label='Correo' type='text' name='correo' value={objEmpleado.correo}
-                            onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Email}
+                            label='Correo' type='text' name='correo' value={formik.values.correo}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
+                            Icon={ICONS.Email}
                           />
                         </div>
                       </div>
@@ -450,25 +558,43 @@ const PaginaEmpleados = () => {
                           </div>
                         </div>
                         <div className='flex flex-row'>
-                          <Input
-                            label='Departamento' type='text' name='departamento' value={objEmpleado.departamento}
-                            onChange={(e) => handleChange(e)} required={true}
+
+                          <CustomSelect
+                            name='Departamento'
+                            className='input'
+                            onChange={value => formik.setFieldValue('departamento', value.value)}
+                            value={formik.values.departamento}
+                            onBlur={formik.handleBlur}
+                            options={optionsDepartamento}
+                            label='Departamento'
+                            errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
                           />
-                          <Input
-                            label='Tipo' type='text' name='tipo' value={objEmpleado.tipo}
-                            onChange={(e) => handleChange(e)} required={true}
+                          <CustomSelect
+                            name='Tipo'
+                            className='input'
+                            onChange={value => formik.setFieldValue('tipo', value.value)}
+                            value={formik.values.tipo}
+                            onBlur={formik.handleBlur}
+                            options={optionsTipo}
+                            label='Tipo'
+                            errores={formik.errors.tipo && formik.touched.tipo ? formik.errors.tipo : null}
                           />
                         </div>
+                        {(formik.values.tipo==="Encargado"|| formik.values.tipo==="Administrador")?
                         <div className='flex flex-row'>
                           <Input
-                            label='Usuario' type='text' name='usuario' value={objEmpleado.usuario}
-                            onChange={(e) => handleChange(e)} required={true} Icon={ICONS.User}
+                            label='Usuario' type='text' name='usuario' value={formik.values.usuario}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
+                            Icon={ICONS.User}
                           />
                           <Input
-                            label='Contaseña' type='password' name='contrasena' value={objEmpleado.contrasena}
-                            onChange={(e) => handleChange(e)} required={true} Icon={ICONS.Key}
+                            label='Contaseña' type='password' name='contrasena' value={formik.values.contrasena}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.contrasena && formik.touched.contrasena ? formik.errors.contrasena : null}
+                            Icon={ICONS.Key}
                           />
-                        </div>
+                        </div>:null}
                       </div>
                       <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
                         <div className="absolute w-full left-0 total-center -top-3">
@@ -484,10 +610,12 @@ const PaginaEmpleados = () => {
                           maquinasList={allMaquinas}
                         />
                       </div>
+                      
                     </div>
+                    
                   </form>
                 </div>
-                
+
               </div>
             </div>
           </div>
