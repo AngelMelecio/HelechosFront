@@ -245,7 +245,7 @@ const PaginaEmpleados = () => {
     getEmpleados()
     setObjEmpleado(initobj)
     setSaving(false)
-    handleModalVisibility(false)
+    handleModalVisibility(false,false)
   }
 
   const deleteEmpleados = async () => {
@@ -264,8 +264,8 @@ const PaginaEmpleados = () => {
 
   const handleModalVisibility = async ( show, edit ) => {
     
-    if( show ) document.getElementsByName("form-modal").classList.add('visible')
-    else document.getElementsByName("form-modal").classList.remove('visible')
+    if( show ) document.getElementById("form-modal").classList.add('visible')
+    else document.getElementById("form-modal").classList.remove('visible')
 
     if (!show) formik.resetForm()
     
