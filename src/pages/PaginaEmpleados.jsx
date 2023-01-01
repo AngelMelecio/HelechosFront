@@ -31,6 +31,8 @@ const initobj = {
   tipo: "Seleccione"
 }
 
+const initErrors ={}
+
 const PaginaEmpleados = () => {
 
   const modalRef = useRef()
@@ -51,6 +53,9 @@ const PaginaEmpleados = () => {
   const [allMaquinas, setAllMaquinas] = useState([])
   const [availableMaquinas, setAvailableMaquinas] = useState([])
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
+
+  const [shown, setShown] = React.useState(false);
+  const switchShown = () => setShown(!shown);
 
   useEffect(() => {
     setListaEmpleados(allEmpleados)
@@ -100,7 +105,7 @@ const PaginaEmpleados = () => {
 
     if (!values.telefono) {
       errors.telefono = 'Ingresa el telefono';
-    } else if (values.telefono.length !== 10) {
+    } else if (values.telefono.toString().length !== 10) {
       errors.telefono = 'Ingresa solo 10 digitos';
     }
 
@@ -112,7 +117,7 @@ const PaginaEmpleados = () => {
 
     if (!values.ns) {
       errors.ns = 'Ingresa el NSS';
-    } else if (values.ns.length !== 11) {
+    } else if (values.ns.toString().length !== 11) {
       errors.ns = 'NSS incorrecto';
     }
 
@@ -123,7 +128,7 @@ const PaginaEmpleados = () => {
     }
 
     if ((values.tipo === "Encargado" || values.tipo === "Administrador") && !values.contrasena) {
-      errors.contrasena = 'Ingresa un usuario';
+      errors.contrasena = 'Ingresa una contraseña';
     } else if ((values.tipo === "Encargado" || values.tipo === "Administrador") && (values.contrasena.length < 8 || values.contrasena.length > 15)) {
       errors.contrasena = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
     }
@@ -259,11 +264,11 @@ const PaginaEmpleados = () => {
 
   const handleModalVisibility = async ( show, edit ) => {
     
-    if (!show) { formik.setValues(initobj) }
+    if( show ) document.getElementsByName("form-modal").classList.add('visible')
+    else document.getElementsByName("form-modal").classList.remove('visible')
 
-    if( show ) document.getElementById("form-modal").classList.add('visible')
-    else document.getElementById("form-modal").classList.remove('visible')
-
+    if (!show) formik.resetForm()
+    
     setModalVisible(show)
     setIsEdit(edit)
 
@@ -278,8 +283,7 @@ const PaginaEmpleados = () => {
   }
 
   const handleSelectImage = (e) => {
-    //e.preventDefault()
-    setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0] })
+    setObjEmpleado({ ...objEmpleado, fotografia: e.target.files[0]})
   }
 
   const handleModalDeleteVisibility = (visible) => {
@@ -314,7 +318,6 @@ const PaginaEmpleados = () => {
 
     //alert(JSON.stringify(emp,null,2))
     formik.setValues(emp)
-
     handleModalVisibility(true, true)
     setIsEdit(true)
     setObjEmpleado(emp)
@@ -342,7 +345,7 @@ const PaginaEmpleados = () => {
       }
       {
         //modalVisible ?
-          <div ref={modalRef} id="form-modal"
+          <div ref={modalRef} id="form-modal" name="form-modal"
             className='modal z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
             <div  ref={modalBoxRef} className='modal-box h-full w-3/4 rounded-lg bg-white shadow-xl'  >
               <div className='w-full flex h-full flex-col '>
@@ -379,10 +382,10 @@ const PaginaEmpleados = () => {
                       <div className='flex flex-row w-full h-full p-2 total-center'>
                         <div className="flex relative w-full items-center justify-center foto text-center">
                           { /* Imagen del Empleado */}
-                          <img
+                          {(toUrl(objEmpleado?.fotografia)!== null)?<img
                             className='object-cover foto'
                             src={toUrl(objEmpleado?.fotografia)}
-                            alt='' />
+                            alt='' />:null}
                           <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
                           <label
                             className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normalButton rounded-full'
@@ -419,13 +422,13 @@ const PaginaEmpleados = () => {
                         </div>
                         <div className='flex flex-row'>
                           <Input
-                            label='Seguro Social' type='text' name='ns' value={formik.values.ns}
+                            label='Seguro Social' type='number' name='ns' value={formik.values.ns}
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
                             errores={formik.errors.ns && formik.touched.ns ? formik.errors.ns : null}
                             Icon={ICONS.Add}
                           />
                           <Input
-                            label='Teléfono' type='text' name='telefono' value={formik.values.telefono}
+                            label='Teléfono' type='number' name='telefono' value={formik.values.telefono}
                             onChange={formik.handleChange} onBlur={formik.handleBlur}
                             errores={formik.errors.telefono && formik.touched.telefono ? formik.errors.telefono : null}
                             Icon={ICONS.Phone}
