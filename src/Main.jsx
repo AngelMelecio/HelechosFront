@@ -6,35 +6,41 @@ import { Route, Routes } from 'react-router-dom'
 import PaginaMaquinas from "./pages/PaginaMaquinas"
 import Login from "./pages/Login"
 import { useNavigate } from "react-router-dom"
+import { AdminProvider } from "./context/AdminContext"
 
 const Main = () => {
 
-  const { isFetching, user } = useApp()
   const navigate = useNavigate()
-  if( isFetching )return <></>
+
+  const { user } = useApp()
+
+  //if( isFetching )return <></>
+
 
   return (
     <div className="flex w-screen relative h-screen overflow-hidden ">
       {user ?
         <>
-          <div className="flex w-14 realtive">
-            <AppBar />
-          </div>
-          <div id='page' className="flex w-full relative">
-            <div className="flex absolute w-full">
-              <div className='flex w-full h-screen bg-slate-200' >
-                <Routes>
-                  <Route path="/empleados" element={<PaginaEmpleados />} />
-                  <Route path="/maquinas" element={<PaginaMaquinas />} />
-                </Routes>
+          <AdminProvider>
+            <div className="flex w-14 realtive">
+              <AppBar />
+            </div>
+            <div id='page' className="flex w-full relative">
+              <div className="flex absolute w-full">
+                <div className='flex w-full h-screen bg-slate-200' >
+                  <Routes>
+                    <Route path="/empleados" element={<PaginaEmpleados />} />
+                    <Route path="/maquinas" element={<PaginaMaquinas />} />
+                  </Routes>
+                </div>
               </div>
             </div>
-          </div>
+          </AdminProvider>
         </>
         :
         <>
           <Routes>
-            <Route path="/" element={<Login navigate={navigate}/>} />
+            <Route path="/" element={<Login navigate={navigate} />} />
           </Routes>
         </>
       }

@@ -10,6 +10,7 @@ import CustomSelect from '../components/CustomSelect'
 import Table from '../components/Table'
 import { useApp } from '../context/AppContext'
 import { AiOutlineConsoleSql } from 'react-icons/ai'
+import { useAdmin } from '../context/AdminContext'
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
@@ -31,7 +32,7 @@ const initobj = {
   tipo: "Seleccione"
 }
 
-const initErrors = {}
+const initErrors ={}
 
 const PaginaEmpleados = () => {
 
@@ -45,9 +46,14 @@ const PaginaEmpleados = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
-  const { allMaquinas, empleadosColumns, getEmpleados } = useApp()
+  const { fetchingEmpleados,
+    empleadosColumns,
+    getEmpleados,
+    allEmpleados,
+    allMaquinas
+  } = useAdmin()
+
   //const [allEmpleados, setAllEmpleados] = useState([])
-  const [allEmpleados, setAllEmpleados] = useState([])
   const [listaEmpleados, setListaEmpleados] = useState([])
 
   const [availableMaquinas, setAvailableMaquinas] = useState([])
@@ -56,7 +62,7 @@ const PaginaEmpleados = () => {
   const [shown, setShown] = React.useState(false);
   const switchShown = () => setShown(!shown);
 
-  useEffect(async () => {
+  useEffect( async() => {
     setAllEmpleados(await getEmpleados())
     setListaEmpleados(await getEmpleados())
   }, [])
@@ -316,6 +322,7 @@ const PaginaEmpleados = () => {
     if (file === '') return null
     return file
   }
+
 
   return (
     <div className='h-full w-full'>

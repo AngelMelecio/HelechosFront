@@ -37,60 +37,7 @@ export function useApp() {
 
 export function AppProvider({ children }) {
 
-  const [user, setUser] = useState(true)
-  const [allEmpleados, setAllEmpleados] = useState([])
-  const [allMaquinas, setAllMaquinas] = useState([])
-  const [isFetching, setIsFetching] = useState(true)
-
-  useEffect(async () => {
-    try {
-      setIsFetching(true)
-      let empl = await getEmpleados()
-      console.log('con:',empl)
-      setAllEmpleados( empl )
-      await getMaquinas()
-    } catch (e) {
-      console.log('lo intentamos:', e)
-    }
-    finally {
-      setIsFetching(false)
-    }
-
-  }, [])
-
-  const getEmpleados = async () => {
-    let formatData
-    await fetch(apiEmpleadosUrl, {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    })
-      .then(response => response.json())
-      .then(data => {
-        formatData = data.map((empl) => ({
-          ...empl,
-          isSelected: false,
-          fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
-        })
-        )
-      })
-      .catch(e => {
-        return []
-      })
-    return formatData
-  }
-  const getMaquinas = async () => {
-
-    await fetch(apiMaquinasUrl, {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        setAllMaquinas(data)
-      })
-  }
+  const [user, setUser] = useState(false)
 
 
   return (
@@ -104,7 +51,6 @@ export function AppProvider({ children }) {
 
         allMaquinas,
         maquinasColumns,
-        getMaquinas,
 
         user, setUser,
       }}>
