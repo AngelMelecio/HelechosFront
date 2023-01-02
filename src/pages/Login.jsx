@@ -4,9 +4,25 @@ import * as Yup from 'yup'
 import loginImg from '../imgs/logo.png'
 import { useApp } from '../context/AppContext'
 
+const apiLoginUrl = "http://127.0.0.1:8000/api/login/"
+
 export default function Login({navigate}) {
 
   const {setUser} = useApp()
+
+  const handleLogin = async(values) =>{
+    
+    const response = await fetch( apiLoginUrl, {
+      method:'POST',
+      headers: {'Content-Type': 'application/json'},
+      body:JSON.stringify(values)
+    } )
+    alert( await response.json() )
+    if( response.status === 200 ){
+        setUser(true)
+        navigate('/')
+    }
+  }
 
   return (
     <Formik
@@ -19,12 +35,15 @@ export default function Login({navigate}) {
             .required('Ingresa tu contraseña')
         })
       }
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
+      onSubmit={ (values, { setSubmitting }) => {
+
+        handleLogin(values)
+        setSubmitting(false)
+        /*setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
           setSubmitting(false);
           setUser(true)
-        }, 400);
+        }, 400);*/
       }}
     >
       <div className='w-full h-screen flex total-center px-4 md:px-0 relative bg-login'>
@@ -59,7 +78,7 @@ export default function Login({navigate}) {
 
             </div>
             <button 
-              onClick={()=>navigate('/')}
+
               className='w-full my-5 py-2 bg-teal-600 shadow-lg  hover:shadow-teal-600 hover:bg-slate-700 duration-200 text-white text-lg font-semibold rounded-lg touchable-opacity'>
               INGRESAR
               </button>

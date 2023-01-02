@@ -1,14 +1,17 @@
 import { useState } from "react"
 import Table from "../components/Table"
-import { useApp } from "../context/AppContext"
+import { useAdmin } from "../context/AdminContext"
 
 const PaginaMaquinas = () => {
 
-    const { allMaquinas , maquinasColumns} = useApp()
+    const {fetchingMaquinas, allMaquinas , maquinasColumns} = useAdmin()
     const [listaMaquinas, setListaMaquinas ] = useState([])
 
-
-    return (
+    if( fetchingMaquinas ){
+        console.log('fetchingM')
+        return <></>
+    }
+    return (    
         <div className="flex flex-col w-full h-full bg-white ">
             <Table
                 allItems={allMaquinas}
