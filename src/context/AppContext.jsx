@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useContext } from "react";
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
+const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
 const imageEndPoint = 'http://127.0.0.1:8000'
 
 const empleadosColumns = [
@@ -17,6 +18,16 @@ const empleadosColumns = [
   { name: 'Contraseña', attribute: 'contrasena' }
 ]
 
+const maquinasColumns = [
+  { name: 'Número', attribute: 'numero' },
+  { name: 'Línea', attribute: 'linea' },
+  { name: 'Marca', attribute: 'marca' },
+  { name: 'Número de Serie', attribute: 'ns' },
+  { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
+  { name: 'Otros', attribute: 'otros' },
+  { name: 'Departamento', attribute: 'departamento' },
+]
+
 const AppContext = React.createContext()
 
 export function useApp() {
@@ -25,27 +36,33 @@ export function useApp() {
 
 export function AppProvider({ children }) {
 
+  const [user,setUser] = useState(false)
   const [allEmpleados, setAllEmpleados] = useState([])
+  const [allMaquinas, setAllMaquinas] = useState([])
   const [isFetching, setIsFetching] = useState(true)
 
+  useEffect(async () => {
+    try{
+      setIsFetching(true)
+      await getEmpleados()
+      await getMaquinas()
+    }catch(e){
+      console.log('lo intentamos:',e)
+    }
+    finally{
+      setIsFetching(false)
+    }
 
-  useEffect( () => {
-     getEmpleados()
-  }, [] )
+  }, [])
 
   const getEmpleados = async () => {
-    
-    setIsFetching(true)
     await fetch(apiEmpleadosUrl, {
       method: 'GET',
-      headers: {
-        "Content-Type": "application/json"
-      }
+      headers: { "Content-Type": "application/json" }
     })
       .then(response => response.json())
       .then(data => {
-        let formatData = data.map((empl) =>
-        ({
+        let formatData = data.map((empl) => ({
           ...empl,
           isSelected: false,
           fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
@@ -53,19 +70,39 @@ export function AppProvider({ children }) {
         )
         setAllEmpleados(formatData)
       })
-      .catch( e => {
-        console.log( e )
+      .catch(e => {
+        console.log(e)
       })
-      setIsFetching(false)
+
   }
+  const getMaquinas = async () => {
+
+    await fetch(apiMaquinasUrl, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setAllMaquinas(data)
+      })
+  }
+
 
   return (
     <AppContext.Provider
       value={{
-        empleadosColumns,
-        allEmpleados,
         isFetching,
+
+        allEmpleados,
+        empleadosColumns,
         getEmpleados,
+
+        allMaquinas,
+        maquinasColumns,
+
+        user,setUser,
       }}>
       {children}
     </AppContext.Provider>

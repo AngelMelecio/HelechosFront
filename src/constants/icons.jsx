@@ -41,7 +41,8 @@ import {
 
 import {
     BiCaretDown as DownFill,
-    BiCaretUp as UpFill
+    BiCaretUp as UpFill,
+    BiLogOut as Logout
 } from 'react-icons/bi'
 
 import {
@@ -87,5 +88,6 @@ export const ICONS = {
     Up, Down,
     Right, Left,
     DownFill, UpFill,
-    Filter
+    Filter,
+    Logout
 }
