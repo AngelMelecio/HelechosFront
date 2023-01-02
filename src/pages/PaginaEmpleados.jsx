@@ -45,9 +45,9 @@ const PaginaEmpleados = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
-  const { allEmpleados, allMaquinas, empleadosColumns, getEmpleados } = useApp()
+  const { allMaquinas, empleadosColumns, getEmpleados } = useApp()
   //const [allEmpleados, setAllEmpleados] = useState([])
-
+  const [allEmpleados, setAllEmpleados] = useState([])
   const [listaEmpleados, setListaEmpleados] = useState([])
 
   const [availableMaquinas, setAvailableMaquinas] = useState([])
@@ -56,8 +56,9 @@ const PaginaEmpleados = () => {
   const [shown, setShown] = React.useState(false);
   const switchShown = () => setShown(!shown);
 
-  useEffect(() => {
-    setListaEmpleados(allEmpleados)
+  useEffect( async() => {
+    setAllEmpleados(await getEmpleados())
+    setListaEmpleados(await getEmpleados())
   }, [])
 
   //Formik
@@ -196,16 +197,17 @@ const PaginaEmpleados = () => {
         method: 'POST',
         body: formData
       })
-      //    Espero la respuesta para obtener el nuevo Id 
-      console.log(response.json())
-      const { message, empleado } = await response.json()
-
-      //    Asigno Cada una de las Maquinas 
-      assignedMaquinas.forEach(async (AM) => {
-        await newRelation(empleado.idEmpleado, AM.idMaquina)
-      })
-
-      alert(message)
+      
+      if( values.tipo === 'Trabajador' ){
+          //    Espero la respuesta para obtener el nuevo Id 
+          console.log(response.json())
+          const { message, empleado } = await response.json()
+          //    Asigno Cada una de las Maquinas 
+          assignedMaquinas.forEach(async (AM) => {
+            await newRelation(empleado.idEmpleado, AM.idMaquina)
+          })
+          alert(message)
+      }
     }
     else {
       //    Actualizando los datos del empleado
@@ -226,7 +228,7 @@ const PaginaEmpleados = () => {
 
     }
 
-    getEmpleados()
+    setListaEmpleados( await getEmpleados() )
     setObjEmpleado(initobj)
     setSaving(false)
     handleModalVisibility(false,false)
@@ -499,7 +501,7 @@ const PaginaEmpleados = () => {
         visibleItems={listaEmpleados}
         setVisibleItems={setListaEmpleados}
         columns={empleadosColumns}
-        onAdd={() => handleModalVisibility(true, true)}
+        onAdd={() => handleModalVisibility(true, false)}
         onDelete={() => { handleModalDeleteVisibility(true) }}
         onEdit={handleEdit}
       />
