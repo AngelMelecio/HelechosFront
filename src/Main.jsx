@@ -34,7 +34,7 @@ const Main = () => {
         :
         <>
           <Routes>
-            <Route path="/login" element={<Login navigate={navigate}/>} />
+            <Route path="/" element={<Login navigate={navigate}/>} />
           </Routes>
         </>
       }
