@@ -45,7 +45,7 @@ const AppBar = () => {
                 </div>
                 <div className='flex h-full items-end w-full pb-10'>
                     <Tab
-                        onClick={() => setUser(false) }
+                        onClick={() => setUser(false) } 
                         to={'/'}
                         content={'SALIR'}
                         Icon={ICONS.Logout} />

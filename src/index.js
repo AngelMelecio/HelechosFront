@@ -9,15 +9,15 @@ import AppBar from './components/AppBar';
 import Table from './components/Table';
 import Main from './Main';
 import { AppProvider } from './context/AppContext';
-import {BrowserRouter} from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 ReactDOM.render(
   <React.StrictMode>
-    <AppProvider>
-      <BrowserRouter>
-        <Main/>
-      </BrowserRouter>
-    </AppProvider>
+    <BrowserRouter>
+      <AppProvider>
+        <Main />
+      </AppProvider>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
