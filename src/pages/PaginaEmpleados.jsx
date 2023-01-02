@@ -45,12 +45,11 @@ const PaginaEmpleados = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
-  const { allEmpleados, empleadosColumns, getEmpleados } = useApp()
+  const { allEmpleados, allMaquinas, empleadosColumns, getEmpleados } = useApp()
   //const [allEmpleados, setAllEmpleados] = useState([])
 
   const [listaEmpleados, setListaEmpleados] = useState([])
 
-  const [allMaquinas, setAllMaquinas] = useState([])
   const [availableMaquinas, setAvailableMaquinas] = useState([])
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
 
@@ -59,7 +58,6 @@ const PaginaEmpleados = () => {
 
   useEffect(() => {
     setListaEmpleados(allEmpleados)
-    getMaquinas()
   }, [])
 
   //Formik
@@ -153,20 +151,6 @@ const PaginaEmpleados = () => {
       saveEmpleado(values);
     },
   });
-
-  const getMaquinas = async () => {
-
-    await fetch(apiMaquinasUrl, {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        setAllMaquinas(data)
-      })
-  }
 
   const removeRelationEM = async (idEmpleado) => {
     const response = await fetch(apiEmpleadoMaquinaUrl + idEmpleado, {
@@ -341,7 +325,7 @@ const PaginaEmpleados = () => {
             elements={listaEmpleados}
             message='Los siguientes empleados se eliminarán permanentemente:'
           />
-          //: null
+        //  : null
       }
       {
         //modalVisible ?
@@ -507,7 +491,7 @@ const PaginaEmpleados = () => {
               </div>
             </div>
           </div>
-        //  : null
+        //: null
       }
 
       <Table

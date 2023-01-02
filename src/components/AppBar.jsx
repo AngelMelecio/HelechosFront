@@ -1,18 +1,22 @@
 import { Link, resolvePath, useMatch, useResolvedPath } from 'react-router-dom'
 
 import { ICONS } from '../constants/icons'
+import { useApp } from '../context/AppContext'
 
 const AppBar = () => {
 
-    const Tab = ({ to, Icon = null, content }) => {
+    const {setUser} = useApp()
+
+    const Tab = ({ to, Icon = null, content, ...props }) => {
         const resolvePath = useResolvedPath(to)
         const isActive = useMatch({ path: resolvePath.pathname, end: true })
-        let activeStyles = isActive ? `bg-teal-700 hover:bg-teal-700` : ``
+        let activeStyles = isActive ? `bg-teal-700 hover:bg-teal-700` : `hover:bg-teal-500`
         return (
-            <Link to={to} 
-            className={`text-white relative w-full flex flex-row py-3 
-            font-bold text-sm touchable-opacity duration-200
-            items-center hover:bg-teal-500 cursor-pointer ` + activeStyles}>
+            <Link to={to}
+                {...props}
+                className={`text-white relative w-full flex flex-row py-3 
+            font-bold text-sm  duration-200 
+            items-center  cursor-pointer ` + activeStyles}>
                 <p className='w-14 total-center'>
                     {Icon && <Icon size='20px' />}
                 </p>
@@ -34,10 +38,17 @@ const AppBar = () => {
                     <Tab to={'/pedidos'} content={'PEDIDOS'} Icon={ICONS.Diablito} />
                     <Tab to={'/modelos'} content={'MODELOS'} Icon={ICONS.Cloth} />
                     <Tab to={'/clientes'} content={'CLIENTES'} Icon={ICONS.HandShake} />
-                    <Tab to={'/'} content={'EMPLEADOS'} Icon={ICONS.Worker} />
+                    <Tab to={'/empleados'} content={'EMPLEADOS'} Icon={ICONS.Worker} />
                     <Tab to={'/maquinas'} content={'MAQUINAS'} Icon={ICONS.Machine} />
                     <Tab to={'/provedores'} content={'PROVEDORES'} Icon={ICONS.Truck} />
                     <Tab to={'/produccion'} content={'PRODUCCION'} Icon={ICONS.Boot} />
+                </div>
+                <div className='flex h-full items-end w-full pb-10'>
+                    <Tab
+                        onClick={() => setUser(false) }
+                        to={'/'}
+                        content={'SALIR'}
+                        Icon={ICONS.Logout} />
                 </div>
             </div>
         </>

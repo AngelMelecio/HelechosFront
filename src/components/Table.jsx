@@ -14,7 +14,6 @@ const Table = ({
 
 }) => {
 
-  //const [visibleItems, setVisibleItems] = useState([])
   const [searchText, setSearchText] = useState('')
 
   const [sortParams, setSortParams] = useState({ attribute: null, criteria: null })
@@ -37,7 +36,7 @@ const Table = ({
 
   const isSelected = () => {
     let sel = false
-    visibleItems.forEach(e => {
+    visibleItems?.forEach(e => {
       if (e.isSelected) sel = true
     })
     return sel
@@ -196,7 +195,7 @@ const Table = ({
         id="table-container"
         className=" flex h-full w-full relative ">
         <div className="w-full overflow-scroll bg-gray-200 ">
-          <table className="customTable bg-white shadow-md">
+          <table className="customTable bg-white ">
             <thead className='text-center'>
               <tr>
                 <th className="px-7 h-7" >
@@ -223,7 +222,7 @@ const Table = ({
             </thead>
             <tbody>
               {
-                visibleItems.map((e, i) =>
+                visibleItems?.map((e, i) =>
                   <tr key={"E" + i} >
                     <td className="total-center h-7 px-7 " >
                       <div className="inp-container">
