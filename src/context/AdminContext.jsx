@@ -22,11 +22,12 @@ const maquinasColumns = [
     { name: 'Número', attribute: 'numero' },
     { name: 'Línea', attribute: 'linea' },
     { name: 'Marca', attribute: 'marca' },
+    { name: 'Modelo', attribute: 'modelo' },
     { name: 'Número de Serie', attribute: 'ns' },
     { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
     { name: 'Otros', attribute: 'otros' },
     { name: 'Departamento', attribute: 'departamento' },
-]
+  ]
 
 const AdminContext = React.createContext()
 export function useAdmin() {

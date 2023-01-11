@@ -32,7 +32,7 @@ const initobj = {
   tipo: "Seleccione"
 }
 
-const initErrors = {}
+const initErrors ={}
 
 const PaginaEmpleados = () => {
 
@@ -65,6 +65,12 @@ const PaginaEmpleados = () => {
   const [shown, setShown] = React.useState(false);
   const switchShown = () => setShown(!shown);
 
+  useEffect( async() => {
+    setAllEmpleados(await getEmpleados())
+    setListaEmpleados(await getEmpleados())
+  }, [])
+
+  //Formik
 
   //Options select
   const optionsDepartamento = [

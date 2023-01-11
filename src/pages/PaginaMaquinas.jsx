@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../components/DeleteModal'
@@ -15,15 +14,15 @@ import { useAdmin } from '../context/AdminContext'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
 
 const initobj = {
-  idMaquina: "",
-  numero: "",
-  linea: "0",
-  marca: "",
-  modelo: "",
-  ns: "",
-  fechaAdquisicion: "",
-  otros: "",
-  departamento: "Seleccione"
+    idMaquina: "",
+    numero: "",
+    linea: "0",
+    marca: "",
+    modelo: "",
+    ns: "",
+    fechaAdquisicion: "",
+    otros: "",
+    departamento: "Seleccione"
 }
 
 const PaginaMaquinas = () => {
@@ -327,6 +326,7 @@ const PaginaMaquinas = () => {
               </div>
             </div>
           </div>
+
         </div>
         //: null
       }
