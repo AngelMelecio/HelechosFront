@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext'
 
 const AppBar = () => {
 
-    const {setUser} = useApp()
+    const { setUser } = useApp()
 
     const Tab = ({ to, Icon = null, content, ...props }) => {
         const resolvePath = useResolvedPath(to)
@@ -14,8 +14,8 @@ const AppBar = () => {
         return (
             <Link to={to}
                 {...props}
-                className={`text-white relative w-full flex flex-row py-3 
-            font-bold text-sm  duration-200 
+                className={`text-white relative w-full flex flex-row py-3
+            font-bold text-sm  duration-200 rounded-lg
             items-center  cursor-pointer ` + activeStyles}>
                 <p className='w-14 total-center'>
                     {Icon && <Icon size='20px' />}
@@ -30,7 +30,11 @@ const AppBar = () => {
     return (
         <>
             {/*<div className='w-14'></div> */}
-            <div id='appbar' className="z-20 flex flex-col absolute h-screen w-14 bg-teal-600 duration-300 ease-in-out hover:w-60" >
+            <div
+                id='appbar'
+                className={`z-20 flex flex-col absolute h-screen pl-2
+                    overflow-y-scroll overflow-x-hidden 
+                    w-18 bg-teal-600 duration-200 ease-in-out hover:w-60`} >
                 <div className="appbar-content flex w-full justify-center mt-5 ">
                     <img className="w-24 h-24" src="http://127.0.0.1:8000/media/images/helechos.PNG" alt="" />
                 </div>
@@ -45,7 +49,7 @@ const AppBar = () => {
                 </div>
                 <div className='flex h-full items-end w-full pb-10'>
                     <Tab
-                        onClick={() => setUser(false) } 
+                        onClick={() => setUser(false)}
                         to={'/'}
                         content={'SALIR'}
                         Icon={ICONS.Logout} />

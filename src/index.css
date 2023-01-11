@@ -41,6 +41,35 @@
   background: #6b7280;
 }
 
+#appbar::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 11px;
+}
+.w-18{
+  width: 4.5rem;
+}
+
+/* Track */
+#appbar::-webkit-scrollbar-track {
+  background: #0d9488;
+}
+
+
+/* Handle */
+#appbar::-webkit-scrollbar-thumb {
+  background: #0d9488;
+  transition: 0.2s;
+}
+#appbar:hover::-webkit-scrollbar-thumb {
+  background: #4c6e6c;
+}
+
+/* Handle on hover */
+#appbar::-webkit-scrollbar-thumb:hover {
+  background: #425f5d
+}
+
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -64,6 +93,73 @@ input::-webkit-inner-spin-button {
   table-layout: auto;
   /*box-shadow: 0px 0px 10px -1px rgba(0,0,0,0.75);*/
   width:100%;
+}
+
+.inp-container{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15px;
+  width: 15px;
+}
+.inp-container input[type="checkbox"]{
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.inp-container .check{
+  display: block;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background-color: white;
+  border: 1px solid#9ca3af;
+  pointer-events: none;
+  transition: border 0s;
+  opacity: 100%;
+  transition: border 0s;
+}
+
+.inp-container input[type="checkbox"]:hover~.check{
+  border: 1px solid #5eead4;
+}
+.inp-container input[type="checkbox"]:active~.check{
+  opacity: 60%;
+  transition: 0s;
+}
+
+.inp-container input[type="checkbox"]:checked~.check{
+  background-color: #2dd4bf;  
+  border: 0;
+}
+
+.inp-container input[type="checkbox"]:checked~.check::after{
+  display: block;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  clip-path: polygon(38% 61%, 73% 15%, 89% 28%, 42% 86%, 33% 86%, 8% 60%, 22% 46%);
+
+}
+.inp-container input[type="checkbox"]:checked:hover~.check{
+  background-color: #14b8a6;  
+}
+
+.inp-container input[type="checkbox"]:disabled~.check,
+.inp-container input[type="checkbox"]:disabled:active~.check,
+.inp-container input[type="checkbox"]:disabled{
+  background-color: #e5e7eb;
+  border: 1px solid #d1d5db;
+  opacity: 100%;
+  cursor: default;
 }
 
 .customTable td, .customTable th {
@@ -99,6 +195,10 @@ input::-webkit-inner-spin-button {
 .customTable tbody tr:hover {
   background-color: #e2e8f0;
   transition: 0.2s;
+}
+.customTable thead th { 
+  position: sticky; 
+  top: 0; z-index: 1; 
 }
 
 .normalButton {
@@ -298,4 +398,8 @@ input::-webkit-inner-spin-button {
 .bg-login{
   background: rgb(16,185,129);
   background: linear-gradient(-3deg, rgba(16,185,129,1) 0%, rgba(13,148,136,1) 100%);
+}
+
+.palomita{
+  clip-path: polygon(33% 73%, 85% 4%, 100% 17%, 34% 100%, 0 69%, 14% 54%);
 }

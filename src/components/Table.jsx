@@ -3,14 +3,14 @@ import { useEffect } from "react"
 import { useState } from "react"
 import { ICONS } from "../constants/icons"
 
-const Table = ({ 
-  allItems, 
+const Table = ({
+  allItems,
   visibleItems, setVisibleItems,
 
-  columns, 
-  onAdd, 
-  onDelete, 
-  onEdit 
+  columns,
+  onAdd,
+  onDelete,
+  onEdit
 
 }) => {
 
@@ -29,10 +29,10 @@ const Table = ({
   useEffect(() => {
     hideShowOptions(isSelected())
   }, [visibleItems])
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     handleSearch()
-  },[sortParams])
+  }, [sortParams])
 
   const isSelected = () => {
     let sel = false
@@ -46,7 +46,7 @@ const Table = ({
     if (searchText.length > 0) {
       searchRef.current.blur()
       setSearchText('')
-      setVisibleItems( sortItems() )
+      setVisibleItems(sortItems())
       return
     }
     searchRef.current.focus()
@@ -59,13 +59,13 @@ const Table = ({
         { ...empl }
     )))
   }
-  
+
   const hideShowOptions = (a) => {
     someSelectedRef.current.checked = a
     someSelectedRef.current.disabled = !a
-    
+
   }
-  
+
   const handleSearch = () => {
     let val = (searchRef.current.value).trim().toLowerCase()
     let sortedItems = sortItems()
@@ -77,7 +77,7 @@ const Table = ({
     setVisibleItems(newItems)
   }
 
- 
+
 
   const sortItems = () => {
 
@@ -85,7 +85,7 @@ const Table = ({
       return [...allItems]
     }
     else {
-      let newOrder = ( [...allItems].sort((a, b) => {
+      let newOrder = ([...allItems].sort((a, b) => {
         let A = a[sortParams.attribute].toLowerCase()
         let B = b[sortParams.attribute].toLowerCase()
 
@@ -104,7 +104,7 @@ const Table = ({
     let newC
     if (sortParams.attribute === attr)
       newC = { ...sortParams, criteria: (sortParams.criteria + 1) % 3 }
-    else 
+    else
       newC = { attribute: attr, criteria: 1 }
     setSortParams(newC)
     sortItems()
@@ -146,7 +146,7 @@ const Table = ({
   }
 
   return (
-    <div className="flex flex-col w-full h-full bg-white ">
+    <div className="flex flex-col h-full w-full bg-white ">
       <div
         className="flex flex-row justify-between p-5"
         id="options-bar" >
@@ -159,12 +159,13 @@ const Table = ({
             <ICONS.Plus size='16px' />
           </button>
           <button
-           onClick={onDelete}
-            disabled={ !isSelected() }
+            onClick={onDelete}
+            disabled={!isSelected()}
             ref={trashButtonRef}
             className={'total-center ml-4 w-8 h-8 trash-button rounded-lg'}>
-            <ICONS.Trash size='19px'  />
+            <ICONS.Trash size='19px' />
           </button>
+
         </div>
         <div
           id="searchbar"
@@ -193,17 +194,21 @@ const Table = ({
       </div>
       <div
         id="table-container"
-        className=" flex h-full w-full relative ">
-        <div className="w-full overflow-scroll bg-gray-200 ">
-          <table className="customTable bg-white ">
+        className=" flex w-full h-full relative bg-gray-200 overflow-x-scroll">
+        <div>
+
+          <table className="customTable bg-white  ">
             <thead className='text-center'>
               <tr>
-                <th className="px-7 h-7" >
-                  <input
-                    onChange={unSelecAll}
-                    ref={someSelectedRef}
-                    type="checkbox"
-                    disabled />
+                <th className="px-7">
+                  <div className="inp-container">
+                    <input
+                      onChange={unSelecAll}
+                      ref={someSelectedRef}
+                      type="checkbox"
+                      disabled />
+                    <label className="check"></label>
+                  </div>
                 </th>
                 {
                   columns.map((c, i) =>
@@ -211,7 +216,7 @@ const Table = ({
                       {<div className="flex flex-row relative total-center text-center">
                         <p className="px-6">{c.name} </p>
                         <button
-                          onClick={ () => onSortCriteriaChange(c.attribute) }
+                          onClick={() => onSortCriteriaChange(c.attribute)}
                           className="absolute right-0 h-4 w-4 total-center">
                           <ThIcon attribute={c.attribute} />
                         </button>
@@ -224,7 +229,7 @@ const Table = ({
               {
                 visibleItems?.map((e, i) =>
                   <tr key={"E" + i} >
-                    <td className="total-center h-7 px-7 " >
+                    <td className="px-7" >
                       <div className="inp-container">
                         <input
                           value={i}
@@ -233,6 +238,7 @@ const Table = ({
                           onChange={handleSelection}
                           checked={e.isSelected}
                         />
+                        <label className="check"></label>
                       </div>
                     </td>
                     <CustomRow element={e} index={i} onClick={() => onEdit(e)} />

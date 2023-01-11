@@ -10,7 +10,7 @@ export function useApp() {
 
 export function AppProvider({ children }) {
 
-  const [user, setUser] = useState(false)
+  const [user, setUser] = useState(true)
 
 
   return (

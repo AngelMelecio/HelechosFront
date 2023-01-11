@@ -36,6 +36,9 @@ const initErrors = {}
 
 const PaginaEmpleados = () => {
 
+
+  
+
   const modalRef = useRef()
   const modalBoxRef = useRef()
 
@@ -62,7 +65,6 @@ const PaginaEmpleados = () => {
   const [shown, setShown] = React.useState(false);
   const switchShown = () => setShown(!shown);
 
-  //Formik
 
   //Options select
   const optionsDepartamento = [
@@ -201,7 +203,7 @@ const PaginaEmpleados = () => {
 
       if (values.tipo === 'Trabajador') {
         //    Espero la respuesta para obtener el nuevo Id 
-        console.log(response.json())
+        //console.log( await response.json() )
         const { message, empleado } = await response.json()
         //    Asigno Cada una de las Maquinas 
         assignedMaquinas.forEach(async (AM) => {
@@ -229,9 +231,10 @@ const PaginaEmpleados = () => {
 
     }
 
-    setListaEmpleados(await getEmpleados())
+    setListaEmpleados( await getEmpleados() )
     setObjEmpleado(initobj)
     setSaving(false)
+
     handleModalVisibility(false, false)
   }
 
@@ -243,10 +246,12 @@ const PaginaEmpleados = () => {
         })
           .then(response => response.json())
           .then(data => console.log('Empleados Eliminados:', data))
+          .finally( async()=>{
+            setListaEmpleados(await getEmpleados())
+          } )
       }
     })
-    getEmpleados()
-    setModalDeleteVisible(false)
+    handleModalDeleteVisibility(false)
   }
 
   const handleModalVisibility = async (show, edit) => {
@@ -319,8 +324,9 @@ const PaginaEmpleados = () => {
   }
 
 
+
   return (
-    <div className='h-full w-full'>
+    <>
       {
         //modalDeleteVisible ?
         <DeleteModal
@@ -508,7 +514,7 @@ const PaginaEmpleados = () => {
         onEdit={handleEdit}
       />
 
-    </div>
+    </>
   )
 }
 export default PaginaEmpleados

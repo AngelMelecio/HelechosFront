@@ -41,13 +41,13 @@ export function AdminProvider({ children }) {
     const [fetchingMaquinas, setFetchingMaquinas] = useState(false)
     const [allMaquinas, setAllMaquinas] = useState([])
 
-    useEffect(() => {
+    useEffect( () => {
         async function getting() {
             setAllEmpleados(await getEmpleados())
             setAllMaquinas(await getMaquinas())
         }
         getting()
-    },[])
+    }, [])
 
     const getEmpleados = async () => {
         setFetchingEmpleados(true)
@@ -65,7 +65,8 @@ export function AdminProvider({ children }) {
                 })
                 )
             })
-        setFetchingEmpleados(false)
+        setAllEmpleados(formatData)
+        setAllEmpleados( formatData )
         return formatData
     }
 
