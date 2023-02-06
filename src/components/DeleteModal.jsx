@@ -20,9 +20,9 @@ const DeleteModal = ({ onCancel,onConfirm, elements, message  }) => {
           </div>
         </div>
         <div className='h-20 overflow-y-scroll bg-slate-100 mt-2 p-2' >
-          {elements?.map(empl => {
+          {elements?.map((empl,indx) => {
             return empl.isSelected ?
-              <p key={empl.idEmpleado}>
+              <p key={indx}>
                 {empl.nombre + " " + empl.apellidos}
               </p>
               : null

@@ -10,12 +10,15 @@ import Table from './components/Table';
 import Main from './Main';
 import { AppProvider } from './context/AppContext';
 import { BrowserRouter } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <AppProvider>
-        <Main />
+        <AuthProvider>
+          <Main />
+        </AuthProvider>
       </AppProvider>
     </BrowserRouter>
   </React.StrictMode>,
