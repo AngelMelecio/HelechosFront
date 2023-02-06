@@ -10,13 +10,18 @@ export function useApp() {
 
 export function AppProvider({ children }) {
 
-  const [user, setUser] = useState(true)
+  let auth = localStorage.getItem('auth')
+  const [user, setUser] = useState( () => auth ? JSON.parse(auth) : null )
 
+  const logout = () =>{
+    setUser(null)
+    localStorage.removeItem('auth')
+  }
 
   return (
     <AppContext.Provider
       value={{
-        user, setUser
+        user, setUser, logout
       }}>
       {children}
     </AppContext.Provider>

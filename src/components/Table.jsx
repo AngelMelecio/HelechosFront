@@ -86,8 +86,12 @@ const Table = ({
     }
     else {
       let newOrder = ([...allItems].sort((a, b) => {
-        let A = a[sortParams.attribute].toLowerCase()
-        let B = b[sortParams.attribute].toLowerCase()
+        let A = a[sortParams.attribute]
+        if (A != true && A != false)
+          A = A.toLowerCase()
+        let B = b[sortParams.attribute]
+        if (B != true && B != false)
+          B = B.toLowerCase()
 
         if (A > B)
           return sortParams.criteria === 1 ? 1 : -1
@@ -125,6 +129,8 @@ const Table = ({
               key={'td' + i}
               onClick={onClick}>
               {element[c.attribute]}
+              {element[c.attribute] == true && 'Sí'}
+              {element[c.attribute] == false && 'No'}
             </td>
           )
         }

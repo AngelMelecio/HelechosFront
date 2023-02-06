@@ -11,6 +11,7 @@ import Table from '../components/Table'
 import { useApp } from '../context/AppContext'
 import { AiOutlineConsoleSql } from 'react-icons/ai'
 import { useAdmin } from '../context/AdminContext'
+import { useAuth } from '../context/AuthContext'
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
@@ -36,29 +37,27 @@ const initErrors = {}
 
 const PaginaEmpleados = () => {
 
-
-  
-
   const modalRef = useRef()
   const modalBoxRef = useRef()
 
-  const [objEmpleado, setObjEmpleado] = useState(initobj);
+  const {
+    fetchingEmpleados,
+    empleadosColumns,
+    getEmpleados,
+    allEmpleados,
+    allMaquinas,
+    getEmpleadoMaquinas
 
+  } = useAdmin()
+
+  const { session } = useAuth()
+
+  const [objEmpleado, setObjEmpleado] = useState(initobj);
   const [saving, setSaving] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
-
-  const { fetchingEmpleados,
-    empleadosColumns,
-    getEmpleados,
-    allEmpleados,
-    allMaquinas
-  } = useAdmin()
-
-  //const [allEmpleados, setAllEmpleados] = useState([])
   const [listaEmpleados, setListaEmpleados] = useState([])
-
   const [availableMaquinas, setAvailableMaquinas] = useState([])
   const [assignedMaquinas, setAssignedMaquinas] = useState([])
 
@@ -66,6 +65,12 @@ const PaginaEmpleados = () => {
   const switchShown = () => setShown(!shown);
 
 
+  useEffect(async () => {
+    //setAllEmpleados(await getEmpleados())
+    setListaEmpleados(await getEmpleados())
+  }, [])
+
+  //Formik
   //Options select
   const optionsDepartamento = [
     { value: 'Seleccione', label: 'Seleccione' },
@@ -134,6 +139,7 @@ const PaginaEmpleados = () => {
     } else if ((values.tipo === "Encargado" || values.tipo === "Administrador") && (values.contrasena.length < 8 || values.contrasena.length > 15)) {
       errors.contrasena = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
     }
+
     if (!values.departamento) {
       errors.departamento = 'Selecciona un departamento';
     } else if (values.departamento === "Seleccione") {
@@ -152,15 +158,18 @@ const PaginaEmpleados = () => {
     initialValues: initobj,
     validate,
     onSubmit: values => {
+      console.log('submiting')
       saveEmpleado(values);
     },
   });
 
   const removeRelationEM = async (idEmpleado) => {
     const response = await fetch(apiEmpleadoMaquinaUrl + idEmpleado, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + session.access
+      }
     })
-    console.log(await response.json())
   }
 
   const newRelation = async (idEmpleado, idMaquina) => {
@@ -168,7 +177,8 @@ const PaginaEmpleados = () => {
     await fetch(apiEmpleadoMaquinaUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access
       },
       body: JSON.stringify(newEmpleadoMaquina)
     })
@@ -177,9 +187,9 @@ const PaginaEmpleados = () => {
   }
 
   const saveEmpleado = async (values) => {
+    console.log('saving')
 
     setSaving(true)
-
     let formData = new FormData()
     formData.append('nombre', values.nombre)
     formData.append('apellidos', values.apellidos)
@@ -198,7 +208,11 @@ const PaginaEmpleados = () => {
       //    Creacion de un Nuevo Empleado 
       let response = await fetch(apiEmpleadosUrl, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
+
       })
 
       if (values.tipo === 'Trabajador') {
@@ -216,7 +230,10 @@ const PaginaEmpleados = () => {
       //    Actualizando los datos del empleado
       await fetch(apiEmpleadosUrl + objEmpleado.idEmpleado, {
         method: 'PUT',
-        body: formData
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
       })
         .then(response => response.json())
         .then(data => alert(data.message))
@@ -231,10 +248,9 @@ const PaginaEmpleados = () => {
 
     }
 
-    setListaEmpleados( await getEmpleados() )
+    setListaEmpleados(await getEmpleados())
     setObjEmpleado(initobj)
     setSaving(false)
-
     handleModalVisibility(false, false)
   }
 
@@ -242,13 +258,16 @@ const PaginaEmpleados = () => {
     listaEmpleados.forEach(async (e) => {
       if (e.isSelected) {
         await fetch(apiEmpleadosUrl + e.idEmpleado, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + session.access
+          }
         })
           .then(response => response.json())
           .then(data => console.log('Empleados Eliminados:', data))
-          .finally( async()=>{
+          .finally(async () => {
             setListaEmpleados(await getEmpleados())
-          } )
+          })
       }
     })
     handleModalDeleteVisibility(false)
@@ -271,7 +290,6 @@ const PaginaEmpleados = () => {
         setAssignedMaquinas([])
       }
     }
-
   }
 
   const handleSelectImage = (e) => {
@@ -282,20 +300,12 @@ const PaginaEmpleados = () => {
     //if (!someSelectedRef.current.checked) return
     if (visible) document.getElementById('delete-modal').classList.add('visible')
     else document.getElementById('delete-modal').classList.remove('visible')
-    setModalDeleteVisible(visible)
   }
 
   const handleEdit = async (emp) => {
-    const response = await fetch(apiEmpleadoMaquinaUrl + emp.idEmpleado, {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
 
-    const assigned = await response.json()
+    const assigned = await getEmpleadoMaquinas(emp.idEmpleado)
     const maquinasIds = assigned.message ? [] : assigned.map(a => a.idMaquina)
-
     let newAvailable = []
     let newAssigned = []
     allMaquinas.forEach(m => {
@@ -308,7 +318,6 @@ const PaginaEmpleados = () => {
     setAssignedMaquinas(newAssigned)
     setAvailableMaquinas(newAvailable)
 
-    //alert(JSON.stringify(emp,null,2))
     formik.setValues(emp)
     handleModalVisibility(true, true)
     setIsEdit(true)
@@ -322,8 +331,6 @@ const PaginaEmpleados = () => {
     if (file === '') return null
     return file
   }
-
-
 
   return (
     <>
@@ -453,48 +460,21 @@ const PaginaEmpleados = () => {
                           label='Departamento'
                           errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
                         />
-                        <CustomSelect
-                          name='Tipo'
-                          className='input'
-                          onChange={value => formik.setFieldValue('tipo', value.value)}
-                          value={formik.values.tipo}
-                          onBlur={formik.handleBlur}
-                          options={optionsTipo}
-                          label='Tipo'
-                          errores={formik.errors.tipo && formik.touched.tipo ? formik.errors.tipo : null}
-                        />
                       </div>
-                      {(formik.values.tipo === "Encargado" || formik.values.tipo === "Administrador") ?
-                        <div className='flex flex-row'>
-                          <Input
-                            label='Usuario' type='text' name='usuario' value={formik.values.usuario}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
-                            Icon={ICONS.User}
-                          />
-                          <Input
-                            label='Contaseña' type='password' name='contrasena' value={formik.values.contrasena}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.contrasena && formik.touched.contrasena ? formik.errors.contrasena : null}
-                            Icon={ICONS.Key}
-                          />
-                        </div> : null}
                     </div>
-                    {(formik.values.tipo === "Trabajador") ?
-                      <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
-                        <div className="absolute w-full left-0 total-center -top-3">
-                          <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                            MAQUINAS
-                          </div>
+                    <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
+                      <div className="absolute w-full left-0 total-center -top-3">
+                        <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
+                          MAQUINAS
                         </div>
-                        <SelectorMaquinas
-                          availableMaquinas={availableMaquinas}
-                          setAvailableMaquinas={setAvailableMaquinas}
-                          assignedMaquinas={assignedMaquinas}
-                          setAssignedMaquinas={setAssignedMaquinas}
-                          maquinasList={allMaquinas}
-                        />
-                      </div> : null}
+                      </div>
+                      <SelectorMaquinas
+                        availableMaquinas={availableMaquinas}
+                        setAvailableMaquinas={setAvailableMaquinas}
+                        assignedMaquinas={assignedMaquinas}
+                        setAssignedMaquinas={setAssignedMaquinas}
+                      />
+                    </div>
                   </div>
                 </form>
               </div>

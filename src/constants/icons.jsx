@@ -33,6 +33,7 @@ import {
     FaUserEdit as UserEdit,
     FaHandshake as HandShake,
     FaTruckMoving as Truck,
+    FaKey as Admin
 } from 'react-icons/fa'
 
 import {
@@ -60,6 +61,7 @@ import {
     RiArrowLeftSLine as Left,
 
 } from 'react-icons/ri'
+
 
 export const ICONS = { 
     Lupa,
@@ -89,5 +91,6 @@ export const ICONS = {
     Right, Left,
     DownFill, UpFill,
     Filter,
-    Logout
+    Logout,
+    Admin
 }

@@ -3,41 +3,61 @@ import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import loginImg from '../imgs/logo.png'
 import { useApp } from '../context/AppContext'
+import { useAuth } from '../context/AuthContext'
 
-const apiLoginUrl = "http://127.0.0.1:8000/api/login/"
+const apiLoginUrl = "http://127.0.0.1:8000/login/"
 
 export default function Login({navigate}) {
 
   const {setUser} = useApp()
+  
+  const{Login} = useAuth()
 
   const handleLogin = async(values) =>{
-    
+    Login(values)
+    values = {...values, usuario:values.usuario.trim()}
     const response = await fetch( apiLoginUrl, {
       method:'POST',
       headers: {'Content-Type': 'application/json'},
       body:JSON.stringify(values)
-    } )
-    alert( await response.json() )
+    } )    
+    let res = await response.json()
+    
+    let tokens = {token:res.token, refreshToken:res['refresh-token'] }
+    console.log( tokens )
+
+    if( res.error ){
+      alert(res.error)
+      return
+    }
+
+    if( !res.usuario.is_active ){
+      alert("Usuario no Activo")
+      return
+    }
+
+    alert( res.message )
     if( response.status === 200 ){
-        setUser(true)
+        localStorage.setItem('auth', JSON.stringify(res.usuario))
+        setUser(res.usuario)
         navigate('/')
     }
   }
 
   return (
     <Formik
-      initialValues={{ usuario: '', contrasena: '' }}
+      initialValues={{ usuario: '', password: '' }}
       validationSchema={
         Yup.object({
           usuario: Yup.string()
             .required('Ingresa tu usuario'),
-          contrasena: Yup.string()
+          password: Yup.string()
             .required('Ingresa tu contraseña')
         })
       }
       onSubmit={ (values, { setSubmitting }) => {
 
-        handleLogin(values)
+        Login(values)
         setSubmitting(false)
         /*setTimeout(() => {
           alert(JSON.stringify(values, null, 2));
@@ -70,10 +90,10 @@ export default function Login({navigate}) {
               <label className='text-slate-800 pl-1 pb-1'>Contraseña</label>
               <Field className='rounded-md bg-gray-200  bg-teal-20 p-2  border-2 border-teal-50 focus:border-teal-600 text-gray-800 duration-100 focus:outline-none'
                 type="password"
-                name='contrasena'
+                name='password'
               />
               <div className='text-rose-400 font-normal italic'>
-                <ErrorMessage name="contrasena" />
+                <ErrorMessage name="password" />
               </div>
 
             </div>

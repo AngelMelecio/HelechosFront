@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
+import { useAuth } from "./AuthContext";
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
+const apiEmpleadoMaquinaUrl = 'http://127.0.0.1:8000/api/empleados_maquina/'
 const imageEndPoint = 'http://127.0.0.1:8000'
+
+const UsuariosColumns = [
+    { name: 'Nombre', attribute: 'nombre' },
+    { name: 'Apellidos', attribute: 'apellidos' },
+    { name: 'Correo', attribute: 'correo' },
+    { name: 'Usuario', attribute: 'usuario' },
+    { name: 'Contraseña', attribute: 'contrasena' },
+    { name: 'Está Activo', attribute: 'is_active' },
+    { name: 'Es Administrador', attribute: 'is_staff' },
+]
 
 const empleadosColumns = [
     { name: 'Nombre', attribute: 'nombre' },
@@ -41,50 +53,69 @@ export function AdminProvider({ children }) {
     const [fetchingMaquinas, setFetchingMaquinas] = useState(false)
     const [allMaquinas, setAllMaquinas] = useState([])
 
-    useEffect( () => {
+    const { session } = useAuth()
+
+    /*useEffect( () => {
         async function getting() {
             setAllEmpleados(await getEmpleados())
             setAllMaquinas(await getMaquinas())
         }
         getting()
-    }, [])
+    }, [])*/
 
     const getEmpleados = async () => {
         setFetchingEmpleados(true)
-        let formatData = []
-        await fetch(apiEmpleadosUrl, {
+        let response = await fetch(apiEmpleadosUrl, {
             method: 'GET',
-            headers: { "Content-Type": "application/json" }
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
+            }
         })
-            .then(response => response.json())
-            .then(data => {
-                formatData = data.map((empl) => ({
-                    ...empl,
-                    isSelected: false,
-                    fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
-                })
-                )
-            })
-        setAllEmpleados(formatData)
-        setAllEmpleados( formatData )
-        return formatData
+        if (response.status == 200) {
+            let data = await response.json()
+            let formatData = data.map((empl) => ({
+                ...empl,
+                isSelected: false,
+                fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
+            }))
+            setAllEmpleados(formatData)
+            return formatData
+        }
+        setFetchingEmpleados(false)
     }
 
     const getMaquinas = async () => {
         setFetchingMaquinas(true)
-        let maquinas = []
-        await fetch(apiMaquinasUrl, {
+        let response = await fetch(apiMaquinasUrl, {
             method: 'GET',
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                maquinas = data
-            })
+        //console.log( 'getting maquinas ',response )
+        if (response.status === 200) {
+            let maquinas = await response.json()
+            setAllMaquinas(maquinas)
+            return maquinas
+        }
         setFetchingMaquinas(false)
-        return maquinas
+    }
+
+    const getEmpleadoMaquinas = async (empId) => {
+        let response = await fetch(apiEmpleadoMaquinaUrl + empId, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
+            }
+        })
+        if (response.status === 200) {
+            let assigned = await response.json()
+            return assigned
+        }
+        return []
     }
 
     return (
@@ -94,11 +125,14 @@ export function AdminProvider({ children }) {
                 allEmpleados, getEmpleados, empleadosColumns,
 
                 fetchingMaquinas,
-                allMaquinas, getMaquinas, maquinasColumns
+                allMaquinas, getMaquinas, maquinasColumns,
+
+                getEmpleadoMaquinas,
+
+                UsuariosColumns
             }}
         >
             {children}
         </AdminContext.Provider>
-
     )
 }

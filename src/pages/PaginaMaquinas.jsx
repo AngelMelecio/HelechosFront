@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react'
 import { useEffect } from 'react'
 import DeleteModal from '../components/DeleteModal'
 import Input from '../components/Input'
-import DatePickerField from '../components/DatePickerField'
 import { useFormik } from 'formik'
 
 
@@ -11,6 +10,7 @@ import { ICONS } from '../constants/icons'
 import CustomSelect from '../components/CustomSelect'
 import Table from '../components/Table'
 import { useAdmin } from '../context/AdminContext'
+import { useAuth } from '../context/AuthContext'
 
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
 
@@ -39,10 +39,18 @@ const PaginaMaquinas = () => {
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
   const { fetchingMaquinas, allMaquinas, maquinasColumns, getMaquinas } = useAdmin()
-  const [listaMaquinas, setListaMaquinas] = useState([])
+  const [listaMaquinas, setListaMaquinas] = useState()
+  const { session } = useAuth()
+
+
+  useEffect(() => {
+    async function fetching() {
+      setListaMaquinas(await getMaquinas())
+    }
+    fetching()
+  }, [])
 
   //Formik
-
   //Options select
   const optionsDepartamento = [
     { value: 'Seleccione', label: 'Seleccione' },
@@ -120,7 +128,10 @@ const PaginaMaquinas = () => {
       //Creacion de un nueva maquina 
       await fetch(apiMaquinasUrl, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
       })
         .then(response => response.json())
         .then(data => alert(data.message))
@@ -129,12 +140,15 @@ const PaginaMaquinas = () => {
       //Actualizando los datos de la maquina
       await fetch(apiMaquinasUrl + objMaquina.idMaquina, {
         method: 'PUT',
-        body: formData
+        body: formData,
+        headers: {
+          'Authorization': 'Bearer ' + session.access
+        }
       })
         .then(response => response.json())
         .then(data => alert(data.message))
     }
-    
+
     setListaMaquinas(await getMaquinas())
     setObjMaquina(initobj)
     setSaving(false)
@@ -145,13 +159,16 @@ const PaginaMaquinas = () => {
     listaMaquinas.forEach(async (e) => {
       if (e.isSelected) {
         await fetch(apiMaquinasUrl + e.idMaquina, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + session.access
+          }
         })
           .then(response => response.json())
           .then(data => alert('Maquinas Eliminadas:', data))
       }
     })
-    setListaMaquinas( await getMaquinas() )
+    setListaMaquinas(await getMaquinas())
     setModalDeleteVisible(false)
   }
 
@@ -166,10 +183,7 @@ const PaginaMaquinas = () => {
     setIsEdit(edit)
 
     if (!edit) setObjMaquina(initobj)
-
-
   }
-
 
   const handleModalDeleteVisibility = (visible) => {
     //if (!someSelectedRef.current.checked) return
@@ -179,16 +193,11 @@ const PaginaMaquinas = () => {
   }
 
   const handleEdit = async (mac) => {
-
-    //alert(JSON.stringify(mac,null,2))
     formik.setValues(mac)
     handleModalVisibility(true, true)
     setIsEdit(true)
     setObjMaquina(mac)
   }
-
-
-
 
   return (
     <div className='h-full w-full'>
@@ -316,7 +325,7 @@ const PaginaMaquinas = () => {
                       </div>
                       <div className='flex flex-row'>
                         <Input
-                          label='Fecha de adquisición' type='text' name='fechaAdquisicion' value={formik.values.fechaAdquisicion}
+                          label='Fecha de adquisición' type='date' name='fechaAdquisicion' value={formik.values.fechaAdquisicion}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.fechaAdquisicion && formik.touched.fechaAdquisicion ? formik.errors.fechaAdquisicion : null}
                         />

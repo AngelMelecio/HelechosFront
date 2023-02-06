@@ -9,7 +9,6 @@ import MaquinasTable from "./MaquinasTable"
 const SelectorMaquinas = ({ 
     availableMaquinas, setAvailableMaquinas,
     assignedMaquinas, setAssignedMaquinas
-
 }) => {
 
   const upButtonRef = useRef()
