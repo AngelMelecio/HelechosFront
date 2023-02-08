@@ -7,13 +7,13 @@ const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
 const apiEmpleadoMaquinaUrl = 'http://127.0.0.1:8000/api/empleados_maquina/'
 const imageEndPoint = 'http://127.0.0.1:8000'
+const apiUsersUrl = 'http://localhost:8000/users/'
 
 const UsuariosColumns = [
     { name: 'Nombre', attribute: 'nombre' },
     { name: 'Apellidos', attribute: 'apellidos' },
     { name: 'Correo', attribute: 'correo' },
     { name: 'Usuario', attribute: 'usuario' },
-    { name: 'Contraseña', attribute: 'contrasena' },
     { name: 'Está Activo', attribute: 'is_active' },
     { name: 'Es Administrador', attribute: 'is_staff' },
 ]
@@ -24,10 +24,7 @@ const empleadosColumns = [
     { name: 'Dirección', attribute: 'direccion' },
     { name: 'Seguro Social', attribute: 'ns' },
     { name: 'Teléfono', attribute: 'telefono' },
-    { name: 'Correo', attribute: 'correo' },
     { name: 'Departamento', attribute: 'departamento' },
-    { name: 'Usuario', attribute: 'usuario' },
-    { name: 'Contraseña', attribute: 'contrasena' }
 ]
 
 const maquinasColumns = [
@@ -53,6 +50,9 @@ export function AdminProvider({ children }) {
 
     const [fetchingMaquinas, setFetchingMaquinas] = useState(false)
     const [allMaquinas, setAllMaquinas] = useState([])
+
+    const [fetchingUsuarios, setFetchingUsuarios] = useState(false)
+    const [allUsuarios, setAllUsuarios] = useState([])
 
     const { session } = useAuth()
 
@@ -119,6 +119,23 @@ export function AdminProvider({ children }) {
         return []
     }
 
+    const getUsuarios = async () =>{
+        setFetchingUsuarios(true)
+        let response = await fetch(apiUsersUrl, {
+            method: 'GET',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
+            }
+        })
+        if (response.status == 200) {
+            let data = await response.json()
+            setAllUsuarios(data)
+            return data
+        }
+        setFetchingUsuarios(false)
+    }
+
     return (
         <AdminContext.Provider
             value={{
@@ -130,7 +147,8 @@ export function AdminProvider({ children }) {
 
                 getEmpleadoMaquinas,
 
-                UsuariosColumns
+                fetchingUsuarios,
+                allUsuarios, getUsuarios,UsuariosColumns
             }}
         >
             {children}

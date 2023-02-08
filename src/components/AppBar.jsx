@@ -1,12 +1,14 @@
+import { useEffect } from 'react'
 import { Link, resolvePath, useMatch, useResolvedPath } from 'react-router-dom'
 
 import { ICONS } from '../constants/icons'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
+import helechos from '../imgs/helechos.png'
 
 const AppBar = () => {
 
-  const { Logout } = useAuth()
+  const { Logout, session } = useAuth()
 
   const Tab = ({ to, Icon = null, content, ...props }) => {
     const resolvePath = useResolvedPath(to)
@@ -37,10 +39,11 @@ const AppBar = () => {
                     overflow-y-scroll overflow-x-hidden 
                     w-18 bg-teal-600 duration-200 ease-in-out hover:w-60`} >
         <div className="appbar-content flex w-full justify-center mt-5 ">
-          <img className="w-24 h-24" src="http://127.0.0.1:8000/media/images/helechos.PNG" alt="" />
+          <img className="w-24 h-24" src={helechos} alt="" />
         </div>
         <div id="tabs" className="mt-10">
-          <Tab to={'/usuarios'} content={'USUARIOS'} Icon={ICONS.Admin} />
+          <Tab to={'/perfil'} content={'PERFIL'} Icon={ICONS.Profile} />
+          {session.usuario.is_staff && <Tab to={'/usuarios'} content={'USUARIOS'} Icon={ICONS.Admin} />}
           <Tab to={'/empleados'} content={'EMPLEADOS'} Icon={ICONS.Worker} />
           <Tab to={'/maquinas'} content={'MAQUINAS'} Icon={ICONS.Machine} />
           {
