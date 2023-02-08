@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { AdminProvider, useAdmin } from "./context/AdminContext"
 import PaginaUsuarios from "./pages/PaginaUsuarios"
 import { useAuth } from "./context/AuthContext"
+import PaginaPerfil from "./pages/PaginaPerfil"
 
 const Main = () => {
 
@@ -25,11 +26,11 @@ const Main = () => {
               <AppBar />
             </div>
             <div id='page' className="flex w-full h-screen relative ">
-
               <div className="flex absolute w-full h-full ">
                   <Routes>
-                    <Route exact path="*" element={ <Navigate replace to="/empleados"/> }/>
-                    <Route path="/usuarios" element={<PaginaUsuarios />} />
+                    <Route exact path="*" element={ <Navigate replace to="/perfil"/> }/>
+                    <Route path="/perfil" element={<PaginaPerfil />} />
+                    {session.usuario.is_staff && <Route path="/usuarios" element={<PaginaUsuarios />} />}
                     <Route path="/empleados" element={<PaginaEmpleados />} />
                     <Route path="/maquinas" element={<PaginaMaquinas />} />
                   </Routes>

@@ -64,10 +64,6 @@ const PaginaEmpleados = () => {
   const [shown, setShown] = React.useState(false);
   const switchShown = () => setShown(!shown);
 
-  useEffect( async() => {
-    setAllEmpleados(await getEmpleados())
-    setListaEmpleados(await getEmpleados())
-  }, [])
 
   //Formik
 
@@ -122,28 +118,10 @@ const PaginaEmpleados = () => {
       errors.telefono = 'Ingresa solo 10 digitos';
     }
 
-    if (!values.correo) {
-      errors.correo = 'Ingresa el correo';
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.correo)) {
-      errors.correo = 'Correo invalido';
-    }
-
     if (!values.ns) {
       errors.ns = 'Ingresa el NSS';
     } else if (values.ns.toString().length !== 11) {
       errors.ns = 'NSS incorrecto';
-    }
-
-    if ((values.tipo === "Encargado" || values.tipo === "Administrador") && !values.usuario) {
-      errors.usuario = 'Ingresa un usuario';
-    } else if ((values.tipo === "Encargado" || values.tipo === "Administrador") && (values.usuario.length < 4 || values.usuario.length > 20)) {
-      errors.usuario = 'El usuario debe tener una longitud entre 4 y 20 caracteres';
-    }
-
-    if ((values.tipo === "Encargado" || values.tipo === "Administrador") && !values.contrasena) {
-      errors.contrasena = 'Ingresa una contraseña';
-    } else if ((values.tipo === "Encargado" || values.tipo === "Administrador") && (values.contrasena.length < 8 || values.contrasena.length > 15)) {
-      errors.contrasena = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
     }
 
     if (!values.departamento) {
@@ -151,12 +129,6 @@ const PaginaEmpleados = () => {
     } else if (values.departamento === "Seleccione") {
       errors.departamento = 'Selecciona un departamento';
     }
-    if (!values.tipo) {
-      errors.tipo = 'Selecciona un tipo';
-    } else if (values.tipo === "Seleccione") {
-      errors.tipo = 'Selecciona un tipo';
-    }
-
     return errors;
   };
   //Declaración
@@ -440,12 +412,6 @@ const PaginaEmpleados = () => {
                           errores={formik.errors.telefono && formik.touched.telefono ? formik.errors.telefono : null}
                           Icon={ICONS.Phone}
                         />
-                        <Input
-                          label='Correo' type='text' name='correo' value={formik.values.correo}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.correo && formik.touched.correo ? formik.errors.correo : null}
-                          Icon={ICONS.Email}
-                        />
                       </div>
                     </div>
                     <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
@@ -456,7 +422,7 @@ const PaginaEmpleados = () => {
                       </div>
                       <div className='flex flex-row'>
 
-                        <CustomSelect
+                        {<CustomSelect
                           name='Departamento'
                           className='input'
                           onChange={value => formik.setFieldValue('departamento', value.value)}
@@ -465,7 +431,7 @@ const PaginaEmpleados = () => {
                           options={optionsDepartamento}
                           label='Departamento'
                           errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
-                        />
+                        />}
                       </div>
                     </div>
                     <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">

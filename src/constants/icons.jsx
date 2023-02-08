@@ -1,13 +1,13 @@
 
 import {
     GoSearch as Lupa,
-    GoAlert as Alert ,
+    GoAlert as Alert,
     GoDiffAdded as Add,
 } from 'react-icons/go'
 
-import {FaRegTrashAlt as Trash} from 'react-icons/fa'
+import { FaRegTrashAlt as Trash } from 'react-icons/fa'
 import {
-    MdOutlineCancel as Cancel, 
+    MdOutlineCancel as Cancel,
     MdOutlineMail as Email
 } from 'react-icons/md'
 import {
@@ -33,7 +33,8 @@ import {
     FaUserEdit as UserEdit,
     FaHandshake as HandShake,
     FaTruckMoving as Truck,
-    FaKey as Admin
+    FaKey as Admin,
+    FaUser as Profile
 } from 'react-icons/fa'
 
 import {
@@ -63,7 +64,7 @@ import {
 } from 'react-icons/ri'
 
 
-export const ICONS = { 
+export const ICONS = {
     Lupa,
     Trash,
     Cancel,
@@ -86,11 +87,12 @@ export const ICONS = {
     Cloth,
     Box,
     Diablito,
-    Truck, 
+    Truck,
     Up, Down,
     Right, Left,
     DownFill, UpFill,
     Filter,
     Logout,
-    Admin
+    Admin,
+    Profile
 }

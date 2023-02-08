@@ -123,15 +123,23 @@ const Table = ({
     return (
       <>
         {
-          columns.map((c, i) =>
-            <td
+          columns.map((c, i) => {
+
+            let value = element[c.attribute] + ''
+            let isBool = (value == 'true' || value == 'false' || value == '' )
+
+            if (isBool) {
+              if (value == 'true') value = 'Sí'
+              else value = '--'
+            }
+
+            return <td
               className="px-4"
               key={'td' + i}
               onClick={onClick}>
-              {element[c.attribute]}
-              {element[c.attribute] == true && 'Sí'}
-              {element[c.attribute] == false && 'No'}
+              {isBool ? <p className="text-center">{value}</p> : value}
             </td>
+          }
           )
         }
       </>
@@ -201,9 +209,8 @@ const Table = ({
       <div
         id="table-container"
         className=" flex w-full h-full relative bg-gray-200 overflow-x-scroll">
-        <div>
-
-          <table className="customTable bg-white  ">
+        <div className="w-full">
+          <table className="customTable bg-white  w-full">
             <thead className='text-center'>
               <tr>
                 <th className="px-7">

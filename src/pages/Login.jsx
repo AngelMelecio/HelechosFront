@@ -70,10 +70,10 @@ export default function Login({navigate}) {
         <div className="flex relative max-w-[500px] w-full h-5/6 mx-auto">
           <div className="login-box-shadow">
           </div>
-          <Form id='login-box' className=' rounded-lg p-4 w-full'>
-            <h2 className='text-4xl  text-teal-700 font-bold text-center'>Inicia Sesión</h2>
+          <Form id='login-box' className=' rounded-lg p-4 w-full overflow-y-scroll'>
+            <h2 className='text-2xl  text-teal-700 font-bold text-center'>Inicia Sesión</h2>
             <div className='flex justify-center mt-4'>
-              <img className='w-40 h-40 object-cover' src={loginImg} alt="" />
+              <img className='w-32 h-32 object-cover' src={loginImg} alt="" />
             </div>
             <div className='flex flex-col text-gay-900 font-medium h-24'>
               <label className='text-slate-800 pl-1 pb-1'>Usuario *</label>

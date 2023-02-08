@@ -14,9 +14,9 @@ export function useAuth() {
 export function AuthProvider({ children }) {
 
   let auth = localStorage.getItem('auth')
+  
   let [session, setSession] = useState(() => auth ? JSON.parse(auth) : null)
   //let [user, setUser] = useState(null)
-
   let [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
@@ -31,6 +31,7 @@ export function AuthProvider({ children }) {
         updateToken()
     }, fourMinutes)
     return () => clearInterval(interval)
+
   }, [session, loading])
 
   const Login = async (values) => {
@@ -66,7 +67,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const logout = () => {
+  const Logout = () => {
     //setUser(null)
     setSession(null)
     localStorage.removeItem('auth')
@@ -86,11 +87,12 @@ export function AuthProvider({ children }) {
     let data = await response.json()
 
     if (response.status === 200) {
-      console.log( 'tokens refreshed' )
-      setSession(data)
-      localStorage.setItem('auth', JSON.stringify(data))
+      console.log( 'tokens refreshed ')
+      let newSession = { ...session, access:data.access, refresh:data.refresh }
+      setSession(newSession)
+      localStorage.setItem('auth', JSON.stringify(newSession))
     } else {
-      logout()
+      Logout()
     }
     if (loading) {
       setLoading(false)
@@ -102,7 +104,7 @@ export function AuthProvider({ children }) {
       value={{
         session,
         Login,
-        logout,
+        Logout,
         updateToken
       }}
     >

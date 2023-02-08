@@ -1,4 +1,5 @@
 import { useFormik } from "formik"
+import { useEffect } from "react"
 import { useRef } from "react"
 import { useState } from "react"
 import CustomSelect from "../components/CustomSelect"
@@ -7,34 +8,16 @@ import Input from "../components/Input"
 import Table from "../components/Table"
 import { ICONS } from "../constants/icons"
 import { useAdmin } from "../context/AdminContext"
+import { useAuth } from "../context/AuthContext"
 
-const dummyUsers = [
-  {
-    nombre: 'Rily',
-    apellidos: 'Gonzalez',
-    correo: 'rily@gmail.com',
-    usuario: 'rilygod123',
-    contrasena: '123',
-    is_active: true,
-    is_staff: true
-  },
-  {
-    nombre: 'Abraham',
-    apellidos: 'Gomez',
-    correo: 'abraham@gmail.com',
-    usuario: 'elabraham',
-    contrasena: '123',
-    is_active: false,
-    is_staff: false
-  }
-]
+const apiUserUrl = 'http://localhost:8000/users/'
 
 const initobj = {
   nombre: '',
   apellidos: '',
   correo: '',
   usuario: '',
-  contrasena: '',
+  password: '',
   is_active: true,
   is_staff: false
 }
@@ -50,14 +33,25 @@ const optionsActivo = [
 
 const PaginaUsuarios = () => {
 
+
+  
   const modalRef = useRef()
   const modalBoxRef = useRef()
 
+  const {session} = useAuth()
+  const {getUsuarios, allUsuarios} = useAdmin()
+
   const [objUsuario, setObjUsuario] = useState(initobj)
-  const [listaUsuarios, setListaUsuarios] = useState(dummyUsers)
+  const [listaUsuarios, setListaUsuarios] = useState([])
   const { UsuariosColumns } = useAdmin()
   const [isEdit, setIsEdit] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  useEffect(async()=>{
+      let data = await getUsuarios()
+      console.log(data)
+      setListaUsuarios(data)
+  },[])
 
   const handleModalVisibility = async (show, edit) => {
 
@@ -106,10 +100,10 @@ const PaginaUsuarios = () => {
       errors.usuario = 'El usuario debe tener una longitud entre 4 y 20 caracteres';
     }
 
-    if (!values.contrasena) {
-      errors.contrasena = 'Ingresa una contraseña';
-    } else if ((values.contrasena.length < 8 || values.contrasena.length > 15)) {
-      errors.contrasena = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
+    if (!values.password) {
+      errors.password = 'Ingresa una contraseña';
+    } else if ((values.password.length < 8 || values.password.length > 15)) {
+      errors.password = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
     }
 
     if (values.is_staff != true && values.is_staff != false) {
@@ -123,7 +117,6 @@ const PaginaUsuarios = () => {
     } else if (values.is_active === "Seleccione") {
       errors.is_active = 'Selecciona un estado';
     }
-
     return errors;
   };
 
@@ -131,10 +124,31 @@ const PaginaUsuarios = () => {
     initialValues: initobj,
     validate,
     onSubmit: values => {
-      console.log('Guardando:', values)
-      //saveEmpleado(values);
+      //console.log('Guardando:', values)
+      saveUsuario(values)
     },
   });
+
+  const saveUsuario = async(values) =>{
+    setSaving(true)
+    //console.log(values)
+    let response = await fetch(apiUserUrl, {
+      method: 'POST',
+      body: JSON.stringify(values),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + session.access
+      }
+    })
+    if( response.ok )
+    {
+      let data = await response.json()
+      alert(data.message)
+      setListaUsuarios( await getUsuarios() )
+      handleModalVisibility(false,false)
+    }
+    setSaving(false)
+  }
 
   const deleteUsuarios = () => {
     console.log('Eliminando')
@@ -238,9 +252,9 @@ const PaginaUsuarios = () => {
                           Icon={ICONS.User}
                         />
                         <Input
-                          label='Contraseña' type='password' name='contrasena' value={formik.values.contrasena}
+                          label='Contraseña' type='password' name='password' value={formik.values.password}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.contrasena && formik.touched.contrasena ? formik.errors.contrasena : null}
+                          errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
                           Icon={ICONS.Key}
                         />
                       </div>
@@ -280,7 +294,7 @@ const PaginaUsuarios = () => {
         //: null
       }
       <Table
-        allItems={dummyUsers}
+        allItems={allUsuarios}
         visibleItems={listaUsuarios}
         setVisibleItems={setListaUsuarios}
         columns={UsuariosColumns}
