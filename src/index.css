@@ -93,6 +93,7 @@ input::-webkit-inner-spin-button {
   table-layout: auto;
   /*box-shadow: 0px 0px 10px -1px rgba(0,0,0,0.75);*/
   width:100%;
+  border-collapse: collapse;
 }
 
 .inp-container{
@@ -183,13 +184,25 @@ input::-webkit-inner-spin-button {
   transition: 0.2s;
 }
 
+tr .filter-button{
+  opacity: 0%;
+  transition: 0s;
+}
+tr:hover .filter-button{
+  opacity: 100%;
+  transition: 0.2s;
+}
+
+
+
 .customTable tbody tr {
 
   color:#334155;
   font-size: medium;
   cursor: pointer;
-  border: 1px solid #cbd5e1;
   transition: 0.4s;
+  border-collapse: collapse;
+  border-bottom: 1px solid #cbd5e1;
 }
 
 .customTable tbody tr:hover {
@@ -206,6 +219,7 @@ input::-webkit-inner-spin-button {
 }
 
 .normalButton:hover {
+  color: white;
   background-color: var(--teal600);
   transition: 0.2s;
 }
@@ -337,6 +351,23 @@ input::-webkit-inner-spin-button {
   opacity: 60%;
   transition:0s;
 }
+.neutral-button{
+
+  color:#111827;
+  transition:0.2s;
+}
+
+.neutral-button:hover{
+  background-color: #4b5563;
+  color:white;
+  transition:0.2s;
+}
+.neutral-button:active{
+  opacity: 60%;
+  transition:0s;
+}
+
+
 
 .trash-button:disabled,
 .trash-button:disabled:active,
@@ -402,4 +433,20 @@ input::-webkit-inner-spin-button {
 
 .palomita{
   clip-path: polygon(33% 73%, 85% 4%, 100% 17%, 34% 100%, 0 69%, 14% 54%);
+}
+
+.profile-table{
+  table-layout: auto;
+  border-collapse: collapse;
+  border-block: 2px solid #cbd5e1;
+  width: 100%;
+}
+
+.profile-table tr{
+  border-block: 1px solid #cbd5e1;
+  transition: 0.2s;
+}
+
+.profile-table tr:hover{
+  cursor: pointer;
 }

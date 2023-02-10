@@ -23,6 +23,8 @@ import {
     AiFillCamera as Camera,
     AiOutlinePhone as Phone,
     AiOutlineUser as User,
+    AiFillEdit as Edit,
+    AiOutlineSave as Save
 } from 'react-icons/ai'
 
 import {
@@ -63,6 +65,11 @@ import {
 
 } from 'react-icons/ri'
 
+const Accept = () =>{
+    return 
+    <span >
+    </span>
+}
 
 export const ICONS = {
     Lupa,
@@ -94,5 +101,7 @@ export const ICONS = {
     Filter,
     Logout,
     Admin,
-    Profile
+    Profile,
+    Edit,
+    Save
 }
