@@ -102,7 +102,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        session,
+        session, setSession,
         Login,
         Logout,
         updateToken

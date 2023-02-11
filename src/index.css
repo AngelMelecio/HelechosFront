@@ -183,16 +183,7 @@ input::-webkit-inner-spin-button {
   opacity: 100%;
   transition: 0.2s;
 }
-
-tr .filter-button{
-  opacity: 0%;
-  transition: 0s;
-}
-tr:hover .filter-button{
-  opacity: 100%;
-  transition: 0.2s;
-}
-
+  
 
 
 .customTable tbody tr {

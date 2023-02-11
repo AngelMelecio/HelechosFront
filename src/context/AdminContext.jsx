@@ -45,6 +45,8 @@ export function useAdmin() {
 
 export function AdminProvider({ children }) {
 
+    
+
     const [fetchingEmpleados, setFetchingEmpleados] = useState(false)
     const [allEmpleados, setAllEmpleados] = useState([])
 
@@ -54,7 +56,7 @@ export function AdminProvider({ children }) {
     const [fetchingUsuarios, setFetchingUsuarios] = useState(false)
     const [allUsuarios, setAllUsuarios] = useState([])
 
-    const { session } = useAuth()
+    const { session, setSession } = useAuth()
 
     /*useEffect( () => {
         async function getting() {
@@ -136,6 +138,41 @@ export function AdminProvider({ children }) {
         setFetchingUsuarios(false)
     }
 
+    const updateUser = async ( id, value ) => {
+        const response = await fetch( apiUsersUrl + id + '/', {
+            method:'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
+            },
+            body: JSON.stringify(value)
+        } )
+        let data = await response.json()
+        if( response.status === 200 ){
+            setSession( prev => ( { ...prev, usuario:data.usuario } ) ) 
+        }
+        alert( data.message )
+    }
+
+    const updatePassword = async ( id, value ) => {
+        const response =await fetch( apiUsersUrl + id + '/set_password/', {
+            method:'post',
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + session.access
+            },
+            body: JSON.stringify({
+                password:value,
+                password2:value
+            })
+        } )
+
+        if( response.status === 200 ){
+
+            alert( 'Contraseña actualizada Correctamente' )
+        }
+    }
+
     return (
         <AdminContext.Provider
             value={{
@@ -148,7 +185,10 @@ export function AdminProvider({ children }) {
                 getEmpleadoMaquinas,
 
                 fetchingUsuarios,
-                allUsuarios, getUsuarios,UsuariosColumns
+                allUsuarios, getUsuarios,UsuariosColumns,
+            
+                updateUser,
+                updatePassword
             }}
         >
             {children}

@@ -34,24 +34,26 @@ const optionsActivo = [
 const PaginaUsuarios = () => {
 
 
-  
+
   const modalRef = useRef()
   const modalBoxRef = useRef()
+  const newPassRef = useRef()
 
-  const {session} = useAuth()
-  const {getUsuarios, allUsuarios} = useAdmin()
+  const { session } = useAuth()
+  const { getUsuarios, allUsuarios, updateUser, updatePassword } = useAdmin()
 
   const [objUsuario, setObjUsuario] = useState(initobj)
   const [listaUsuarios, setListaUsuarios] = useState([])
   const { UsuariosColumns } = useAdmin()
   const [isEdit, setIsEdit] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [newPass, setNewPass] = useState(false)
 
-  useEffect(async()=>{
-      let data = await getUsuarios()
-      console.log(data)
-      setListaUsuarios(data)
-  },[])
+  useEffect(async () => {
+    let data = await getUsuarios()
+    console.log(data)
+    setListaUsuarios(data)
+  }, [])
 
   const handleModalVisibility = async (show, edit) => {
 
@@ -64,6 +66,7 @@ const PaginaUsuarios = () => {
 
     if (!edit) {
       setObjUsuario(initobj)
+      setNewPass(false)
     }
 
   }
@@ -100,10 +103,12 @@ const PaginaUsuarios = () => {
       errors.usuario = 'El usuario debe tener una longitud entre 4 y 20 caracteres';
     }
 
-    if (!values.password) {
-      errors.password = 'Ingresa una contraseña';
-    } else if ((values.password.length < 8 || values.password.length > 15)) {
-      errors.password = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
+    if ( !isEdit || (isEdit && newPass) ){
+      if (!values.password) {
+        errors.password = 'Ingresa una contraseña';
+      } else if ((values.password.length < 8 || values.password.length > 15)) {
+        errors.password = 'La contraseña debe tener una longitud entre 8 y 15 caracteres';
+      }
     }
 
     if (values.is_staff != true && values.is_staff != false) {
@@ -129,24 +134,44 @@ const PaginaUsuarios = () => {
     },
   });
 
-  const saveUsuario = async(values) =>{
+  const saveUsuario = async (values) => {
     setSaving(true)
-    //console.log(values)
-    let response = await fetch(apiUserUrl, {
-      method: 'POST',
-      body: JSON.stringify(values),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer ' + session.access
+
+    if (!isEdit) {
+      //console.log(values)
+      let response = await fetch(apiUserUrl, {
+        method: 'POST',
+        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + session.access
+        }
+      })
+      if (response.ok) {
+        let data = await response.json()
+        alert(data.message)
+
       }
-    })
-    if( response.ok )
-    {
-      let data = await response.json()
-      alert(data.message)
-      setListaUsuarios( await getUsuarios() )
-      handleModalVisibility(false,false)
     }
+    else { 
+      let newV = {
+        nombre: values.nombre,
+        apellidos: values.apellidos,
+        correo: values.correo,
+        usuario: values.usuario,
+        is_active: values.is_active,
+        is_staff: values.is_staff,
+      }
+      let id = values.id
+      await updateUser(id, newV)
+      if( newPass )
+      {
+        await updatePassword( id,values.password  )
+      }
+
+    }
+    setListaUsuarios(await getUsuarios())
+    handleModalVisibility(false, false)
     setSaving(false)
   }
 
@@ -154,7 +179,6 @@ const PaginaUsuarios = () => {
     console.log('Eliminando')
   }
   const handleEdit = (usr) => {
-    console.log('editing: ', usr)
     formik.setValues(usr)
     handleModalVisibility(true, true)
     setIsEdit(true)
@@ -251,12 +275,31 @@ const PaginaUsuarios = () => {
                           errores={formik.errors.usuario && formik.touched.usuario ? formik.errors.usuario : null}
                           Icon={ICONS.User}
                         />
-                        <Input
-                          label='Contraseña' type='password' name='password' value={formik.values.password}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
-                          Icon={ICONS.Key}
-                        />
+                        {isEdit ?
+                          <div className="flex w-full mx-2 ">
+                            <div className="flex items-center px-2 pt-4">
+                              <div className="inp-container ">
+                                <input
+                                  onChange={() => setNewPass(prev => !prev)}
+                                  value={newPass} type="checkbox" className="inp-check" />
+                                <label className="check"></label>
+                              </div>
+                            </div>
+                            <Input
+                              label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values.password}
+                              onChange={formik.handleChange} onBlur={formik.handleBlur}
+                              errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
+                              Icon={ICONS.Key}
+                              disabled={!newPass}
+                            />
+                          </div>
+                          :
+                          <Input
+                            label={isEdit ? 'Nueva Contraseña' : 'Contraseña'} type='password' name='password' value={formik.values.password}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.password && formik.touched.password ? formik.errors.password : null}
+                            Icon={ICONS.Key}
+                          />}
                       </div>
                       <div className="flex flex-row">
 
@@ -274,7 +317,7 @@ const PaginaUsuarios = () => {
                           name='Estado'
                           className='input'
                           onChange={value => formik.setFieldValue('is_active', value.value === 'Activo' ? true : false)}
-                          value={formik.values.is_active ? "Activo" : "Inactivo" }
+                          value={formik.values.is_active ? "Activo" : "Inactivo"}
                           onBlur={formik.handleBlur}
                           options={optionsActivo}
                           label='Estado'
