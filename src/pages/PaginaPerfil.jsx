@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ICONS } from "../constants/icons"
+import { useAdmin } from "../context/AdminContext"
 import { useAuth } from "../context/AuthContext"
 
 
@@ -7,23 +8,44 @@ import { useAuth } from "../context/AuthContext"
 const PaginaPerfil = () => {
 
   const { session } = useAuth()
+  const { updateUser } = useAdmin()
   const [user, setUser] = useState(() => {
     let u = session.usuario
     return [
-      { id: 1, label: 'Nombre', value: u.nombre },
-      { id: 2, label: 'Apellidos', value: u.apellidos },
-      { id: 3, label: 'Correo', value: u.correo },
-      { id: 4, label: 'Usuario', value: u.usuario },
-      { id: 5, label: 'Tipo', value: u.is_staff ? 'Administrador' : 'Encargado' },
+      { id: 1, label: 'Nombre', value: u.nombre, atribute: 'nombre' },
+      { id: 2, label: 'Apellidos', value: u.apellidos, atribute: 'apellidos' },
+      { id: 3, label: 'Correo', value: u.correo, atribute: 'correo' },
+      { id: 4, label: 'Usuario', value: u.usuario, atribute: 'usuario' },
+      { id: 5, label: 'Tipo', value: u.is_staff ? 'Administrador' : 'Encargado', atribute: 'is_staff' },
     ]
   })
+
+  useEffect(() => {
+    let u = session.usuario
+    setUser([
+      { id: 1, label: 'Nombre', value: u.nombre, atribute: 'nombre' },
+      { id: 2, label: 'Apellidos', value: u.apellidos, atribute: 'apellidos' },
+      { id: 3, label: 'Correo', value: u.correo, atribute: 'correo' },
+      { id: 4, label: 'Usuario', value: u.usuario, atribute: 'usuario' },
+      { id: 5, label: 'Tipo', value: u.is_staff ? 'Administrador' : 'Encargado', atribute: 'is_staff' },
+    ])
+  }, [session,] )
 
   const [tmpInp, setTmpInp] = useState('')
   const [focusedRow, setFocusedRow] = useState(null)
 
-  const saveChanges = () => {
-    console.log( user )
-    console.log( tmpInp )
+  const saveChanges = async (atribute) => {
+    let sinId = {
+      nombre: session.usuario.nombre,
+      apellidos: session.usuario.apellidos,
+      correo: session.usuario.correo,
+      usuario: session.usuario.usuario,
+      is_active: session.usuario.is_active,
+      is_staff: session.usuario.is_staff,
+    }
+    let newV = { ...sinId, [atribute]: tmpInp }
+    await updateUser(session.usuario.id, newV)
+    setFocusedRow(0)
   }
 
   return (
@@ -36,7 +58,7 @@ const PaginaPerfil = () => {
         {user[0].value} {user[1].value}
       </p>
       <p className="text-2xl font-normal text-gray-700 pl-6 pt-2">
-          Datos de Usuario
+        Datos de Usuario
       </p>
       <div className="w-full p-5">
         <table className="profile-table">
@@ -76,7 +98,7 @@ const PaginaPerfil = () => {
                       {focusedRow === atr.id ?
                         <>
                           <button
-                            onClick={ saveChanges }
+                            onClick={() => saveChanges(atr.atribute)}
                             className="normalButton w-full flex items-center p-1 rounded-md justify-center" >
                             <ICONS.Save size='20px' />
                           </button>
@@ -96,85 +118,6 @@ const PaginaPerfil = () => {
             }
           </tbody>
         </table>
-
-        {/*<table className="customTable">
-                    <tbody>
-                        <tr
-                            onClick={hanldeEdit}
-                            className="relative flex flex-row items-center w-full py-2 text-gray-700 ">
-                            <td className="px-3 font-normal text-sm pointer-events-none">
-                                Nombre:
-                            </td>
-                            <td className="font-medium">
-                                <input value={user.nombre} disabled className="pointer-events-none input-when-click-text" />
-                            </td>
-                            <label className="cursor-pointer pointer-events-none absolute flex items-center justify-center right-4 filter-button">
-                                <ICONS.Edit size='20px' />
-                            </label>
-                        </tr>
-                        <tr
-                            onClick={hanldeEdit}
-                            className="relative flex flex-row items-center w-full py-2 text-gray-700 ">
-                            <td className="px-3 font-normal text-sm pointer-events-none">
-                                Apellidos:
-                            </td>
-                            <td className="font-medium">
-                                <input value={user.apellidos} disabled className="pointer-events-none input-when-click-text" />
-
-                            </td>
-                            <label className="cursor-pointer pointer-events-none absolute flex items-center justify-center right-4 filter-button">
-                                <ICONS.Edit size='20px' />
-                            </label>
-                        </tr>
-                        <tr
-                            onClick={hanldeEdit}
-                            className="relative flex flex-row items-center w-full py-2 text-gray-700 ">
-                            <td className="px-3 font-normal text-sm pointer-events-none">
-                                Correo:
-                            </td>
-                            <td className="font-medium">
-                                <input value={user.correo} disabled className="pointer-events-none input-when-click-text" />
-
-                            </td>
-                            <label className="cursor-pointer pointer-events-none absolute flex items-center justify-center right-4 filter-button">
-                                <ICONS.Edit size='20px' />
-                            </label>
-                        </tr>
-                        <tr
-                            onClick={hanldeEdit}
-                            className="relative flex flex-row items-center w-full py-2 text-gray-700 ">
-                            <td className="px-3 font-normal text-sm pointer-events-none">
-                                Usuario:
-                            </td>
-                            <td className="font-medium">
-                                <input value={user.usuario} disabled className="pointer-events-none input-when-click-text" />
-                            </td>
-                            <label className="cursor-pointer pointer-events-none absolute flex items-center justify-center right-4 filter-button">
-                                <ICONS.Edit size='20px' />
-                            </label>
-                        </tr>
-                        <tr
-                            id={1}
-                            onClick={hanldeEdit}
-                            className="relative flex flex-row items-center w-full py-2 text-gray-700 ">
-                            <td className="px-3 font-normal text-sm pointer-events-none">
-                                Tipo:
-                            </td>
-                            <td className="font-medium">
-                                <input value={user.is_staff ? 'Administrador' : 'Encargado'} disabled className="pointer-events-none input-when-click-text" />
-                            </td>
-                            <label className="cursor-pointer pointer-events-none absolute flex items-center justify-center right-4 filter-button">
-
-                                {focusedRow === 1 ? console.log(this) &&
-                                    <>
-                                        assdf
-                                    </> :
-                                    <ICONS.Edit size='20px' />
-                                }
-                            </label>
-                        </tr>
-                    </tbody>
-                </table>*/}
       </div>
     </div>
   )
