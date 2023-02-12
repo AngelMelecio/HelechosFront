@@ -33,18 +33,24 @@ const optionsActivo = [
 
 const PaginaUsuarios = () => {
 
-
-
   const modalRef = useRef()
   const modalBoxRef = useRef()
   const newPassRef = useRef()
 
-  const { session } = useAuth()
-  const { getUsuarios, allUsuarios, updateUser, updatePassword } = useAdmin()
+  const { session, notify } = useAuth()
+
+  const {
+    getUsuarios,
+    allUsuarios,
+    updateUser,
+    updatePassword,
+    UsuariosColumns,
+    saveUser
+
+  } = useAdmin()
 
   const [objUsuario, setObjUsuario] = useState(initobj)
   const [listaUsuarios, setListaUsuarios] = useState([])
-  const { UsuariosColumns } = useAdmin()
   const [isEdit, setIsEdit] = useState(false)
   const [saving, setSaving] = useState(false)
   const [newPass, setNewPass] = useState(false)
@@ -103,7 +109,7 @@ const PaginaUsuarios = () => {
       errors.usuario = 'El usuario debe tener una longitud entre 4 y 20 caracteres';
     }
 
-    if ( !isEdit || (isEdit && newPass) ){
+    if (!isEdit || (isEdit && newPass)) {
       if (!values.password) {
         errors.password = 'Ingresa una contraseña';
       } else if ((values.password.length < 8 || values.password.length > 15)) {
@@ -130,50 +136,44 @@ const PaginaUsuarios = () => {
     validate,
     onSubmit: values => {
       //console.log('Guardando:', values)
-      saveUsuario(values)
+      handleSaveUsuario(values)
     },
   });
 
-  const saveUsuario = async (values) => {
+  const handleSaveUsuario = async (values) => {
     setSaving(true)
-
-    if (!isEdit) {
-      //console.log(values)
-      let response = await fetch(apiUserUrl, {
-        method: 'POST',
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': 'Bearer ' + session.access
+    try{
+      if (!isEdit) {
+        await saveUser(values)
+      } else {
+        let newV = {
+          nombre: values.nombre,
+          apellidos: values.apellidos,
+          correo: values.correo,
+          usuario: values.usuario,
+          is_active: values.is_active,
+          is_staff: values.is_staff,
         }
-      })
-      if (response.ok) {
-        let data = await response.json()
-        alert(data.message)
-
+        let id = values.id
+        await updateUser(id, newV)
+        if (newPass) {
+          await updatePassword(id, values.password)
+        }
       }
+      setListaUsuarios(await getUsuarios())
+      handleModalVisibility(false, false)
     }
-    else { 
-      let newV = {
-        nombre: values.nombre,
-        apellidos: values.apellidos,
-        correo: values.correo,
-        usuario: values.usuario,
-        is_active: values.is_active,
-        is_staff: values.is_staff,
-      }
-      let id = values.id
-      await updateUser(id, newV)
-      if( newPass )
-      {
-        await updatePassword( id,values.password  )
-      }
-
+    catch(e){
+      let {errors} = e
+      console.log( 'catched', e )
+      if( errors.correo ) notify( errors.correo[0], true )
+      if( errors.usuario ) notify( errors.usuario[0], true )
     }
-    setListaUsuarios(await getUsuarios())
-    handleModalVisibility(false, false)
-    setSaving(false)
+    finally{
+      setSaving(false)
+    }
   }
+
 
   const deleteUsuarios = () => {
     console.log('Eliminando')

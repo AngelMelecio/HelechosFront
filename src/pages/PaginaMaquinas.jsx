@@ -10,20 +10,37 @@ import CustomSelect from '../components/CustomSelect'
 import Table from '../components/Table'
 import { useAdmin } from '../context/AdminContext'
 import { useAuth } from '../context/AuthContext'
+import { useApp } from '../context/AppContext'
 
-const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
+
 
 const initobj = {
-    idMaquina: "",
-    numero: "",
-    linea: "0",
-    marca: "",
-    modelo: "",
-    ns: "",
-    fechaAdquisicion: "",
-    otros: "",
-    departamento: "Seleccione"
+  idMaquina: "",
+  numero: "",
+  linea: "0",
+  marca: "",
+  modelo: "",
+  ns: "",
+  fechaAdquisicion: "",
+  otros: "",
+  departamento: "Seleccione"
 }
+const optionsDepartamento = [
+  { value: 'Seleccione', label: 'Seleccione' },
+  { value: 'Tejido', label: 'Tejido' },
+  { value: 'Corte', label: 'Corte' },
+  { value: 'Plancha', label: 'Plancha' },
+  { value: 'Empaque', label: 'Empaque' },
+  { value: 'Transporte', label: 'Transporte' },
+  { value: 'Diseno', label: 'Diseño' },
+  { value: 'Gerencia', label: 'Gerencia' }
+]
+const optionsLinea = [
+  { value: '0', label: 'Ninguna' },
+  { value: '1', label: 'Línea 1' },
+  { value: '2', label: 'Línea 2' },
+  { value: '3', label: 'Línea 3' }
+]
 
 const PaginaMaquinas = () => {
 
@@ -37,7 +54,15 @@ const PaginaMaquinas = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [modalDeleteVisible, setModalDeleteVisible] = useState()
 
-  const { fetchingMaquinas, allMaquinas, maquinasColumns, getMaquinas } = useAdmin()
+  const {
+    fetchingMaquinas,
+    allMaquinas,
+    maquinasColumns,
+    getMaquinas,
+    saveMaquina,
+    deleteMaquinas 
+  } = useApp()
+
   const [listaMaquinas, setListaMaquinas] = useState()
   const { session } = useAuth()
 
@@ -51,22 +76,7 @@ const PaginaMaquinas = () => {
 
   //Formik
   //Options select
-  const optionsDepartamento = [
-    { value: 'Seleccione', label: 'Seleccione' },
-    { value: 'Tejido', label: 'Tejido' },
-    { value: 'Corte', label: 'Corte' },
-    { value: 'Plancha', label: 'Plancha' },
-    { value: 'Empaque', label: 'Empaque' },
-    { value: 'Transporte', label: 'Transporte' },
-    { value: 'Diseno', label: 'Diseño' },
-    { value: 'Gerencia', label: 'Gerencia' }
-  ]
-  const optionsLinea = [
-    { value: '0', label: 'Ninguna' },
-    { value: '1', label: 'Línea 1' },
-    { value: '2', label: 'Línea 2' },
-    { value: '3', label: 'Línea 3' }
-  ]
+
 
   //Validaciones
   const validate = values => {
@@ -105,74 +115,26 @@ const PaginaMaquinas = () => {
     initialValues: initobj,
     validate,
     onSubmit: values => {
-      saveMaquina(values);
+      handleSaveMaquinas(values);
     },
   });
 
-  const saveMaquina = async (values) => {
-
+  const handleSaveMaquinas = async(values)=>{
     setSaving(true)
-
-    let formData = new FormData()
-    formData.append('numero', values.numero)
-    formData.append('linea', values.linea)
-    formData.append('marca', values.marca)
-    formData.append('modelo', values.modelo)
-    formData.append('ns', values.ns)
-    formData.append('fechaAdquisicion', values.fechaAdquisicion)
-    formData.append('otros', values.otros)
-    formData.append('departamento', values.departamento)
-
-    if (!isEdit) {
-      //Creacion de un nueva maquina 
-      await fetch(apiMaquinasUrl, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Authorization': 'Bearer ' + session.access
-        }
-      })
-        .then(response => response.json())
-        .then(data => alert(data.message))
-
-    } else {
-      //Actualizando los datos de la maquina
-      await fetch(apiMaquinasUrl + objMaquina.idMaquina, {
-        method: 'PUT',
-        body: formData,
-        headers: {
-          'Authorization': 'Bearer ' + session.access
-        }
-      })
-        .then(response => response.json())
-        .then(data => alert(data.message))
-    }
-
+    await saveMaquina(values, isEdit)
     setListaMaquinas(await getMaquinas())
     setObjMaquina(initobj)
-    setSaving(false)
     handleModalVisibility(false, false)
-  }
+    setSaving(false)
+  } 
 
-  const deleteMaquinas = async () => {
-    listaMaquinas.forEach(async (e) => {
-      if (e.isSelected) {
-        await fetch(apiMaquinasUrl + e.idMaquina, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': 'Bearer ' + session.access
-          }
-        })
-          .then(response => response.json())
-          .then(data => alert('Maquinas Eliminadas:', data))
-      }
-    })
+  const hancleDleteMaquinas = async()=>{
+    await deleteMaquinas(listaMaquinas)
     setListaMaquinas(await getMaquinas())
     setModalDeleteVisible(false)
   }
 
   const handleModalVisibility = async (show, edit) => {
-
     if (show) document.getElementById("form-modal-maquinas").classList.add('visible')
     else document.getElementById("form-modal-maquinas").classList.remove('visible')
 
@@ -185,7 +147,6 @@ const PaginaMaquinas = () => {
   }
 
   const handleModalDeleteVisibility = (visible) => {
-    //if (!someSelectedRef.current.checked) return
     if (visible) document.getElementById('delete-modal-maquina').classList.add('visible')
     else document.getElementById('delete-modal-maquina').classList.remove('visible')
     setModalDeleteVisible(visible)
@@ -204,7 +165,7 @@ const PaginaMaquinas = () => {
         //modalDeleteVisible ?
         <DeleteModal
           onCancel={() => handleModalDeleteVisibility(false)}
-          onConfirm={deleteMaquinas}
+          onConfirm={hancleDleteMaquinas}
           elements={listaMaquinas}
           message='Las siguientes maquinas se eliminarán permanentemente:'
         />

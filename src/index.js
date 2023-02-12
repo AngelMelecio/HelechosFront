@@ -15,11 +15,11 @@ import { AuthProvider } from './context/AuthContext';
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AppProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <AppProvider>
           <Main />
-        </AuthProvider>
-      </AppProvider>
+        </AppProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
