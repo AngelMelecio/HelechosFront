@@ -12,12 +12,7 @@ import { useApp } from '../context/AppContext'
 import { AiOutlineConsoleSql } from 'react-icons/ai'
 import { useAdmin } from '../context/AdminContext'
 import { useAuth } from '../context/AuthContext'
-
-const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
-const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
-const apiEmpleadoMaquinaUrl = 'http://127.0.0.1:8000/api/empleados_maquina/'
-const imageEndPoint = 'http://127.0.0.1:8000'
-const apiEmpleadoMaquinasUrl = 'http://127.0.0.1:8000/api/empleado_maquinas/'
+import { useNavigate } from 'react-router-dom'
 
 const initobj = {
   idEmpleado: "",
@@ -41,7 +36,7 @@ const PaginaEmpleados = () => {
   const modalRef = useRef()
   const modalBoxRef = useRef()
 
-  const {
+/*  const {
     fetchingEmpleados,
     empleadosColumns,
     getEmpleados,
@@ -49,10 +44,20 @@ const PaginaEmpleados = () => {
     allMaquinas,
     getEmpleadoMaquinas
 
-  } = useAdmin()
+  } = useAdmin()*/
+
+  const {
+    getEmpleadoMaquinas,
+    
+    empleadosColumns, getEmpleados, allEmpleados, fetchingEmpleados,
+    saveEmpleado, deleteEmpleados,
+
+    getMaquinas, allMaquinas, fetchingMaquinas
+  } = useApp()
+
+  const navigate = useNavigate()
 
   const { session } = useAuth()
-  const { notify } = useApp()
 
   const [objEmpleado, setObjEmpleado] = useState(initobj);
   const [saving, setSaving] = useState(false)
@@ -68,9 +73,8 @@ const PaginaEmpleados = () => {
 
 
   //Formik
-
   useEffect(async () => {
-    //setAllEmpleados(await getEmpleados())
+    setAvailableMaquinas( await getMaquinas() )
     setListaEmpleados(await getEmpleados())
   }, [])
 
@@ -139,113 +143,15 @@ const PaginaEmpleados = () => {
     validate,
     onSubmit: values => {
       console.log('submiting')
-      saveEmpleado(values);
+      handleSaveEmpleado(values);
     },
   });
 
-  const removeRelationEM = async (idEmpleado) => {
-    const response = await fetch(apiEmpleadoMaquinaUrl + idEmpleado, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': 'Bearer ' + session.access
-      }
-    })
-  }
-
-  const newRelation = async (idEmpleado, idMaquina) => {
-    let newEmpleadoMaquina = { idEmpleado: idEmpleado, idMaquina: idMaquina }
-    await fetch(apiEmpleadoMaquinaUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + session.access
-      },
-      body: JSON.stringify(newEmpleadoMaquina)
-    })
-      .then(response => response.json())
-      .then(data => console.log('asignacion:', data))
-  }
-
-  const saveEmpleado = async (values) => {
-    console.log('saving', isEdit)
-
+  const handleSaveEmpleado = async (values) => {
     setSaving(true)
-    let formData = new FormData()
-    formData.append('nombre', values.nombre)
-    formData.append('apellidos', values.apellidos)
-    formData.append('direccion', values.direccion)
-    formData.append('telefono', values.telefono)
-    formData.append('correo', values.correo)
-    formData.append('ns', values.ns)
-    formData.append('usuario', values.usuario)
-    formData.append('contrasena', values.contrasena)
-    if ((objEmpleado.fotografia) instanceof File)
-      formData.append('fotografia', objEmpleado.fotografia)
-    formData.append('departamento', values.departamento)
-    formData.append('tipo', values.tipo)
 
-    if (!isEdit) {
-      //    Creacion de un Nuevo Empleado 
-      let response = await fetch(apiEmpleadosUrl, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Authorization': 'Bearer ' + session.access
-        }
-
-      })
-
-      
-      //    Espero la respuesta para obtener el nuevo Id 
-      //console.log( await response.json() )
-      const { message, empleado } = await response.json()
-      //    Asigno Cada una de las Maquinas 
-      assignedMaquinas.forEach(async (AM) => {
-        await newRelation(empleado.idEmpleado, AM.idMaquina)
-      })
-      notify(message)
-      
-    }
-    else {
-      let idEmpleado = values.idEmpleado
-      let maquinas = []
-      assignedMaquinas.forEach(m => maquinas.push({id:m.idMaquina}))
-      //console.log({ idEmpleado: idEmpleado, maquinas: maquinas })
-      let response = await fetch(apiEmpleadoMaquinasUrl, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + session.access 
-        },
-        body: JSON.stringify({ idEmpleado: idEmpleado, maquinas: maquinas }),
-      })
-      let data = await response.json()
-      notify( data.message )
-
-      await fetch(apiEmpleadosUrl + objEmpleado.idEmpleado, {
-        method: 'PUT',
-        body: formData,
-        headers: {
-          'Authorization': 'Bearer ' + session.access
-        }
-      })
-        .then(response => response.json())
-        .then(data => notify(data.message))
-      
-      //console.log( response )
-      //console.log(data)
-      /*
-      //    Actualizando los datos del empleado
-
-      //    Removiendo las relaciones existentes
-      await removeRelationEM(values.idEmpleado)
-
-      //    Creando las nuevas relaciones
-      assignedMaquinas.forEach(async (am) => {
-        await newRelation(values.idEmpleado, am.idMaquina)
-      })
-*/
-    }
+    
+    await saveEmpleado( values, objEmpleado, assignedMaquinas, isEdit )
 
     setListaEmpleados(await getEmpleados())
     setObjEmpleado(initobj)
@@ -253,24 +159,14 @@ const PaginaEmpleados = () => {
     handleModalVisibility(false, false)
   }
 
-  const deleteEmpleados = async () => {
-    listaEmpleados.forEach(async (e) => {
-      if (e.isSelected) {
-        await fetch(apiEmpleadosUrl + e.idEmpleado, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': 'Bearer ' + session.access
-          }
-        })
-          .then(response => response.json())
-          .then(data => console.log('Empleados Eliminados:', data))
-          .finally(async () => {
-            setListaEmpleados(await getEmpleados())
-          })
-      }
-    })
+  const handleDeleteEmpleados = async() =>{
+    setSaving(true)
+    await deleteEmpleados(listaEmpleados)
+    setListaEmpleados(await getEmpleados())
     handleModalDeleteVisibility(false)
+    setSaving(false)
   }
+  
 
   const handleModalVisibility = async (show, edit) => {
 
@@ -337,7 +233,7 @@ const PaginaEmpleados = () => {
         //modalDeleteVisible ?
         <DeleteModal
           onCancel={() => handleModalDeleteVisibility(false)}
-          onConfirm={deleteEmpleados}
+          onConfirm={handleDeleteEmpleados}
           elements={listaEmpleados}
           message='Los siguientes empleados se eliminarán permanentemente:'
         />

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify";
 import { useApp } from "./AppContext";
 
 const apiLoginUrl = "http://127.0.0.1:8000/login/"
@@ -20,7 +21,20 @@ export function AuthProvider({ children }) {
   let [loading, setLoading] = useState(true)
   
   const navigate = useNavigate()
-  const{notify} = useApp()
+  
+  const notify = (message, error = false) => {
+    let options = {
+      position: "bottom-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    }
+    error ? toast.error(message, options) : toast.success(message, options)
+  }
 
   useEffect(() => {
     if (loading)
@@ -106,7 +120,8 @@ export function AuthProvider({ children }) {
         session, setSession,
         Login,
         Logout,
-        updateToken
+        updateToken,
+        notify
       }}
     >
       {children}
