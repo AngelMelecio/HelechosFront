@@ -8,41 +8,9 @@ import { useAuth } from '../context/AuthContext'
 const apiLoginUrl = "http://127.0.0.1:8000/login/"
 
 export default function Login({navigate}) {
-
-  const {setUser} = useApp()
   
   const{Login} = useAuth()
-
-  const handleLogin = async(values) =>{
-    Login(values)
-    values = {...values, usuario:values.usuario.trim()}
-    const response = await fetch( apiLoginUrl, {
-      method:'POST',
-      headers: {'Content-Type': 'application/json'},
-      body:JSON.stringify(values)
-    } )    
-    let res = await response.json()
-    
-    let tokens = {token:res.token, refreshToken:res['refresh-token'] }
-    console.log( tokens )
-
-    if( res.error ){
-      alert(res.error)
-      return
-    }
-
-    if( !res.usuario.is_active ){
-      alert("Usuario no Activo")
-      return
-    }
-
-    alert( res.message )
-    if( response.status === 200 ){
-        localStorage.setItem('auth', JSON.stringify(res.usuario))
-        setUser(res.usuario)
-        navigate('/')
-    }
-  }
+  
 
   return (
     <Formik

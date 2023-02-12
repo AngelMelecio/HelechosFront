@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
+import { toast } from "react-toastify";
+import { useApp } from "./AppContext";
 import { useAuth } from "./AuthContext";
 
 const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
@@ -36,7 +38,7 @@ const maquinasColumns = [
     { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
     { name: 'Otros', attribute: 'otros' },
     { name: 'Departamento', attribute: 'departamento' },
-  ]
+]
 
 const AdminContext = React.createContext()
 export function useAdmin() {
@@ -44,8 +46,6 @@ export function useAdmin() {
 }
 
 export function AdminProvider({ children }) {
-
-    
 
     const [fetchingEmpleados, setFetchingEmpleados] = useState(false)
     const [allEmpleados, setAllEmpleados] = useState([])
@@ -57,14 +57,7 @@ export function AdminProvider({ children }) {
     const [allUsuarios, setAllUsuarios] = useState([])
 
     const { session, setSession } = useAuth()
-
-    /*useEffect( () => {
-        async function getting() {
-            setAllEmpleados(await getEmpleados())
-            setAllMaquinas(await getMaquinas())
-        }
-        getting()
-    }, [])*/
+    const {notify} = useApp()
 
     const getEmpleados = async () => {
         setFetchingEmpleados(true)
@@ -121,7 +114,7 @@ export function AdminProvider({ children }) {
         return []
     }
 
-    const getUsuarios = async () =>{
+    const getUsuarios = async () => {
         setFetchingUsuarios(true)
         let response = await fetch(apiUsersUrl, {
             method: 'GET',
@@ -138,38 +131,42 @@ export function AdminProvider({ children }) {
         setFetchingUsuarios(false)
     }
 
-    const updateUser = async ( id, value ) => {
-        const response = await fetch( apiUsersUrl + id + '/', {
-            method:'PUT',
+    const updateUser = async (id, value) => {
+        const response = await fetch(apiUsersUrl + id + '/', {
+            method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': 'Bearer ' + session.access
             },
             body: JSON.stringify(value)
-        } )
+        })
         let data = await response.json()
-        if( response.status === 200 ){
-            setSession( prev => ( { ...prev, usuario:data.usuario } ) ) 
+        if (response.status === 200) {
+            let newSesion = {...session, usuario: data.usuario }
+            setSession(newSesion)
+            localStorage.setItem('auth', JSON.stringify(newSesion))
+            notify(data.message)
+            return
         }
-        alert( data.message )
+        notify(data.message, true)
     }
 
-    const updatePassword = async ( id, value ) => {
-        const response =await fetch( apiUsersUrl + id + '/set_password/', {
-            method:'post',
+    const updatePassword = async (id, value) => {
+        const response = await fetch(apiUsersUrl + id + '/set_password/', {
+            method: 'post',
             headers: {
                 "Content-Type": "application/json",
                 'Authorization': 'Bearer ' + session.access
             },
             body: JSON.stringify({
-                password:value,
-                password2:value
+                password: value,
+                password2: value
             })
-        } )
+        })
 
-        if( response.status === 200 ){
+        if (response.status === 200) {
 
-            alert( 'Contraseña actualizada Correctamente' )
+            alert('Contraseña actualizada Correctamente')
         }
     }
 
@@ -185,10 +182,10 @@ export function AdminProvider({ children }) {
                 getEmpleadoMaquinas,
 
                 fetchingUsuarios,
-                allUsuarios, getUsuarios,UsuariosColumns,
-            
+                allUsuarios, getUsuarios, UsuariosColumns,
+
                 updateUser,
-                updatePassword
+                updatePassword,
             }}
         >
             {children}
