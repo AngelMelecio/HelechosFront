@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom"
+import { useApp } from "./AppContext";
 
 const apiLoginUrl = "http://127.0.0.1:8000/login/"
 const apiRefreshTokenUrl = "http://127.0.0.1:8000/api/token/refresh/"
@@ -14,12 +15,12 @@ export function useAuth() {
 export function AuthProvider({ children }) {
 
   let auth = localStorage.getItem('auth')
-  
   let [session, setSession] = useState(() => auth ? JSON.parse(auth) : null)
   //let [user, setUser] = useState(null)
   let [loading, setLoading] = useState(true)
-
+  
   const navigate = useNavigate()
+  const{notify} = useApp()
 
   useEffect(() => {
     if (loading)
@@ -53,16 +54,16 @@ export function AuthProvider({ children }) {
       setSession(data)
       //setAuthTokens(tokens)
       localStorage.setItem('auth', JSON.stringify(data))
-      
-      alert(data.message)
+      notify('Bienvenido')
+      //alert(data.message)
       navigate('/empleados')
     }
     else {
       if (data.error) {
-        alert(data.error)
+        notify(data.error, true)
       }
       else if (!data.usuario.is_active) {
-        alert("Usuario no Activo")
+        notify("Usuario no Activo", true)
       }
     }
   }

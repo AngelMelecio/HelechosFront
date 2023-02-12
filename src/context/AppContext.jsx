@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 const AppContext = React.createContext()
 
@@ -10,20 +11,27 @@ export function useApp() {
 
 export function AppProvider({ children }) {
 
-  let auth = localStorage.getItem('auth')
-  const [user, setUser] = useState( () => auth ? JSON.parse(auth) : null )
-
-  const logout = () =>{
-    setUser(null)
-    localStorage.removeItem('auth')
-  }
+  const notify = (message, error = false ) => {
+    let options = {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    }
+    error ? toast.error(message,options) : toast.success(message,options)
+}
 
   return (
     <AppContext.Provider
       value={{
-        user, setUser, logout
+       notify
       }}>
       {children}
+      <ToastContainer position="bottom-right" />
     </AppContext.Provider>
   )
 }

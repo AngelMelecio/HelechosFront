@@ -9,14 +9,15 @@ const PaginaPerfil = () => {
 
   const { session } = useAuth()
   const { updateUser } = useAdmin()
+
+
   const [user, setUser] = useState(() => {
     let u = session.usuario
     return [
       { id: 1, label: 'Nombre', value: u.nombre, atribute: 'nombre' },
       { id: 2, label: 'Apellidos', value: u.apellidos, atribute: 'apellidos' },
       { id: 3, label: 'Correo', value: u.correo, atribute: 'correo' },
-      { id: 4, label: 'Usuario', value: u.usuario, atribute: 'usuario' },
-      { id: 5, label: 'Tipo', value: u.is_staff ? 'Administrador' : 'Encargado', atribute: 'is_staff' },
+      { id: 4, label: 'Usuario', value: u.usuario, atribute: 'usuario' }
     ]
   })
 
@@ -26,8 +27,7 @@ const PaginaPerfil = () => {
       { id: 1, label: 'Nombre', value: u.nombre, atribute: 'nombre' },
       { id: 2, label: 'Apellidos', value: u.apellidos, atribute: 'apellidos' },
       { id: 3, label: 'Correo', value: u.correo, atribute: 'correo' },
-      { id: 4, label: 'Usuario', value: u.usuario, atribute: 'usuario' },
-      { id: 5, label: 'Tipo', value: u.is_staff ? 'Administrador' : 'Encargado', atribute: 'is_staff' },
+      { id: 4, label: 'Usuario', value: u.usuario, atribute: 'usuario' }
     ])
   }, [session,] )
 

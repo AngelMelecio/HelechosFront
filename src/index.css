@@ -441,3 +441,25 @@ input::-webkit-inner-spin-button {
 .profile-table tr:hover{
   cursor: pointer;
 }
+
+.profile-table tr .filter-button{
+  opacity: 0%;
+  transition: 0.2s;
+}
+
+.profile-table tr:hover .filter-button{
+  opacity: 100%;
+  transition: 0.2s;
+}
+
+#alert-box{
+  opacity: 100%;
+  transition: 0.2s;
+}
+#alert-box.hide{
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: 0.2s;
+}
+

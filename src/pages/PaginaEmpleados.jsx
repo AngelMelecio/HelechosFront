@@ -17,6 +17,7 @@ const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
 const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
 const apiEmpleadoMaquinaUrl = 'http://127.0.0.1:8000/api/empleados_maquina/'
 const imageEndPoint = 'http://127.0.0.1:8000'
+const apiEmpleadoMaquinasUrl = 'http://127.0.0.1:8000/api/empleado_maquinas/'
 
 const initobj = {
   idEmpleado: "",
@@ -33,7 +34,7 @@ const initobj = {
   tipo: "Seleccione"
 }
 
-const initErrors ={}
+const initErrors = {}
 
 const PaginaEmpleados = () => {
 
@@ -51,6 +52,7 @@ const PaginaEmpleados = () => {
   } = useAdmin()
 
   const { session } = useAuth()
+  const { notify } = useApp()
 
   const [objEmpleado, setObjEmpleado] = useState(initobj);
   const [saving, setSaving] = useState(false)
@@ -165,7 +167,7 @@ const PaginaEmpleados = () => {
   }
 
   const saveEmpleado = async (values) => {
-    console.log('saving')
+    console.log('saving', isEdit)
 
     setSaving(true)
     let formData = new FormData()
@@ -193,19 +195,33 @@ const PaginaEmpleados = () => {
 
       })
 
-      if (values.tipo === 'Trabajador') {
-        //    Espero la respuesta para obtener el nuevo Id 
-        //console.log( await response.json() )
-        const { message, empleado } = await response.json()
-        //    Asigno Cada una de las Maquinas 
-        assignedMaquinas.forEach(async (AM) => {
-          await newRelation(empleado.idEmpleado, AM.idMaquina)
-        })
-        alert(message)
-      }
+      
+      //    Espero la respuesta para obtener el nuevo Id 
+      //console.log( await response.json() )
+      const { message, empleado } = await response.json()
+      //    Asigno Cada una de las Maquinas 
+      assignedMaquinas.forEach(async (AM) => {
+        await newRelation(empleado.idEmpleado, AM.idMaquina)
+      })
+      notify(message)
+      
     }
     else {
-      //    Actualizando los datos del empleado
+      let idEmpleado = values.idEmpleado
+      let maquinas = []
+      assignedMaquinas.forEach(m => maquinas.push({id:m.idMaquina}))
+      //console.log({ idEmpleado: idEmpleado, maquinas: maquinas })
+      let response = await fetch(apiEmpleadoMaquinasUrl, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + session.access 
+        },
+        body: JSON.stringify({ idEmpleado: idEmpleado, maquinas: maquinas }),
+      })
+      let data = await response.json()
+      notify( data.message )
+
       await fetch(apiEmpleadosUrl + objEmpleado.idEmpleado, {
         method: 'PUT',
         body: formData,
@@ -214,7 +230,12 @@ const PaginaEmpleados = () => {
         }
       })
         .then(response => response.json())
-        .then(data => alert(data.message))
+        .then(data => notify(data.message))
+      
+      //console.log( response )
+      //console.log(data)
+      /*
+      //    Actualizando los datos del empleado
 
       //    Removiendo las relaciones existentes
       await removeRelationEM(values.idEmpleado)
@@ -223,7 +244,7 @@ const PaginaEmpleados = () => {
       assignedMaquinas.forEach(async (am) => {
         await newRelation(values.idEmpleado, am.idMaquina)
       })
-
+*/
     }
 
     setListaEmpleados(await getEmpleados())
