@@ -29,7 +29,7 @@ const PaginaPerfil = () => {
       { id: 3, label: 'Correo', value: u.correo, atribute: 'correo' },
       { id: 4, label: 'Usuario', value: u.usuario, atribute: 'usuario' }
     ])
-  }, [session,] )
+  }, [session,])
 
   const [tmpInp, setTmpInp] = useState('')
   const [focusedRow, setFocusedRow] = useState(null)
@@ -50,8 +50,9 @@ const PaginaPerfil = () => {
 
   return (
     <div className="flex flex-col w-full overflow-scroll py-5">
-      <div className="flex  w-full h-1/5 justify-center items-center my-2">
-        <div className="bg-gray-200 w-28 h-28 rounded-full">
+      <div className="flex  w-full h-1/5 justify-center items-center">
+        <div className="w-28 h-28 rounded-full">
+          <ICONS.UsersIdentity className='' size='px' style={{ color: '#115e59' }} />
         </div>
       </div>
       <p className="text-center text-lg font-medium text-gray-700 italic">
@@ -79,23 +80,14 @@ const PaginaPerfil = () => {
                   </td>
                   <td className="w-full  font-normal">
                     {
-                      focusedRow === atr.id ?
-                        <input
-                          id={atr.id}
-                          className="border-2 border-transparent w-full py-1 px-2 bg-blue-50 h-full focus:outline-none"
-                          type="text"
-                          value={tmpInp}
-                          onChange={(e) => setTmpInp(e.target.value)}
-                        />
-                        : <p className="border-2 border-transparent px-2">
-                          {atr.value}
-                        </p>
-
+                      <p className="border-2 border-transparent px-2">
+                        {atr.value}
+                      </p>
                     }
                   </td>
                   <td className="">
                     <div className="flex flex-row h-full justify-around items-center w-24">
-                      {focusedRow === atr.id ?
+                      {/*focusedRow === atr.id ?
                         <>
                           <button
                             onClick={() => saveChanges(atr.atribute)}
@@ -111,7 +103,7 @@ const PaginaPerfil = () => {
                         :
                         <button className="filter-button">
                           <ICONS.Edit size='20px' />
-                        </button>}
+                  </button>*/}
                     </div>
                   </td>
                 </tr>)

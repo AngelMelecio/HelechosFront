@@ -251,7 +251,7 @@ input::-webkit-inner-spin-button {
   width: 100px;
   height: 100px;
   border-radius: 50px;
-  background-color: rgb(187, 187, 187);
+  background-color: #e5e7eb;
 }
 
 .opacity-white {
@@ -436,10 +436,6 @@ input::-webkit-inner-spin-button {
 .profile-table tr{
   border-block: 1px solid #cbd5e1;
   transition: 0.2s;
-}
-
-.profile-table tr:hover{
-  cursor: pointer;
 }
 
 .profile-table tr .filter-button{

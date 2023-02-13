@@ -60,7 +60,7 @@ const PaginaMaquinas = () => {
     maquinasColumns,
     getMaquinas,
     saveMaquina,
-    deleteMaquinas 
+    deleteMaquinas
   } = useApp()
 
   const [listaMaquinas, setListaMaquinas] = useState()
@@ -119,16 +119,16 @@ const PaginaMaquinas = () => {
     },
   });
 
-  const handleSaveMaquinas = async(values)=>{
+  const handleSaveMaquinas = async (values) => {
     setSaving(true)
     await saveMaquina(values, isEdit)
     setListaMaquinas(await getMaquinas())
     setObjMaquina(initobj)
     handleModalVisibility(false, false)
     setSaving(false)
-  } 
+  }
 
-  const hancleDleteMaquinas = async()=>{
+  const hancleDleteMaquinas = async () => {
     await deleteMaquinas(listaMaquinas)
     setListaMaquinas(await getMaquinas())
     setModalDeleteVisible(false)
@@ -147,8 +147,8 @@ const PaginaMaquinas = () => {
   }
 
   const handleModalDeleteVisibility = (visible) => {
-    if (visible) document.getElementById('delete-modal-maquina').classList.add('visible')
-    else document.getElementById('delete-modal-maquina').classList.remove('visible')
+    if (visible) document.getElementById('delete-modal').classList.add('visible')
+    else document.getElementById('delete-modal').classList.remove('visible')
     setModalDeleteVisible(visible)
   }
 
@@ -180,8 +180,8 @@ const PaginaMaquinas = () => {
               <div className="z-10 py-2 px-4 flex w-full shadow-md ">
                 <div className="flex flex-row w-full total-center relative h-10">
                   {isEdit
-                    ? <ICONS.UserEdit className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
-                    : <ICONS.PersonPlus className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
+                    ? <ICONS.Edit className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
+                    : <ICONS.Plus className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
                   }
                   <p className='font-semibold text-teal-800 text-2xl' >
                     {isEdit ? 'Editar Maquina' : 'Nueva Maquina'}
@@ -208,13 +208,8 @@ const PaginaMaquinas = () => {
                   onSubmit={formik.handleSubmit}>
                   <div className="absolute w-full flex flex-col  px-4">
                     <div className='flex flex-row w-full h-full p-2 total-center'>
-                      <div className="flex relative w-full items-center justify-center foto text-center">
-                        { /* Imagen de la maquina ---*/}
-
-                        <img
-                          className='object-cover foto'
-                          url='../imgs/sewing-machine.png'
-                          alt='' />
+                      <div className="flex relative w-full items-center justify-center text-center">
+                        <ICONS.Machine className='' size='100px' style={{ color: '#115e59' }} />
 
                       </div>
                     </div>

@@ -1,3 +1,6 @@
+import {
+    RxPerson as Person,
+} from 'react-icons/rx'
 
 import {
     GoSearch as Lupa,
@@ -36,7 +39,8 @@ import {
     FaHandshake as HandShake,
     FaTruckMoving as Truck,
     FaKey as Admin,
-    FaUser as Profile
+    FaUser as Profile,
+    FaRegAddressCard as UsersIdentity
 } from 'react-icons/fa'
 
 import {
@@ -103,5 +107,7 @@ export const ICONS = {
     Admin,
     Profile,
     Edit,
-    Save
+    Save,
+    Person,
+    UsersIdentity,
 }
