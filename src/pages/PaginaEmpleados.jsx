@@ -121,7 +121,7 @@ const PaginaEmpleados = () => {
     if (!values.telefono) {
       errors.telefono = 'Ingresa el telefono';
     } else if (values.telefono.toString().length !== 10) {
-      errors.telefono = 'Ingresa solo 10 digitos';
+      errors.telefono = 'Ingresa 10 digitos';
     }
 
     if (!values.ns) {
@@ -281,7 +281,7 @@ const PaginaEmpleados = () => {
                         {(toUrl(objEmpleado?.fotografia) !== null) ? <img
                           className='object-cover foto'
                           src={toUrl(objEmpleado?.fotografia)}
-                          alt='' /> : null}
+                          alt='' /> : <ICONS.Person className='' size='80px' style={{ color: '#115e59' }} />}
                         <input id='file' type="file" name='fotografia' accept='image/*' onChange={handleSelectImage} className='inputfile' />
                         <label
                           className='absolute -bottom-2 -right-1 bg-teal-500 p-2 text-white normalButton rounded-full'
@@ -341,7 +341,7 @@ const PaginaEmpleados = () => {
 
                         {<CustomSelect
                           name='Departamento'
-                          className='input'
+                          className='input z-[100]'
                           onChange={value => formik.setFieldValue('departamento', value.value)}
                           value={formik.values.departamento}
                           onBlur={formik.handleBlur}

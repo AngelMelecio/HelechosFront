@@ -142,7 +142,7 @@ const PaginaUsuarios = () => {
 
   const handleSaveUsuario = async (values) => {
     setSaving(true)
-    try{
+    try {
       if (!isEdit) {
         await saveUser(values)
       } else {
@@ -163,13 +163,13 @@ const PaginaUsuarios = () => {
       setListaUsuarios(await getUsuarios())
       handleModalVisibility(false, false)
     }
-    catch(e){
-      let {errors} = e
-      console.log( 'catched', e )
-      if( errors.correo ) notify( errors.correo[0], true )
-      if( errors.usuario ) notify( errors.usuario[0], true )
+    catch (e) {
+      let { errors } = e
+      console.log('catched', e)
+      if (errors.correo) notify(errors.correo[0], true)
+      if (errors.usuario) notify(errors.usuario[0], true)
     }
-    finally{
+    finally {
       setSaving(false)
     }
   }
@@ -233,6 +233,11 @@ const PaginaUsuarios = () => {
                   className='flex flex-col h-full w-full relative overflow-y-scroll'
                   onSubmit={formik.handleSubmit}>
                   <div className="absolute w-full flex flex-col  px-4">
+                    <div className='flex flex-row w-full h-full p-2 total-center'>
+                      <div className="flex relative w-full items-center justify-center text-center">
+                        <ICONS.UsersIdentity className='' size='100px' style={{ color: '#115e59' }} />
+                      </div>
+                    </div>
                     <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                       <div className="absolute w-full total-center -top-3">
                         <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
