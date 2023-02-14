@@ -47,9 +47,6 @@ export function AppProvider({ children }) {
   const [allMaquinas, setAllMaquinas] = useState([])
 
 
-
-  
-
   const getEmpleados = async () => {
     setFetchingEmpleados(true)
     let response = await fetch(apiEmpleadosUrl, {
@@ -59,7 +56,7 @@ export function AppProvider({ children }) {
         'Authorization': 'Bearer ' + session.access
       }
     })
-    if (response.status == 200) {
+    if (response.status === 200) {
       let data = await response.json()
       let formatData = data.map((empl) => ({
         ...empl,
@@ -73,7 +70,7 @@ export function AppProvider({ children }) {
   }
 
   const saveEmpleado = async (values, objEmpleado, maquinas, isEdit) => {
-    
+
     let formData = new FormData()
     formData.append('nombre', values.nombre)
     formData.append('apellidos', values.apellidos)
@@ -87,7 +84,7 @@ export function AppProvider({ children }) {
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
     formData.append('tipo', values.tipo)
-    
+
     let maquinasIds = []
     maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))
 
@@ -101,8 +98,8 @@ export function AppProvider({ children }) {
       //    Espero la respuesta para obtener el nuevo Id 
       const { message, empleado } = await response.json()
       notify(message)
-
-      if ( response.ok ) {
+      if (maquinas.length === 0) return
+      if (response.ok) {
         //    Asigno las Maquinas 
         let response2 = await fetch(apiEmpleadoMaquinasUrl, {
           method: 'POST',
@@ -128,7 +125,7 @@ export function AppProvider({ children }) {
         .then(response => response.json())
         .then(data => notify(data.message))
 
-      if( maquinas.length === 0 ) return
+      if (maquinas.length === 0) return
 
       //    Asigno Sus nuevas maquinas
       let response = await fetch(apiEmpleadoMaquinasUrl, {
@@ -154,15 +151,12 @@ export function AppProvider({ children }) {
             'Authorization': 'Bearer ' + session.access
           }
         })
-        console.log( response )
-        if( response.ok )
-        {
-          let data = await response.json()
-          console.log(data)
+        let data = await response.json()
+        if (response.ok) {
           notify(data.message)
-        }else{
-          notify('Error al eliminar', true.message)
+          return
         }
+        notify(data.message, true)
       }
     })
   }
@@ -194,8 +188,12 @@ export function AppProvider({ children }) {
     //console.log( 'getting maquinas ',response )
     if (response.status === 200) {
       let maquinas = await response.json()
-      setAllMaquinas(maquinas)
-      return maquinas
+      let formatData = maquinas.map((mqna) => ({
+        ...mqna,
+        isSelected: false,
+      }))
+      setAllMaquinas(formatData)
+      return formatData
     }
     setFetchingMaquinas(false)
   }
@@ -241,17 +239,23 @@ export function AppProvider({ children }) {
   const deleteMaquinas = async (listaMaquinas) => {
     listaMaquinas.forEach(async (e) => {
       if (e.isSelected) {
-        await fetch(apiMaquinasUrl + e.idMaquina, {
+        let response = await fetch(apiMaquinasUrl + e.idMaquina, {
           method: 'DELETE',
           headers: {
             'Authorization': 'Bearer ' + session.access
           }
         })
-          .then(response => response.json())
-          .then(data => alert('Maquinas Eliminadas:', data))
+        let data = await response.json()
+        if (response.ok) {
+          notify(data.message)
+          return
+        }
+        notify(data.message, true)
       }
     })
   }
+
+
 
   return (
     <AppContext.Provider

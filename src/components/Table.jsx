@@ -6,7 +6,6 @@ import { ICONS } from "../constants/icons"
 const Table = ({
   allItems,
   visibleItems, setVisibleItems,
-
   columns,
   onAdd,
   onDelete,
@@ -15,7 +14,6 @@ const Table = ({
 }) => {
 
   const [searchText, setSearchText] = useState('')
-
   const [sortParams, setSortParams] = useState({ attribute: null, criteria: null })
 
   const searchRef = useRef()
@@ -24,8 +22,8 @@ const Table = ({
 
   useEffect(() => {
     setVisibleItems(allItems)
-  }, [])
-
+  }, [] )
+  
   useEffect(() => {
     hideShowOptions(isSelected())
   }, [visibleItems])
@@ -63,7 +61,6 @@ const Table = ({
   const hideShowOptions = (a) => {
     someSelectedRef.current.checked = a
     someSelectedRef.current.disabled = !a
-
   }
 
   const handleSearch = () => {

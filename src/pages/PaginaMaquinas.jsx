@@ -128,11 +128,17 @@ const PaginaMaquinas = () => {
     setSaving(false)
   }
 
-  const hancleDleteMaquinas = async () => {
+
+  const handleDleteMaquinas = async () => {
+    setSaving(true)
+
     await deleteMaquinas(listaMaquinas)
     setListaMaquinas(await getMaquinas())
-    setModalDeleteVisible(false)
+    handleModalDeleteVisibility(false)
+
+    setSaving(false)
   }
+
 
   const handleModalVisibility = async (show, edit) => {
     if (show) document.getElementById("form-modal-maquinas").classList.add('visible')
@@ -149,7 +155,6 @@ const PaginaMaquinas = () => {
   const handleModalDeleteVisibility = (visible) => {
     if (visible) document.getElementById('delete-modal').classList.add('visible')
     else document.getElementById('delete-modal').classList.remove('visible')
-    setModalDeleteVisible(visible)
   }
 
   const handleEdit = async (mac) => {
@@ -162,17 +167,15 @@ const PaginaMaquinas = () => {
   return (
     <div className='h-full w-full'>
       {
-        //modalDeleteVisible ?
         <DeleteModal
           onCancel={() => handleModalDeleteVisibility(false)}
-          onConfirm={hancleDleteMaquinas}
+          onConfirm={handleDleteMaquinas}
           elements={listaMaquinas}
+          representation={['numero', 'linea', 'marca', 'modelo']}
           message='Las siguientes maquinas se eliminarán permanentemente:'
         />
-        //  : null
       }
       {
-        //modalVisible ?
         <div ref={modalRef} id="form-modal-maquinas"
           className='modal z-10 flex absolute h-full w-full grayTrans items-center justify-center '>
           <div ref={modalBoxRef} className='modal-box h-full w-3/4 rounded-lg bg-white shadow-xl'  >
@@ -181,8 +184,7 @@ const PaginaMaquinas = () => {
                 <div className="flex flex-row w-full total-center relative h-10">
                   {isEdit
                     ? <ICONS.Edit className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
-                    : <ICONS.Plus className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />
-                  }
+                    : <ICONS.Plus className='mt-1 mr-2' size='20px' style={{ color: '#115e59' }} />}
                   <p className='font-semibold text-teal-800 text-2xl' >
                     {isEdit ? 'Editar Maquina' : 'Nueva Maquina'}
                   </p>
@@ -191,12 +193,10 @@ const PaginaMaquinas = () => {
                     className='bg-teal-500 p-1 w-40 text-white normalButton absolute right-0 rounded-lg'
                     type="submit"
                     value={isEdit ? "GUARDAR" : "AGREGAR"}
-                    form="frmMaquinas"
-                  />
+                    form="frmMaquinas"/>
                   <button
                     className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute left-0 '
-                    onClick={() => handleModalVisibility(false, false)}
-                  >
+                    onClick={() => handleModalVisibility(false, false)}>
                     <ICONS.Cancel className='m-0' size='25px' />
                   </button>
                 </div>
@@ -210,7 +210,6 @@ const PaginaMaquinas = () => {
                     <div className='flex flex-row w-full h-full p-2 total-center'>
                       <div className="flex relative w-full items-center justify-center text-center">
                         <ICONS.Machine className='' size='100px' style={{ color: '#115e59' }} />
-
                       </div>
                     </div>
                     <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
@@ -220,8 +219,7 @@ const PaginaMaquinas = () => {
                         </div>
                       </div>
                       <div className='flex flex-row'>
-
-                        <CustomSelect
+                       <CustomSelect
                           name='Línea'
                           className='input'
                           onChange={value => formik.setFieldValue('linea', value.value)}
@@ -235,7 +233,6 @@ const PaginaMaquinas = () => {
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.numero && formik.touched.numero ? formik.errors.numero : null}
                         />
-
                         <CustomSelect
                           name='Departamento'
                           className='input'
@@ -291,20 +288,18 @@ const PaginaMaquinas = () => {
               </div>
             </div>
           </div>
-
         </div>
-        //: null
       }
-
-      <Table
-        allItems={allMaquinas}
-        visibleItems={listaMaquinas}
-        setVisibleItems={setListaMaquinas}
-        columns={maquinasColumns}
-        onAdd={() => handleModalVisibility(true, false)}
-        onDelete={() => { handleModalDeleteVisibility(true) }}
-        onEdit={handleEdit}
-      />
+      {
+        <Table
+          allItems={allMaquinas}
+          visibleItems={listaMaquinas}
+          setVisibleItems={setListaMaquinas}
+          columns={maquinasColumns}
+          onAdd={() => handleModalVisibility(true, false)}
+          onDelete={() => { handleModalDeleteVisibility(true) }}
+          onEdit={handleEdit}
+        />}
 
     </div>
   )

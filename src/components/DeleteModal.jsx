@@ -1,7 +1,7 @@
 import { ICONS } from '../constants/icons'
 
 
-const DeleteModal = ({ onCancel,onConfirm, elements, message  }) => {
+const DeleteModal = ({ onCancel, onConfirm, elements, representation, message }) => {
 
   return (
     <div id="delete-modal" className='z-10 total-center absolute h-screen w-full grayTrans modal'>
@@ -20,11 +20,16 @@ const DeleteModal = ({ onCancel,onConfirm, elements, message  }) => {
           </div>
         </div>
         <div className='h-20 overflow-y-scroll bg-slate-100 mt-2 p-2' >
-          {elements?.map((elmt,indx) => {
+          {elements?.map((elmt, indx) => {
             return elmt.isSelected ?
-              <p key={indx}>
-                {elmt.nombre + " " + elmt.apellidos}
-              </p>
+              <div key={indx}>
+                {
+                  representation.map((atr, j) =>
+                    <p key={'P' + j}>
+                      {elmt[atr] + " "}
+                    </p>)
+                }
+              </div>
               : null
           })}
         </div>
@@ -35,7 +40,7 @@ const DeleteModal = ({ onCancel,onConfirm, elements, message  }) => {
             Cancelar
           </button>
           <button
-            onClick={()=>onConfirm(elements)}
+            onClick={() => onConfirm(elements)}
             className='bg-rose-500 w-full py-1 ml-2 rose-opacity'>
             Continuar
           </button>
