@@ -6,12 +6,14 @@ import { ICONS } from "../constants/icons"
 const Table = ({
   allItems,
   visibleItems, setVisibleItems,
+  fetching,
   columns,
   onAdd,
   onDelete,
   onEdit
 
 }) => {
+
 
   const [searchText, setSearchText] = useState('')
   const [sortParams, setSortParams] = useState({ attribute: null, criteria: null })
@@ -21,9 +23,11 @@ const Table = ({
   const trashButtonRef = useRef()
 
   useEffect(() => {
+    console.log('CARGANDO TODO EN LA TABLA...  ')
+    console.log('fetching: ', fetching)
     setVisibleItems(allItems)
-  }, [] )
-  
+  }, [allItems])
+
   useEffect(() => {
     hideShowOptions(isSelected())
   }, [visibleItems])
@@ -42,12 +46,12 @@ const Table = ({
 
   const handleSearchButtonClick = () => {
     if (searchText.length > 0) {
-      searchRef.current.blur()
+      searchRef?.current?.blur()
       setSearchText('')
       setVisibleItems(sortItems())
       return
     }
-    searchRef.current.focus()
+    searchRef?.current?.focus()
   }
 
   const handleSelection = (e) => {
@@ -64,7 +68,7 @@ const Table = ({
   }
 
   const handleSearch = () => {
-    let val = (searchRef.current.value).trim().toLowerCase()
+    let val = (searchRef?.current?.value).trim().toLowerCase()
     let sortedItems = sortItems()
     let newItems = [...sortedItems].filter(e => {
       let E = JSON.stringify(e).toLowerCase()
@@ -123,7 +127,7 @@ const Table = ({
           columns.map((c, i) => {
 
             let value = element[c.attribute] + ''
-            let isBool = (value == 'true' || value == 'false' || value == '' )
+            let isBool = (value == 'true' || value == 'false' || value == '')
 
             if (isBool) {
               if (value == 'true') value = 'Sí'
@@ -157,7 +161,7 @@ const Table = ({
   }
 
   return (
-    <div className="flex flex-col h-full w-full bg-white ">
+    <div id="tbl-page" className="flex flex-col h-full w-full bg-white">
       <div
         className="flex flex-row justify-between p-5"
         id="options-bar" >
@@ -246,7 +250,7 @@ const Table = ({
                           className='inp-check'
                           type="checkbox"
                           onChange={handleSelection}
-                          checked={e.isSelected}
+                          checked={e?.isSelected}
                         />
                         <label className="check"></label>
                       </div>

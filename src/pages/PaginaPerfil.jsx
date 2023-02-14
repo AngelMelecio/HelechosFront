@@ -69,7 +69,7 @@ const PaginaPerfil = () => {
                   <tr
                     key={'A' + atr.id}
                     onClick={() => {
-                      if (focusedRow != atr.id) {
+                      if (focusedRow !== atr.id) {
                         setFocusedRow(atr.id)
                         setTmpInp(atr.value)
                       }
