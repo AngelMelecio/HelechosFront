@@ -35,10 +35,10 @@ export default function Login({navigate}) {
       }}
     >
       <div className='w-full h-screen flex total-center px-4 md:px-0 relative bg-login'>
-        <div className="flex relative max-w-[500px] w-full h-5/6 mx-auto">
+        <div className="flex relative max-w-[500px] w-full  mx-auto">
           <div className="login-box-shadow">
           </div>
-          <Form id='login-box' className=' rounded-lg p-4 w-full overflow-y-scroll'>
+          <Form id='login-box' className='rounded-lg w-full p-8'>
             <h2 className='text-2xl  text-teal-700 font-bold text-center'>Inicia Sesión</h2>
             <div className='flex justify-center mt-4'>
               <img className='w-32 h-32 object-cover' src={loginImg} alt="" />

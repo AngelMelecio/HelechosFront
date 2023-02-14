@@ -23,10 +23,12 @@ const initobj = {
 }
 
 const optionsTipo = [
+  { value: 'Seleccione', label: 'Seleccione' },
   { value: 'Encargado', label: 'Encargado' },
   { value: 'Administrador', label: 'Administrador' },
 ]
 const optionsActivo = [
+  { value: 'Seleccione', label: 'Seleccione' },
   { value: 'Activo', label: 'Activo' },
   { value: 'Inactivo', label: 'Inactivo' },
 ]
@@ -40,12 +42,14 @@ const PaginaUsuarios = () => {
   const { session, notify } = useAuth()
 
   const {
+    fetchingUsuarios,
     getUsuarios,
     allUsuarios,
     updateUser,
     updatePassword,
     UsuariosColumns,
-    saveUser
+    saveUser,
+    deleteUsuarios
 
   } = useAdmin()
 
@@ -56,9 +60,7 @@ const PaginaUsuarios = () => {
   const [newPass, setNewPass] = useState(false)
 
   useEffect(async () => {
-    let data = await getUsuarios()
-    console.log(data)
-    setListaUsuarios(data)
+    setListaUsuarios(await getUsuarios())
   }, [])
 
   const handleModalVisibility = async (show, edit) => {
@@ -174,10 +176,19 @@ const PaginaUsuarios = () => {
     }
   }
 
+  const handleDeleteUsuarios = async () => {
+    setSaving(true)
 
-  const deleteUsuarios = () => {
-    console.log('Eliminando')
+    await deleteUsuarios(listaUsuarios)
+    let newList = await getUsuarios()
+    console.log( 'Antes:', listaUsuarios )
+    console.log( 'Despues:', newList )
+    setListaUsuarios(newList)
+    handleModalDeleteVisibility(false)
+
+    setSaving(false)
   }
+
   const handleEdit = (usr) => {
     formik.setValues(usr)
     handleModalVisibility(true, true)
@@ -191,8 +202,9 @@ const PaginaUsuarios = () => {
         //modalDeleteVisible ?
         <DeleteModal
           onCancel={() => handleModalDeleteVisibility(false)}
-          onConfirm={deleteUsuarios}
+          onConfirm={handleDeleteUsuarios}
           elements={listaUsuarios}
+          representation={['nombre', 'apellidos']}
           message='Los siguientes usuarios se eliminarán permanentemente:'
         />
         //  : null
@@ -228,7 +240,7 @@ const PaginaUsuarios = () => {
                 </div>
               </div>
               <div className="flex w-full h-full ">
-                <form
+                {<form
                   id='frmUsuarios'
                   className='flex flex-col h-full w-full relative overflow-y-scroll'
                   onSubmit={formik.handleSubmit}>
@@ -307,7 +319,6 @@ const PaginaUsuarios = () => {
                           />}
                       </div>
                       <div className="flex flex-row">
-
                         <CustomSelect
                           name='Tipo'
                           className='input'
@@ -328,28 +339,26 @@ const PaginaUsuarios = () => {
                           label='Estado'
                           errores={formik.errors.activo && formik.touched.activo ? formik.errors.activo : null}
                         />
-
-
                       </div>
                     </div>
-
                   </div>
-                </form>
+                </form>}
               </div>
             </div>
           </div>
         </div>
         //: null
       }
-      <Table
-        allItems={allUsuarios}
-        visibleItems={listaUsuarios}
-        setVisibleItems={setListaUsuarios}
-        columns={UsuariosColumns}
-        onAdd={() => handleModalVisibility(true, false)}
-        onDelete={() => { handleModalDeleteVisibility(true) }}
-        onEdit={handleEdit}
-      />
+  
+        <Table
+          allItems={allUsuarios}
+          visibleItems={listaUsuarios}
+          setVisibleItems={setListaUsuarios}
+          columns={UsuariosColumns}
+          onAdd={() => handleModalVisibility(true, false)}
+          onDelete={() => { handleModalDeleteVisibility(true) }}
+          onEdit={handleEdit}
+        />
     </>
   )
 }

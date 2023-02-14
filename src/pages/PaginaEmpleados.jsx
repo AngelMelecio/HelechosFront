@@ -36,19 +36,19 @@ const PaginaEmpleados = () => {
   const modalRef = useRef()
   const modalBoxRef = useRef()
 
-/*  const {
-    fetchingEmpleados,
-    empleadosColumns,
-    getEmpleados,
-    allEmpleados,
-    allMaquinas,
-    getEmpleadoMaquinas
-
-  } = useAdmin()*/
+  /*  const {
+      fetchingEmpleados,
+      empleadosColumns,
+      getEmpleados,
+      allEmpleados,
+      allMaquinas,
+      getEmpleadoMaquinas
+  
+    } = useAdmin()*/
 
   const {
     getEmpleadoMaquinas,
-    
+
     empleadosColumns, getEmpleados, allEmpleados, fetchingEmpleados,
     saveEmpleado, deleteEmpleados,
 
@@ -74,7 +74,7 @@ const PaginaEmpleados = () => {
 
   //Formik
   useEffect(async () => {
-    setAvailableMaquinas( await getMaquinas() )
+    setAvailableMaquinas(await getMaquinas())
     setListaEmpleados(await getEmpleados())
   }, [])
 
@@ -150,23 +150,29 @@ const PaginaEmpleados = () => {
   const handleSaveEmpleado = async (values) => {
     setSaving(true)
 
-    
-    await saveEmpleado( values, objEmpleado, assignedMaquinas, isEdit )
-
+    await saveEmpleado(values, objEmpleado, assignedMaquinas, isEdit)
     setListaEmpleados(await getEmpleados())
     setObjEmpleado(initobj)
-    setSaving(false)
     handleModalVisibility(false, false)
+
+    setSaving(false)
   }
 
-  const handleDeleteEmpleados = async() =>{
+  const handleDeleteEmpleados = async () => {
     setSaving(true)
+
     await deleteEmpleados(listaEmpleados)
-    setListaEmpleados(await getEmpleados())
+    let newList = await getEmpleados()
+    console.log( 'Antes:', listaEmpleados )
+    console.log( 'Despues:', newList )
+    setListaEmpleados(newList)
     handleModalDeleteVisibility(false)
+
     setSaving(false)
+    //window.location.reload()
   }
-  
+
+
 
   const handleModalVisibility = async (show, edit) => {
 
@@ -235,6 +241,7 @@ const PaginaEmpleados = () => {
           onCancel={() => handleModalDeleteVisibility(false)}
           onConfirm={handleDeleteEmpleados}
           elements={listaEmpleados}
+          representation={['nombre', 'apellidos']}
           message='Los siguientes empleados se eliminarán permanentemente:'
         />
         //  : null
@@ -338,7 +345,6 @@ const PaginaEmpleados = () => {
                         </div>
                       </div>
                       <div className='flex flex-row'>
-
                         {<CustomSelect
                           name='Departamento'
                           className='input z-[100]'

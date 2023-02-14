@@ -16,10 +16,7 @@ const CustomSelect = ({ name, className, onChange, value, onBlur, options, label
                 <Select
                     name={name}
                     value={defaultValue(options, value)}
-                    onChange={value => {
-                        onChange(value)
-
-                    }}
+                    onChange={ value =>  {onChange(value)}  }
                     options={options}
                     onBlur={onBlur} />
             </div>
