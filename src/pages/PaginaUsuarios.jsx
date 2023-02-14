@@ -38,6 +38,7 @@ const PaginaUsuarios = () => {
   const modalRef = useRef()
   const modalBoxRef = useRef()
   const newPassRef = useRef()
+  const pageRef = useRef()
 
   const { session, notify } = useAuth()
 
@@ -60,13 +61,28 @@ const PaginaUsuarios = () => {
   const [newPass, setNewPass] = useState(false)
 
   useEffect(async () => {
-    setListaUsuarios(await getUsuarios())
+    async function str() {
+      console.log('NEEDING USERS...')
+      await getUsuarios()
+    }
+    str()
   }, [])
+
+  useEffect(async () => {
+    console.log(' SE CARGARON NUEVOS USUARIOS... ', allUsuarios)
+    setListaUsuarios(allUsuarios)
+  }, [allUsuarios])
 
   const handleModalVisibility = async (show, edit) => {
 
-    if (show) document.getElementById("form-modal").classList.add('visible')
-    else document.getElementById("form-modal").classList.remove('visible')
+    if (show) {
+      document.getElementById("form-modal").classList.add('visible')
+      document.getElementById("tbl-page").classList.add('blurred')
+    }
+    else {
+      document.getElementById("form-modal").classList.remove('visible')
+      document.getElementById("tbl-page").classList.remove('blurred')
+    }
 
     if (!show) formik.resetForm()
 
@@ -80,8 +96,14 @@ const PaginaUsuarios = () => {
   }
   const handleModalDeleteVisibility = (visible) => {
     //if (!someSelectedRef.current.checked) return
-    if (visible) document.getElementById('delete-modal').classList.add('visible')
-    else document.getElementById('delete-modal').classList.remove('visible')
+    if (visible) {
+      document.getElementById('delete-modal').classList.add('visible')
+      document.getElementById("tbl-page").classList.add('blurred')
+    }
+    else {
+      document.getElementById('delete-modal').classList.remove('visible')
+      document.getElementById("tbl-page").classList.remove('blurred')
+    }
   }
 
   const validate = values => {
@@ -119,7 +141,7 @@ const PaginaUsuarios = () => {
       }
     }
 
-    if (values.is_staff != true && values.is_staff != false) {
+    if (values.is_staff !== true && values.is_staff !== false) {
       errors.is_staff = 'Selecciona un tipo';
     } else if (values.is_staff === "Seleccione") {
       errors.is_staff = 'Selecciona un tipo';
@@ -178,14 +200,8 @@ const PaginaUsuarios = () => {
 
   const handleDeleteUsuarios = async () => {
     setSaving(true)
-
     await deleteUsuarios(listaUsuarios)
-    let newList = await getUsuarios()
-    console.log( 'Antes:', listaUsuarios )
-    console.log( 'Despues:', newList )
-    setListaUsuarios(newList)
     handleModalDeleteVisibility(false)
-
     setSaving(false)
   }
 
@@ -198,6 +214,17 @@ const PaginaUsuarios = () => {
 
   return (
     <>
+      <Table
+        allItems={allUsuarios}
+        visibleItems={listaUsuarios}
+        setVisibleItems={setListaUsuarios}
+        fetching={fetchingUsuarios}
+        columns={UsuariosColumns}
+        onAdd={() => handleModalVisibility(true, false)}
+        onDelete={() => { handleModalDeleteVisibility(true) }}
+        onEdit={handleEdit}
+      />
+      
       {
         //modalDeleteVisible ?
         <DeleteModal
@@ -226,13 +253,13 @@ const PaginaUsuarios = () => {
                   </p>
                   <input
                     disabled={saving}
-                    className='bg-teal-500 p-1 w-40 text-white normalButton absolute right-0 rounded-lg'
+                    className='bg-teal-500 p-1 w-40 text-white font-bold normalButton absolute right-0 rounded-lg'
                     type="submit"
                     value={isEdit ? "GUARDAR" : "AGREGAR"}
                     form="frmUsuarios"
                   />
                   <button
-                    className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute left-0 '
+                    className='total center neutral-button p-1 text-white rounded-lg  absolute left-0 '
                     onClick={() => handleModalVisibility(false, false)}
                   >
                     <ICONS.Cancel className='m-0' size='25px' />
@@ -349,16 +376,7 @@ const PaginaUsuarios = () => {
         </div>
         //: null
       }
-  
-        <Table
-          allItems={allUsuarios}
-          visibleItems={listaUsuarios}
-          setVisibleItems={setListaUsuarios}
-          columns={UsuariosColumns}
-          onAdd={() => handleModalVisibility(true, false)}
-          onDelete={() => { handleModalDeleteVisibility(true) }}
-          onEdit={handleEdit}
-        />
+
     </>
   )
 }

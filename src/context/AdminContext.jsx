@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
+import { GiConsoleController } from "react-icons/gi";
 import { toast } from "react-toastify";
 import { useApp } from "./AppContext";
 import { useAuth } from "./AuthContext";
 
 const apiUsersUrl = 'http://localhost:8000/users/'
+
+const ct_JSON = { "Content-Type": "application/json" }
 
 const UsuariosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
@@ -25,22 +28,20 @@ export function useAdmin() {
 
 export function AdminProvider({ children }) {
 
-
+  const { session, setSession } = useAuth()
+  const { notify } = useAuth()
 
   const [fetchingUsuarios, setFetchingUsuarios] = useState(false)
   const [allUsuarios, setAllUsuarios] = useState([])
 
-  const { session, setSession } = useAuth()
-  const { notify } = useAuth()
-
-
   const getUsuarios = async () => {
     setFetchingUsuarios(true)
+    console.log('fetchig...')
     let response = await fetch(apiUsersUrl, {
       method: 'GET',
       headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer ' + session.access
+        ...ct_JSON,
+        'Authorization': 'Bearer ' + session?.access
       }
     })
     if (response.status === 200) {
@@ -84,33 +85,29 @@ export function AdminProvider({ children }) {
     })
     let data = await response.json()
     if (response.status === 200) {
-      let newSesion = { ...session, usuario: data.usuario }
-      setSession(newSesion)
-      localStorage.setItem('auth', JSON.stringify(newSesion))
       notify(data.message)
-      return
     } else {
       throw data
     }
   }
 
   const deleteUsuarios = async (listaUsuarios) => {
-    listaUsuarios.forEach( async (e) => {
-      if (e.isSelected) {
-        let response = await fetch(apiUsersUrl + e.id, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': 'Bearer ' + session.access
-          }
-        })
-        let data = await response.json()
-        if (response.ok) {
-          notify(data.message)
-          return
-        }
-        notify(data.message, true)
-      }
+    let ids = []
+    listaUsuarios.forEach(usr => {
+      if (usr.isSelected) ids.push({ id: usr.id })
     })
+    let response = await fetch(apiUsersUrl + "delete_user_apiView/", {
+      method: 'DELETE',
+      headers: { ...ct_JSON, 'Authorization': 'Bearer ' + session.access },
+      body: JSON.stringify(ids)
+    })
+    let data = await response.json()
+    if (response.ok) {
+      notify(data.message)
+      await getUsuarios()
+    }
+    else
+      notify(data.message, true)
   }
 
   const updatePassword = async (id, value) => {

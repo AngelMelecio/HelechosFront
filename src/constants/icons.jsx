@@ -10,9 +10,11 @@ import {
 
 import { FaRegTrashAlt as Trash } from 'react-icons/fa'
 import {
-    MdOutlineCancel as Cancel,
     MdOutlineMail as Email
 } from 'react-icons/md'
+import {
+    RxCross2 as Cancel,
+} from 'react-icons/rx'
 import {
     BsPlusLg as Plus,
     BsFillPersonPlusFill as PersonPlus,

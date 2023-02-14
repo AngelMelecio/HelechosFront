@@ -21,22 +21,23 @@ const DeleteModal = ({ onCancel, onConfirm, elements, representation, message })
         </div>
         <div className='h-20 overflow-y-scroll bg-slate-100 mt-2 p-2' >
           {elements?.map((elmt, indx) => {
-            return elmt.isSelected ?
-              <div key={indx}>
-                {
-                  representation.map((atr, j) =>
-                    <p key={'P' + j}>
-                      {elmt[atr] + " "}
-                    </p>)
-                }
-              </div>
-              : null
+            if (elmt.isSelected) {
+              let str = ""
+              representation.map((atr, j) =>
+                str += elmt[atr] + " ")
+              
+              return (
+                <div key={indx}>
+                  <p> {str} </p>
+                </div>
+              )
+            }
           })}
         </div>
         <div className='flex mt-2 text-white font-bold px-5 py-2'>
           <button
             onClick={onCancel}
-            className='bg-teal-500 w-full py-1 mr-2 normalButton'>
+            className='neutral-button w-full py-1 mr-2 normalButton'>
             Cancelar
           </button>
           <button

@@ -64,6 +64,7 @@ export function AppProvider({ children }) {
         fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
       }))
       setAllEmpleados(formatData)
+      setFetchingEmpleados(false)
       return formatData
     }
     setFetchingEmpleados(false)
@@ -154,9 +155,9 @@ export function AppProvider({ children }) {
         let data = await response.json()
         if (response.ok) {
           notify(data.message)
-          return
         }
-        notify(data.message, true)
+        else
+          notify(data.message, true)
       }
     })
   }
@@ -232,7 +233,7 @@ export function AppProvider({ children }) {
         }
       })
         .then(response => response.json())
-        .then(data => alert(data.message))
+        .then(data => notify(data.message))
     }
   }
 

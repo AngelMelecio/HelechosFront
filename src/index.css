@@ -206,6 +206,7 @@ input::-webkit-inner-spin-button {
 }
 
 .normalButton {
+  cursor:pointer;
   transition: 0.2s;
 }
 
@@ -343,15 +344,14 @@ input::-webkit-inner-spin-button {
   transition:0s;
 }
 .neutral-button{
-
-  color:#111827;
-  transition:0.2s;
+  color:#374151;
+  transition: 0.2s;
 }
 
 .neutral-button:hover{
-  background-color: #4b5563;
+  background-color: #6b7280;
   color:white;
-  transition:0.2s;
+  transition: 0.2s;
 }
 .neutral-button:active{
   opacity: 60%;
@@ -459,3 +459,6 @@ input::-webkit-inner-spin-button {
   transition: 0.2s;
 }
 
+.blurred{
+  filter: blur(2px);
+}

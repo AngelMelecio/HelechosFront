@@ -1,7 +1,7 @@
 
 const Input = ({ label, type, name, value, onChange, Icon = null, onBlur, errores, ...props }) => {
 
-    let p = Icon != null ? 'pl-9' : ''
+    let p = Icon !== null ? 'pl-9' : ''
     let cn_good = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-teal-500 " + p;
     let cn_bad = "flex w-full p-1 outline-none bg-gray-100 duration-300 border focus:border-red-600 border-red-600 " + p;
 
@@ -23,7 +23,7 @@ const Input = ({ label, type, name, value, onChange, Icon = null, onBlur, errore
                     onBlur={onBlur}
                     {...props}
                 />
-                {Icon != null ?
+                {Icon !== null ?
                     <Icon
                         className='absolute left-2'
                         style={{ color: '#374151' }}

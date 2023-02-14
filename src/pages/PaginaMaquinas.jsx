@@ -141,8 +141,14 @@ const PaginaMaquinas = () => {
 
 
   const handleModalVisibility = async (show, edit) => {
-    if (show) document.getElementById("form-modal-maquinas").classList.add('visible')
-    else document.getElementById("form-modal-maquinas").classList.remove('visible')
+    if (show) {
+      document.getElementById("form-modal-maquinas").classList.add('visible')
+      document.getElementById("tbl-page").classList.add('blurred')
+    }
+    else {
+      document.getElementById("form-modal-maquinas").classList.remove('visible')
+      document.getElementById("tbl-page").classList.remove('blurred')
+    }
 
     if (!show) formik.resetForm()
 
@@ -153,8 +159,14 @@ const PaginaMaquinas = () => {
   }
 
   const handleModalDeleteVisibility = (visible) => {
-    if (visible) document.getElementById('delete-modal').classList.add('visible')
-    else document.getElementById('delete-modal').classList.remove('visible')
+    if (visible) {
+      document.getElementById('delete-modal').classList.add('visible')
+      document.getElementById("tbl-page").classList.add('blurred')
+    }
+    else {
+      document.getElementById('delete-modal').classList.remove('visible')
+      document.getElementById("tbl-page").classList.remove('blurred')
+    }
   }
 
   const handleEdit = async (mac) => {
@@ -165,7 +177,18 @@ const PaginaMaquinas = () => {
   }
 
   return (
-    <div className='h-full w-full'>
+    <>
+      {
+        <Table
+          allItems={allMaquinas}
+          visibleItems={listaMaquinas}
+          setVisibleItems={setListaMaquinas}
+          columns={maquinasColumns}
+          onAdd={() => handleModalVisibility(true, false)}
+          onDelete={() => { handleModalDeleteVisibility(true) }}
+          onEdit={handleEdit}
+        />
+      }
       {
         <DeleteModal
           onCancel={() => handleModalDeleteVisibility(false)}
@@ -193,9 +216,9 @@ const PaginaMaquinas = () => {
                     className='bg-teal-500 p-1 w-40 text-white normalButton absolute right-0 rounded-lg'
                     type="submit"
                     value={isEdit ? "GUARDAR" : "AGREGAR"}
-                    form="frmMaquinas"/>
+                    form="frmMaquinas" />
                   <button
-                    className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute left-0 '
+                    className='total center neutral-button p-1 text-white rounded-lg  absolute left-0 '
                     onClick={() => handleModalVisibility(false, false)}>
                     <ICONS.Cancel className='m-0' size='25px' />
                   </button>
@@ -219,7 +242,7 @@ const PaginaMaquinas = () => {
                         </div>
                       </div>
                       <div className='flex flex-row'>
-                       <CustomSelect
+                        <CustomSelect
                           name='Línea'
                           className='input'
                           onChange={value => formik.setFieldValue('linea', value.value)}
@@ -290,18 +313,7 @@ const PaginaMaquinas = () => {
           </div>
         </div>
       }
-      {
-        <Table
-          allItems={allMaquinas}
-          visibleItems={listaMaquinas}
-          setVisibleItems={setListaMaquinas}
-          columns={maquinasColumns}
-          onAdd={() => handleModalVisibility(true, false)}
-          onDelete={() => { handleModalDeleteVisibility(true) }}
-          onEdit={handleEdit}
-        />}
-
-    </div>
+    </>
   )
 }
 export default PaginaMaquinas

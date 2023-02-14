@@ -163,8 +163,6 @@ const PaginaEmpleados = () => {
 
     await deleteEmpleados(listaEmpleados)
     let newList = await getEmpleados()
-    console.log( 'Antes:', listaEmpleados )
-    console.log( 'Despues:', newList )
     setListaEmpleados(newList)
     handleModalDeleteVisibility(false)
 
@@ -176,8 +174,14 @@ const PaginaEmpleados = () => {
 
   const handleModalVisibility = async (show, edit) => {
 
-    if (show) document.getElementById("form-modal").classList.add('visible')
-    else document.getElementById("form-modal").classList.remove('visible')
+    if (show) {
+      document.getElementById("form-modal").classList.add('visible')
+      document.getElementById("tbl-page").classList.add('blurred')
+    }
+    else {
+      document.getElementById("form-modal").classList.remove('visible')
+      document.getElementById("tbl-page").classList.remove('blurred')
+    }
 
     if (!show) formik.resetForm()
 
@@ -199,8 +203,14 @@ const PaginaEmpleados = () => {
 
   const handleModalDeleteVisibility = (visible) => {
     //if (!someSelectedRef.current.checked) return
-    if (visible) document.getElementById('delete-modal').classList.add('visible')
-    else document.getElementById('delete-modal').classList.remove('visible')
+    if (visible) {
+      document.getElementById('delete-modal').classList.add('visible')
+      document.getElementById("tbl-page").classList.add('blurred')
+    }
+    else {
+      document.getElementById('delete-modal').classList.remove('visible')
+      document.getElementById("tbl-page").classList.remove('blurred')
+    }
   }
 
   const handleEdit = async (emp) => {
@@ -235,6 +245,15 @@ const PaginaEmpleados = () => {
 
   return (
     <>
+      <Table
+        allItems={allEmpleados}
+        visibleItems={listaEmpleados}
+        setVisibleItems={setListaEmpleados}
+        columns={empleadosColumns}
+        onAdd={() => handleModalVisibility(true, false)}
+        onDelete={() => { handleModalDeleteVisibility(true) }}
+        onEdit={handleEdit}
+      />
       {
         //modalDeleteVisible ?
         <DeleteModal
@@ -269,7 +288,7 @@ const PaginaEmpleados = () => {
                     form="frmEmpleados"
                   />
                   <button
-                    className='total center rose-opacity bg-rose-500 p-1 text-white rounded-lg  absolute left-0 '
+                    className='total center neutral-button p-1 text-white rounded-lg  absolute left-0 '
                     onClick={() => handleModalVisibility(false, false)}
                   >
                     <ICONS.Cancel className='m-0' size='25px' />
@@ -379,15 +398,7 @@ const PaginaEmpleados = () => {
         //: null
       }
 
-      <Table
-        allItems={allEmpleados}
-        visibleItems={listaEmpleados}
-        setVisibleItems={setListaEmpleados}
-        columns={empleadosColumns}
-        onAdd={() => handleModalVisibility(true, false)}
-        onDelete={() => { handleModalDeleteVisibility(true) }}
-        onEdit={handleEdit}
-      />
+      
 
     </>
   )
