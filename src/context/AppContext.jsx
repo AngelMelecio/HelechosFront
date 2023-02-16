@@ -21,6 +21,9 @@ const empleadosColumns = [
   { name: 'Apellidos', attribute: 'apellidos' },
   { name: 'Dirección', attribute: 'direccion' },
   { name: 'Seguro Social', attribute: 'ns' },
+  { name: 'Fecha de Contratación', attribute: 'fechaEntrada' },
+  { name: 'Fecha Alta de Seguro', attribute: 'fechaAltaSeguro' },
+  { name: 'Está Activo', attribute: 'is_active' },
   { name: 'Teléfono', attribute: 'telefono' },
   { name: 'Departamento', attribute: 'departamento' },
 ]
@@ -31,8 +34,9 @@ const maquinasColumns = [
   { name: 'Marca', attribute: 'marca' },
   { name: 'Modelo', attribute: 'modelo' },
   { name: 'Número de Serie', attribute: 'ns' },
-  { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
   { name: 'Otros', attribute: 'otros' },
+  { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
+  { name: 'Detalle Adquisición', attribute: 'detalleAdquisicion' },
   { name: 'Departamento', attribute: 'departamento' },
 ]
 
@@ -77,14 +81,13 @@ export function AppProvider({ children }) {
     formData.append('apellidos', values.apellidos)
     formData.append('direccion', values.direccion)
     formData.append('telefono', values.telefono)
-    formData.append('correo', values.correo)
     formData.append('ns', values.ns)
-    formData.append('usuario', values.usuario)
-    formData.append('contrasena', values.contrasena)
+    formData.append('fechaEntrada',values.fechaEntrada)
+    formData.append('fechaAltaSeguro',values.fechaAltaSeguro)
+    formData.append('is_active',values.is_active)
     if ((objEmpleado.fotografia) instanceof File)
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
-    formData.append('tipo', values.tipo)
 
     let maquinasIds = []
     maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))
@@ -207,8 +210,9 @@ export function AppProvider({ children }) {
     formData.append('marca', values.marca)
     formData.append('modelo', values.modelo)
     formData.append('ns', values.ns)
-    formData.append('fechaAdquisicion', values.fechaAdquisicion)
     formData.append('otros', values.otros)
+    formData.append('fechaAdquisicion', values.fechaAdquisicion)
+    formData.append('detalleAdquisicion', values.detalleAdquisicion)
     formData.append('departamento', values.departamento)
 
     if (!isEdit) {

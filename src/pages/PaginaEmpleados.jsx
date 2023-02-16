@@ -22,6 +22,9 @@ const initobj = {
   telefono: "",
   correo: "",
   ns: "",
+  fechaEntrada: "",
+  fechaAltaSeguro: "",
+  is_active: true,
   usuario: "",
   contrasena: "",
   fotografia: "",
@@ -123,13 +126,14 @@ const PaginaEmpleados = () => {
     } else if (values.telefono.toString().length !== 10) {
       errors.telefono = 'Ingresa 10 digitos';
     }
-
-    if (!values.ns) {
-      errors.ns = 'Ingresa el NSS';
-    } else if (values.ns.toString().length !== 11) {
+    
+    if (values.ns.toString().length !== 11) {
       errors.ns = 'NSS incorrecto';
     }
-
+    
+    if(!values.fechaEntrada){
+      errors.fechaEntrada = 'Establece la fecha de contratación';
+    }
     if (!values.departamento) {
       errors.departamento = 'Selecciona un departamento';
     } else if (values.departamento === "Seleccione") {
@@ -341,14 +345,6 @@ const PaginaEmpleados = () => {
                           errores={formik.errors.direccion && formik.touched.direccion ? formik.errors.direccion : null}
                           Icon={ICONS.House}
                         />
-                      </div>
-                      <div className='flex flex-row'>
-                        <Input
-                          label='Seguro Social' type='number' name='ns' value={formik.values.ns}
-                          onChange={formik.handleChange} onBlur={formik.handleBlur}
-                          errores={formik.errors.ns && formik.touched.ns ? formik.errors.ns : null}
-                          Icon={ICONS.Add}
-                        />
                         <Input
                           label='Teléfono' type='number' name='telefono' value={formik.values.telefono}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
@@ -356,6 +352,7 @@ const PaginaEmpleados = () => {
                           Icon={ICONS.Phone}
                         />
                       </div>
+                      
                     </div>
                     <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                       <div className="absolute w-full total-center -top-3">
@@ -364,7 +361,12 @@ const PaginaEmpleados = () => {
                         </div>
                       </div>
                       <div className='flex flex-row'>
-                        {<CustomSelect
+                          <Input
+                            label='Fecha de Contratación' type='date' name='fechaEntrada' value={formik.values.fechaEntrada}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.fechaEntrada && formik.touched.fechaEntrada ? formik.errors.fechaEntrada : null}
+                          />
+                           {<CustomSelect
                           name='Departamento'
                           className='input z-[100]'
                           onChange={value => formik.setFieldValue('departamento', value.value)}
@@ -373,7 +375,21 @@ const PaginaEmpleados = () => {
                           options={optionsDepartamento}
                           label='Departamento'
                           errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
-                        />}
+                          />}
+                          
+                      </div>
+                      <div className='flex flex-row'>
+                          <Input
+                            label='Fecha de registro en el seguro' type='date' name='fechaAltaSeguro' value={formik.values.fechaAltaSeguro}
+                            onChange={formik.handleChange} onBlur={formik.handleBlur}
+                            errores={formik.errors.fechaAltaSeguro && formik.touched.fechaAltaSeguro ? formik.errors.fechaAltaSeguro : null}
+                          />
+                          <Input
+                          label='Seguro Social' type='number' name='ns' value={formik.values.ns}
+                          onChange={formik.handleChange} onBlur={formik.handleBlur}
+                          errores={formik.errors.ns && formik.touched.ns ? formik.errors.ns : null}
+                          Icon={ICONS.Add}
+                          />
                       </div>
                     </div>
                     <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
