@@ -10,11 +10,11 @@ export function useApp() {
   return useContext(AppContext)
 }
 
-const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
-const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
-const apiEmpleadoMaquinaUrl = 'http://127.0.0.1:8000/api/empleados_maquina/'
-const apiEmpleadoMaquinasUrl = 'http://127.0.0.1:8000/api/empleado_maquinas/'
-const imageEndPoint = 'http://127.0.0.1:8000'
+const apiEmpleadosUrl = 'http://192.168.1.239:8000/api/empleados/'
+const apiMaquinasUrl = 'http://192.168.1.239:8000/api/maquinas/'
+const apiEmpleadoMaquinaUrl = 'http://192.168.1.239:8000/api/empleados_maquina/'
+const apiEmpleadoMaquinasUrl = 'http://192.168.1.239:8000/api/empleado_maquinas/'
+const imageEndPoint = 'http://192.168.1.239:8000'
 
 const empleadosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
