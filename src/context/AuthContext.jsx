@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify";
 import { useApp } from "./AppContext";
 
-const apiLoginUrl = "http://127.0.0.1:8000/login/"
-const apiRefreshTokenUrl = "http://127.0.0.1:8000/api/token/refresh/"
+const apiLoginUrl = "http://192.168.1.239:8000/login/"
+const apiRefreshTokenUrl = "http://192.168.1.239:8000/api/token/refresh/"
 
 const AuthContext = React.createContext()
 export function useAuth() {
