@@ -27,6 +27,7 @@ const optionsTipo = [
   { value: 'Encargado', label: 'Encargado' },
   { value: 'Administrador', label: 'Administrador' },
 ]
+
 const optionsActivo = [
   { value: 'Seleccione', label: 'Seleccione' },
   { value: 'Activo', label: 'Activo' },
@@ -68,7 +69,6 @@ const PaginaUsuarios = () => {
   }, [])
 
   useEffect(async () => {
-    console.log(' SE CARGARON NUEVOS USUARIOS... ', allUsuarios)
     setListaUsuarios(allUsuarios)
   }, [allUsuarios])
 
