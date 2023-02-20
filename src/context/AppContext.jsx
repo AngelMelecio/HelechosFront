@@ -20,6 +20,7 @@ const empleadosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
   { name: 'Apellidos', attribute: 'apellidos' },
   { name: 'Dirección', attribute: 'direccion' },
+  { name: 'Estado', attribute: 'estado' },
   { name: 'Seguro Social', attribute: 'ns' },
   { name: 'Fecha de Contratación', attribute: 'fechaEntrada' },
   { name: 'Fecha Alta de Seguro', attribute: 'fechaAltaSeguro' },
@@ -65,6 +66,7 @@ export function AppProvider({ children }) {
       let formatData = data.map((empl) => ({
         ...empl,
         isSelected: false,
+        estado: empl.is_active ? 'Activo' : 'Inactivo', //['Activo','Inactivo'].at( Math.random()*2 ), //
         fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
       }))
       setAllEmpleados(formatData)
@@ -82,12 +84,14 @@ export function AppProvider({ children }) {
     formData.append('direccion', values.direccion)
     formData.append('telefono', values.telefono)
     formData.append('ns', values.ns)
-    formData.append('fechaEntrada',values.fechaEntrada)
-    formData.append('fechaAltaSeguro',values.fechaAltaSeguro)
-    formData.append('is_active',values.is_active)
+
     if ((objEmpleado.fotografia) instanceof File)
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
+    formData.append('is_active', values.is_active)
+
+    formData.append('fechaEntrada',values.fechaEntrada)
+    formData.append('fechaAltaSeguro',values.fechaAltaSeguro)
 
     let maquinasIds = []
     maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))
@@ -120,7 +124,6 @@ export function AppProvider({ children }) {
     }
     else {
       //    Actaulizo los datos del Empleado
-      console.log(values)
       await fetch(apiEmpleadosUrl + values.idEmpleado, {
         method: 'PUT',
         body: formData,
@@ -278,7 +281,6 @@ export function AppProvider({ children }) {
       }}>
 
       {children}
-      <ToastContainer position="bottom-right" />
     </AppContext.Provider>
   )
 }

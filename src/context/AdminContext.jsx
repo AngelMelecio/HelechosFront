@@ -15,11 +15,9 @@ const UsuariosColumns = [
   { name: 'Apellidos', attribute: 'apellidos' },
   { name: 'Correo', attribute: 'correo' },
   { name: 'Usuario', attribute: 'usuario' },
-  { name: 'Está Activo', attribute: 'is_active' },
-  { name: 'Es Administrador', attribute: 'is_staff' },
+  { name: 'Estado', attribute: 'estado' },
+  { name: 'Tipo', attribute: 'tipo' },
 ]
-
-
 
 const AdminContext = React.createContext()
 export function useAdmin() {
@@ -36,7 +34,6 @@ export function AdminProvider({ children }) {
 
   const getUsuarios = async () => {
     setFetchingUsuarios(true)
-    console.log('fetchig...')
     let response = await fetch(apiUsersUrl, {
       method: 'GET',
       headers: {
@@ -48,6 +45,8 @@ export function AdminProvider({ children }) {
       let data = await response.json()
       let formatData = data.map((usr) => ({
         ...usr,
+        estado: usr.is_active ? 'Activo' : 'Inactivo',
+        tipo: usr.is_staff ? 'Administrador' : 'Encargado',
         isSelected: false,
       }))
       setAllUsuarios(formatData)

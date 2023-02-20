@@ -10,8 +10,8 @@ const Table = ({
   columns,
   onAdd,
   onDelete,
-  onEdit
-
+  onEdit,
+  filters = [{atr:'is_active'}]
 }) => {
 
 
@@ -23,8 +23,8 @@ const Table = ({
   const trashButtonRef = useRef()
 
   useEffect(() => {
-    console.log('CARGANDO TODO EN LA TABLA...  ')
-    console.log('fetching: ', fetching)
+    //console.log('CARGANDO TODO EN LA TABLA...  ')
+    //console.log('fetching: ', fetching)
     setVisibleItems(allItems)
   }, [allItems])
 
@@ -128,17 +128,19 @@ const Table = ({
 
             let value = element[c.attribute] + ''
             let isBool = (value == 'true' || value == 'false' || value == '')
-
             if (isBool) {
               if (value == 'true') value = 'Sí'
               else value = '--'
             }
-
             return <td
               className="px-4"
               key={'td' + i}
               onClick={onClick}>
-              {isBool ? <p className="text-center">{value}</p> : value}
+              <p className="flex flex-row items-center">
+                {value}
+                {value === 'Activo' && <ICONS.Active className="ml-2 text-sm text-emerald-500" />}
+                {value === 'Inactivo' && <ICONS.Ghost className="ml-2 text-lg text-gray-500" />}
+              </p>
             </td>
           }
           )

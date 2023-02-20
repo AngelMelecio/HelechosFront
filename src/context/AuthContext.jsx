@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom"
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useApp } from "./AppContext";
+import 'react-toastify/dist/ReactToastify.css';
 
 const apiLoginUrl = "http://192.168.1.239:8000/login/"
 const apiRefreshTokenUrl = "http://192.168.1.239:8000/api/token/refresh/"
@@ -19,9 +20,9 @@ export function AuthProvider({ children }) {
   let [session, setSession] = useState(() => auth ? JSON.parse(auth) : null)
   //let [user, setUser] = useState(null)
   let [loading, setLoading] = useState(true)
-  
+
   const navigate = useNavigate()
-  
+
   const notify = (message, error = false) => {
     let options = {
       position: "bottom-right",
@@ -57,9 +58,6 @@ export function AuthProvider({ children }) {
       body: JSON.stringify(values)
     })
     let data = await response.json()
-
-    console.log( data )
-    console.log( response )
 
     if (response.status === 200) {
       //let tokens = { access: data.access, refresh: data.refresh }
@@ -102,8 +100,7 @@ export function AuthProvider({ children }) {
     let data = await response.json()
 
     if (response.status === 200) {
-      console.log( 'tokens refreshed ')
-      let newSession = { ...session, access:data.access, refresh:data.refresh }
+      let newSession = { ...session, access: data.access, refresh: data.refresh }
       setSession(newSession)
       localStorage.setItem('auth', JSON.stringify(newSession))
     } else {
@@ -125,6 +122,7 @@ export function AuthProvider({ children }) {
       }}
     >
       {children}
+      <ToastContainer />
     </AuthContext.Provider>
   )
 }
