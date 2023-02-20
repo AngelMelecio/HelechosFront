@@ -23,6 +23,7 @@ const initobj = {
   ns: "",
   fechaAdquisicion: "",
   otros: "",
+  detalleAdquisicion: "",
   departamento: "Seleccione"
 }
 const optionsDepartamento = [
@@ -288,7 +289,7 @@ const PaginaMaquinas = () => {
                     <div className="relative px-2 py-4 border-2 mx-2 my-4 border-slate-300">
                       <div className="absolute w-full total-center -top-3">
                         <div className='bg-white px-3 font-medium text-teal-800 text-sm italic' >
-                          INFORMACIÓN EXTRA
+                          INFORMACIÓN ADICIONAL
                         </div>
                       </div>
                       <div className='flex flex-row'>
@@ -303,6 +304,11 @@ const PaginaMaquinas = () => {
                           label='Fecha de adquisición' type='date' name='fechaAdquisicion' value={formik.values.fechaAdquisicion}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.fechaAdquisicion && formik.touched.fechaAdquisicion ? formik.errors.fechaAdquisicion : null}
+                        />
+                         <Input
+                          label='Infromación extra de adquisición' type='text' name='detalleAdquisicion' value={formik.values.detalleAdquisicion}
+                          onChange={formik.handleChange} onBlur={formik.handleBlur}
+                          errores={formik.errors.detalleAdquisicion && formik.touched.detalleAdquisicion ? formik.errors.detalleAdquisicion : null}
                         />
                       </div>
                     </div>

@@ -10,11 +10,11 @@ export function useApp() {
   return useContext(AppContext)
 }
 
-const apiEmpleadosUrl = 'http://127.0.0.1:8000/api/empleados/'
-const apiMaquinasUrl = 'http://127.0.0.1:8000/api/maquinas/'
-const apiEmpleadoMaquinaUrl = 'http://127.0.0.1:8000/api/empleados_maquina/'
-const apiEmpleadoMaquinasUrl = 'http://127.0.0.1:8000/api/empleado_maquinas/'
-const imageEndPoint = 'http://127.0.0.1:8000'
+const apiEmpleadosUrl = 'http://192.168.1.239:8000/api/empleados/'
+const apiMaquinasUrl = 'http://192.168.1.239:8000/api/maquinas/'
+const apiEmpleadoMaquinaUrl = 'http://192.168.1.239:8000/api/empleados_maquina/'
+const apiEmpleadoMaquinasUrl = 'http://192.168.1.239:8000/api/empleado_maquinas/'
+const imageEndPoint = 'http://192.168.1.239:8000'
 
 const empleadosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
@@ -22,6 +22,9 @@ const empleadosColumns = [
   { name: 'Dirección', attribute: 'direccion' },
   { name: 'Estado', attribute: 'estado' },
   { name: 'Seguro Social', attribute: 'ns' },
+  { name: 'Fecha de Contratación', attribute: 'fechaEntrada' },
+  { name: 'Fecha Alta de Seguro', attribute: 'fechaAltaSeguro' },
+  { name: 'Está Activo', attribute: 'is_active' },
   { name: 'Teléfono', attribute: 'telefono' },
   { name: 'Departamento', attribute: 'departamento' },
 ]
@@ -32,8 +35,9 @@ const maquinasColumns = [
   { name: 'Marca', attribute: 'marca' },
   { name: 'Modelo', attribute: 'modelo' },
   { name: 'Número de Serie', attribute: 'ns' },
-  { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
   { name: 'Otros', attribute: 'otros' },
+  { name: 'Fecha de Adquisición', attribute: 'fechaAdquisicion' },
+  { name: 'Detalle Adquisición', attribute: 'detalleAdquisicion' },
   { name: 'Departamento', attribute: 'departamento' },
 ]
 
@@ -80,10 +84,14 @@ export function AppProvider({ children }) {
     formData.append('direccion', values.direccion)
     formData.append('telefono', values.telefono)
     formData.append('ns', values.ns)
+
     if ((objEmpleado.fotografia) instanceof File)
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
     formData.append('is_active', values.is_active)
+
+    formData.append('fechaEntrada',values.fechaEntrada)
+    formData.append('fechaAltaSeguro',values.fechaAltaSeguro)
 
     let maquinasIds = []
     maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))
@@ -205,8 +213,9 @@ export function AppProvider({ children }) {
     formData.append('marca', values.marca)
     formData.append('modelo', values.modelo)
     formData.append('ns', values.ns)
-    formData.append('fechaAdquisicion', values.fechaAdquisicion)
     formData.append('otros', values.otros)
+    formData.append('fechaAdquisicion', values.fechaAdquisicion)
+    formData.append('detalleAdquisicion', values.detalleAdquisicion)
     formData.append('departamento', values.departamento)
 
     if (!isEdit) {
