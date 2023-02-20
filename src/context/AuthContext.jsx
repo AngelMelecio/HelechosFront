@@ -6,8 +6,8 @@ import { toast, ToastContainer } from "react-toastify";
 import { useApp } from "./AppContext";
 import 'react-toastify/dist/ReactToastify.css';
 
-const apiLoginUrl = "http://192.168.1.239:8000/login/"
-const apiRefreshTokenUrl = "http://192.168.1.239:8000/api/token/refresh/"
+const apiLoginUrl = "http://localhost:8000/login/"
+const apiRefreshTokenUrl = "http://localhost:8000/api/token/refresh/"
 
 const AuthContext = React.createContext()
 export function useAuth() {

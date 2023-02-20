@@ -20,16 +20,12 @@ const initobj = {
   apellidos: "",
   direccion: "",
   telefono: "",
-  correo: "",
   ns: "",
-  fechaEntrada: "",
-  fechaAltaSeguro: "",
+  fechaEntrada: null,
+  fechaAltaSeguro: null,
   is_active: true,
-  usuario: "",
-  contrasena: "",
   fotografia: "",
   departamento: "Seleccione",
-  tipo: "Seleccione"
 }
 
 const initErrors = {}
@@ -93,16 +89,11 @@ const PaginaEmpleados = () => {
     { value: 'Diseno', label: 'Diseño' },
     { value: 'Gerencia', label: 'Gerencia' }
   ]
-const optionsEstado = [
-  { value:'Activo', label:'Activo' },
-  { value:'Inactivo', label:'Inactivo' }
-]
-  const optionsTipo = [
-    { value: 'Seleccione', label: 'Seleccione' },
-    { value: 'Trabajador', label: 'Trabajador' },
-    { value: 'Encargado', label: 'Encargado' },
-    { value: 'Administrador', label: 'Administrador' },
+  const optionsEstado = [
+    { value: 'Activo', label: 'Activo' },
+    { value: 'Inactivo', label: 'Inactivo' }
   ]
+
 
   //Validaciones
   const validate = values => {
@@ -136,7 +127,7 @@ const optionsEstado = [
       errors.ns = 'NSS incorrecto';
     }*/
 
-    if(!values.fechaEntrada){
+    if (!values.fechaEntrada) {
       errors.fechaEntrada = 'Establece la fecha de contratación';
     }
     if (!values.departamento) {
@@ -236,6 +227,8 @@ const optionsEstado = [
 
     setAssignedMaquinas(newAssigned)
     setAvailableMaquinas(newAvailable)
+
+    console.log(emp)
 
     formik.setValues(emp)
     handleModalVisibility(true, true)
@@ -364,12 +357,12 @@ const optionsEstado = [
                         </div>
                       </div>
                       <div className='flex flex-row'>
-                          <Input
-                            label='Fecha de Contratación' type='date' name='fechaEntrada' value={formik.values.fechaEntrada}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.fechaEntrada && formik.touched.fechaEntrada ? formik.errors.fechaEntrada : null}
-                          />
-                           {<CustomSelect
+                        <Input
+                          label='Fecha de Contratación' type='date' name='fechaEntrada' value={formik.values.fechaEntrada}
+                          onChange={formik.handleChange} onBlur={formik.handleBlur}
+                          errores={formik.errors.fechaEntrada && formik.touched.fechaEntrada ? formik.errors.fechaEntrada : null}
+                        />
+                        {<CustomSelect
                           name='Departamento'
                           className='input z-[100]'
                           onChange={value => formik.setFieldValue('departamento', value.value)}
@@ -384,25 +377,25 @@ const optionsEstado = [
                           name='Estado'
                           className='input z-[100]'
                           onChange={value => formik.setFieldValue('is_active', value.value === 'Activo' ? true : false)}
-                          value={formik.values.is_active}
+                          value={formik.values.is_active ? 'Activo' : 'Inactivo'}
                           onBlur={formik.handleBlur}
                           options={optionsEstado}
                           label='Estado'
                           errores={formik.errors.is_active && formik.touched.is_active ? formik.errors.is_active : null}
-                        />}                       
+                        />}
                       </div>
                       <div className='flex flex-row'>
-                          <Input
-                            label='Fecha de registro en el seguro' type='date' name='fechaAltaSeguro' value={formik.values.fechaAltaSeguro}
-                            onChange={formik.handleChange} onBlur={formik.handleBlur}
-                            errores={formik.errors.fechaAltaSeguro && formik.touched.fechaAltaSeguro ? formik.errors.fechaAltaSeguro : null}
-                          />
-                          <Input
+                        <Input
+                          label='Fecha de registro en el seguro' type='date' name='fechaAltaSeguro' value={formik.values.fechaAltaSeguro}
+                          onChange={formik.handleChange} onBlur={formik.handleBlur}
+                          errores={formik.errors.fechaAltaSeguro && formik.touched.fechaAltaSeguro ? formik.errors.fechaAltaSeguro : null}
+                        />
+                        <Input
                           label='Seguro Social' type='number' name='ns' value={formik.values.ns}
                           onChange={formik.handleChange} onBlur={formik.handleBlur}
                           errores={formik.errors.ns && formik.touched.ns ? formik.errors.ns : null}
                           Icon={ICONS.Add}
-                          />
+                        />
                       </div>
                     </div>
                     <div className="mx-2 my-4 relative h-56 px-4 py-4 border-2 border-slate-300">
@@ -427,7 +420,7 @@ const optionsEstado = [
         //: null
       }
 
-      
+
 
     </>
   )

@@ -10,21 +10,20 @@ export function useApp() {
   return useContext(AppContext)
 }
 
-const apiEmpleadosUrl = 'http://192.168.1.239:8000/api/empleados/'
-const apiMaquinasUrl = 'http://192.168.1.239:8000/api/maquinas/'
-const apiEmpleadoMaquinaUrl = 'http://192.168.1.239:8000/api/empleados_maquina/'
-const apiEmpleadoMaquinasUrl = 'http://192.168.1.239:8000/api/empleado_maquinas/'
-const imageEndPoint = 'http://192.168.1.239:8000'
+const apiEmpleadosUrl = 'http://localhost:8000/api/empleados/'
+const apiMaquinasUrl = 'http://localhost:8000/api/maquinas/'
+const apiEmpleadoMaquinaUrl = 'http://localhost:8000/api/empleados_maquina/'
+const apiEmpleadoMaquinasUrl = 'http://localhost:8000/api/empleado_maquinas/'
+const imageEndPoint = 'http://localhost:8000'
 
 const empleadosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
   { name: 'Apellidos', attribute: 'apellidos' },
   { name: 'Dirección', attribute: 'direccion' },
-  { name: 'Estado', attribute: 'estado' },
   { name: 'Seguro Social', attribute: 'ns' },
   { name: 'Fecha de Contratación', attribute: 'fechaEntrada' },
   { name: 'Fecha Alta de Seguro', attribute: 'fechaAltaSeguro' },
-  { name: 'Está Activo', attribute: 'is_active' },
+  { name: 'Estado', attribute: 'estado' },
   { name: 'Teléfono', attribute: 'telefono' },
   { name: 'Departamento', attribute: 'departamento' },
 ]
@@ -66,7 +65,7 @@ export function AppProvider({ children }) {
       let formatData = data.map((empl) => ({
         ...empl,
         isSelected: false,
-        estado: empl.is_active ? 'Activo' : 'Inactivo', //['Activo','Inactivo'].at( Math.random()*2 ), //
+        estado: empl.is_active ? "Activo" : 'Inactivo',
         fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
       }))
       setAllEmpleados(formatData)
@@ -76,8 +75,7 @@ export function AppProvider({ children }) {
     setFetchingEmpleados(false)
   }
 
-  const saveEmpleado = async (values, objEmpleado, maquinas, isEdit) => {
-
+  const saveEmpleado = async (values, objEmpleado, maquinas, isEdit) => {    
     let formData = new FormData()
     formData.append('nombre', values.nombre)
     formData.append('apellidos', values.apellidos)
@@ -89,9 +87,8 @@ export function AppProvider({ children }) {
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
     formData.append('is_active', values.is_active)
-
-    formData.append('fechaEntrada',values.fechaEntrada)
-    formData.append('fechaAltaSeguro',values.fechaAltaSeguro)
+    values.fechaEntrada !== null && formData.append('fechaEntrada',values.fechaEntrada)
+    values.fechaAltaSeguro !== null && formData.append('fechaAltaSeguro',values.fechaAltaSeguro)
 
     let maquinasIds = []
     maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))

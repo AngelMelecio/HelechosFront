@@ -59,7 +59,7 @@ const SelectorMaquinas = ({
       </div>
       <div className='flex flex-row h-full '>
         <div className='flex relative w-full h-full border-2 border-slate-200 bg-white'>
-          {availableMaquinas.length > 0 ?
+          {availableMaquinas?.length > 0 ?
             <MaquinasTable
               list={availableMaquinas}
               setList={setAvailableMaquinas}
