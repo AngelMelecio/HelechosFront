@@ -21,6 +21,7 @@ import {
     BsHouseDoor as House,
     BsPeopleFill as Worker,
     BsFilter as Filter,
+    BsFillCheckCircleFill as Active
 
 } from 'react-icons/bs'
 
@@ -68,14 +69,10 @@ import {
     RiArrowDownSLine as Down,
     RiArrowRightSLine as Right,
     RiArrowLeftSLine as Left,
+    RiGhost2Line as Ghost
 
 } from 'react-icons/ri'
-
-const Accept = () =>{
-    return 
-    <span >
-    </span>
-}
+    
 
 export const ICONS = {
     Lupa,
@@ -112,4 +109,5 @@ export const ICONS = {
     Save,
     Person,
     UsersIdentity,
+    Active, Ghost
 }

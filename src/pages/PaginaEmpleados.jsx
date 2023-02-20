@@ -90,7 +90,10 @@ const PaginaEmpleados = () => {
     { value: 'Diseno', label: 'Diseño' },
     { value: 'Gerencia', label: 'Gerencia' }
   ]
-
+const optionsEstado = [
+  { value:'Activo', label:'Activo' },
+  { value:'Inactivo', label:'Inactivo' }
+]
   const optionsTipo = [
     { value: 'Seleccione', label: 'Seleccione' },
     { value: 'Trabajador', label: 'Trabajador' },
@@ -124,11 +127,11 @@ const PaginaEmpleados = () => {
       errors.telefono = 'Ingresa 10 digitos';
     }
 
-    if (!values.ns) {
+    /*if (!values.ns) {
       errors.ns = 'Ingresa el NSS';
     } else if (values.ns.toString().length !== 11) {
       errors.ns = 'NSS incorrecto';
-    }
+    }*/
 
     if (!values.departamento) {
       errors.departamento = 'Selecciona un departamento';
@@ -142,7 +145,6 @@ const PaginaEmpleados = () => {
     initialValues: initobj,
     validate,
     onSubmit: values => {
-      console.log('submiting')
       handleSaveEmpleado(values);
     },
   });
@@ -373,6 +375,16 @@ const PaginaEmpleados = () => {
                           options={optionsDepartamento}
                           label='Departamento'
                           errores={formik.errors.departamento && formik.touched.departamento ? formik.errors.departamento : null}
+                        />}
+                        {<CustomSelect
+                          name='Estado'
+                          className='input z-[100]'
+                          onChange={value => formik.setFieldValue('is_active', value.value === 'Activo' ? true : false)}
+                          value={formik.values.is_active}
+                          onBlur={formik.handleBlur}
+                          options={optionsEstado}
+                          label='Estado'
+                          errores={formik.errors.is_active && formik.touched.is_active ? formik.errors.is_active : null}
                         />}
                       </div>
                     </div>

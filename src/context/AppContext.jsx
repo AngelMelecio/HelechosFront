@@ -20,6 +20,7 @@ const empleadosColumns = [
   { name: 'Nombre', attribute: 'nombre' },
   { name: 'Apellidos', attribute: 'apellidos' },
   { name: 'Dirección', attribute: 'direccion' },
+  { name: 'Estado', attribute: 'estado' },
   { name: 'Seguro Social', attribute: 'ns' },
   { name: 'Teléfono', attribute: 'telefono' },
   { name: 'Departamento', attribute: 'departamento' },
@@ -61,6 +62,7 @@ export function AppProvider({ children }) {
       let formatData = data.map((empl) => ({
         ...empl,
         isSelected: false,
+        estado: empl.is_active ? 'Activo' : 'Inactivo', //['Activo','Inactivo'].at( Math.random()*2 ), //
         fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
       }))
       setAllEmpleados(formatData)
@@ -77,14 +79,11 @@ export function AppProvider({ children }) {
     formData.append('apellidos', values.apellidos)
     formData.append('direccion', values.direccion)
     formData.append('telefono', values.telefono)
-    formData.append('correo', values.correo)
     formData.append('ns', values.ns)
-    formData.append('usuario', values.usuario)
-    formData.append('contrasena', values.contrasena)
     if ((objEmpleado.fotografia) instanceof File)
       formData.append('fotografia', objEmpleado.fotografia)
     formData.append('departamento', values.departamento)
-    formData.append('tipo', values.tipo)
+    formData.append('is_active', values.is_active)
 
     let maquinasIds = []
     maquinas.forEach(m => maquinasIds.push({ id: m.idMaquina }))
@@ -117,7 +116,6 @@ export function AppProvider({ children }) {
     }
     else {
       //    Actaulizo los datos del Empleado
-      console.log(values)
       await fetch(apiEmpleadosUrl + values.idEmpleado, {
         method: 'PUT',
         body: formData,
@@ -274,7 +272,6 @@ export function AppProvider({ children }) {
       }}>
 
       {children}
-      <ToastContainer position="bottom-right" />
     </AppContext.Provider>
   )
 }

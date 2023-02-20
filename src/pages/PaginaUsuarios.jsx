@@ -62,7 +62,6 @@ const PaginaUsuarios = () => {
 
   useEffect(async () => {
     async function str() {
-      console.log('NEEDING USERS...')
       await getUsuarios()
     }
     str()
@@ -189,7 +188,6 @@ const PaginaUsuarios = () => {
     }
     catch (e) {
       let { errors } = e
-      console.log('catched', e)
       if (errors.correo) notify(errors.correo[0], true)
       if (errors.usuario) notify(errors.usuario[0], true)
     }

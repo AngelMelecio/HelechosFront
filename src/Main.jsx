@@ -1,19 +1,14 @@
 import AppBar from "./components/AppBar"
-import Table from "./components/Table"
-import ReactDOM from 'react-dom';
-import { AppProvider, useApp } from "./context/AppContext"
 import PaginaEmpleados from "./pages/PaginaEmpleados"
 import { Route, Routes, Navigate } from 'react-router-dom'
 import PaginaMaquinas from "./pages/PaginaMaquinas"
 import Login from "./pages/Login"
 import { useNavigate } from "react-router-dom"
-import { AdminProvider, useAdmin } from "./context/AdminContext"
+import { AdminProvider } from "./context/AdminContext"
 import PaginaUsuarios from "./pages/PaginaUsuarios"
 import { useAuth } from "./context/AuthContext"
 import PaginaPerfil from "./pages/PaginaPerfil"
-import { useRef } from "react"
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify"
 
 const Main = () => {
 

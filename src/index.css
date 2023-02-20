@@ -8,6 +8,8 @@
   --teal300: #6ee7b7;
   --rose500: #ef4444;
   --rose600: #dc2626;
+  --toastify-color-success: #22c55e !important;
+  --toastify-color-error: #e11d48 !important;
 }
 
 ::-moz-selection {
