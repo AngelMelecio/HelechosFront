@@ -6,7 +6,10 @@ import { toast } from "react-toastify";
 import { useApp } from "./AppContext";
 import { useAuth } from "./AuthContext";
 
-const apiUsersUrl = 'http://localhost:8000/users/'
+//const entorno="http://localhost:8000"
+const entorno="http://192.168.1.239:8000"
+
+const apiUsersUrl = entorno+"/users/"
 
 const ct_JSON = { "Content-Type": "application/json" }
 
