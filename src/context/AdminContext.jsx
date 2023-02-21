@@ -5,9 +5,8 @@ import { GiConsoleController } from "react-icons/gi";
 import { toast } from "react-toastify";
 import { useApp } from "./AppContext";
 import { useAuth } from "./AuthContext";
+import {entorno} from "../constants/entornos.jsx"
 
-//const entorno="http://localhost:8000"
-const entorno="http://192.168.1.239:8000"
 
 const apiUsersUrl = entorno+"/users/"
 
