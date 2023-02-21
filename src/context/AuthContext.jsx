@@ -5,9 +5,8 @@ import { useNavigate } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify";
 import { useApp } from "./AppContext";
 import 'react-toastify/dist/ReactToastify.css';
+import {entorno} from "../constants/entornos.jsx"
 
-//const entorno="http://localhost:8000"
-const entorno="http://192.168.1.239:8000"
 
 const apiLoginUrl = entorno+"/login/"
 const apiRefreshTokenUrl = entorno+"/api/token/refresh/"

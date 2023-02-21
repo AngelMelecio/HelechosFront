@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useContext } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "./AuthContext";
+import {entorno} from "../constants/entornos.jsx"
 
 const AppContext = React.createContext()
 
@@ -10,8 +11,7 @@ export function useApp() {
   return useContext(AppContext)
 }
 
-//const entorno="http://localhost:8000"
-const entorno="http://192.168.1.239:8000"
+
 
 const apiEmpleadosUrl = entorno+"/api/empleados/"
 const apiMaquinasUrl = entorno+"/api/maquinas/"
