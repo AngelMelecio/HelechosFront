@@ -88,11 +88,13 @@ const Table = ({
     else {
       let newOrder = ([...allItems].sort((a, b) => {
         let A = a[sortParams.attribute]
+        if( A === null ) A = ''
         if (A != true && A != false)
-          A = A.toLowerCase()
+          A = A?.toLowerCase()
         let B = b[sortParams.attribute]
+        if( B === null ) B = ''
         if (B != true && B != false)
-          B = B.toLowerCase()
+          B = B?.toLowerCase()
 
         if (A > B)
           return sortParams.criteria === 1 ? 1 : -1
@@ -127,7 +129,7 @@ const Table = ({
           columns.map((c, i) => {
 
             let value = element[c.attribute] + ''
-            let isBool = (value == 'true' || value == 'false' || value == '')
+            let isBool = (value == 'true' || value == 'false' || value == '' || value == 'null')
             if (isBool) {
               if (value == 'true') value = 'Sí'
               else value = '--'
