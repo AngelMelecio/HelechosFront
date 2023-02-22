@@ -69,7 +69,7 @@ export function AppProvider({ children }) {
         ...empl,
         isSelected: false,
         estado: empl.is_active ? "Activo" : 'Inactivo',
-        fotografia: empl.fotografia ? imageEndPoint + empl.fotografia : ''
+        fotografia: empl.fotografia ? empl.fotografia : ''
       }))
       setAllEmpleados(formatData)
       setFetchingEmpleados(false)
